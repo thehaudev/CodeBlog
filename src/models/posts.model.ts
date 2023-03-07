@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const postSchema = new Schema({
     userId: {
-        type: String,
+        type: mongoose.Types.ObjectId,
         required: true,
         min: 6,
         max: 255,
@@ -31,22 +31,15 @@ const postSchema = new Schema({
         createdAt: 'created_at', // Use `created_at` to store the created date
         updatedAt: 'updated_at' // and `updated_at` to store the last updated date
     }
-}, {
-    toJson: { virtual: true }
-}, {
-    collection: "post"
 });
 
-// postSchema.virtual('posts', {
-//     ref: 'post_tag',
-//     localField: 'postId',
-//     foreignField: '_idw ',
-//     strictPopulate: false
-// });
-
-
-
-
+postSchema.set('toObject', { virtuals: true });
+postSchema.set('toJSON', { virtuals: true });
+postSchema.virtual("tags", {
+    ref: "post_tag",
+    localField: "_id",
+    foreignField: "postId",
+});
 
 
 export const PostModel = mongoose.model('post', postSchema)

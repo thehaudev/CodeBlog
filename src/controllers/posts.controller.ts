@@ -23,9 +23,11 @@ export class PostsController {
             const CommentData = { ...req.body, postId: postId, userId: userId }
 
             const createComment: Comment = await this.commentService.comment(CommentData)
+            let data: any = createComment
             const user: User = await this.userService.findUserById(createComment.userId || "")
+            data = { ...data['_doc'], user }
 
-            res.status(201).json({ data: { comment: createComment, user: user }, message: "comment" })
+            res.status(201).json({ comment: data, message: "comment" })
         } catch (error) {
             next(error)
         }
@@ -95,19 +97,6 @@ export class PostsController {
                 current_page: +page,
                 total_pages: +total_pages
             }
-            // const data = await Promise.all(posts.map(async (e: Post) => {
-            //     const post_tag = await this.postTagService.findPost_Tag(e._id)
-            //     return post_tag
-            // }))
-            // // console.log(data)
-            // let i = 1
-            // posts.forEach(async e => {
-            //     const a = await this.postTagService.findPost_Tag(e._id)
-
-            //     console.log(a)
-            //     console.log(i)
-            //     i++
-            // });
 
             res.status(200).json({ count: count, posts: { data: posts, meta: { pagination } } })
 
@@ -115,7 +104,7 @@ export class PostsController {
             next(error)
         }
     }
-    ///
+
     public getPostById = async (req: RequestWithPost, res: Response, next: NextFunction) => {
         try {
             const id: string = req.params.id

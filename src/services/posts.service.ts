@@ -15,8 +15,8 @@ export default class PostsService {
         this.postRepository = new PostRepository()
     }
 
-    public async findAllPosts(filter?: any): Promise<{ posts: Post[], total: Number }> {
-        const posts: Post[] = await this.postRepository.findAndSort(filter.skip, filter.take, filter.sort, filter.search)
+    public async findAllPosts(filter?: any): Promise<{ posts: any, total: Number }> {
+        const posts: any = await this.postRepository.findAndSort(filter.skip, filter.take, filter.sort, filter.search)
         const total: Number = await this.postRepository.count()
         return { posts, total }
     }

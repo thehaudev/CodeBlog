@@ -22,7 +22,7 @@ export default class Vote_PostController {
             const user: User = req.user
             const data = { ...req.body, userId: user._id }
             const updateVotePost = await this.vote_postService.updateVotePost(data)
-            res.status(201).json({ data: updateVotePost, message: " updated successfully" })
+            res.status(200).json({ data: updateVotePost, message: " updated successfully" })
         } catch (error) {
             next(error)
         }
@@ -33,7 +33,7 @@ export default class Vote_PostController {
             const user: User = req.user
             const data = { ...req.body, userId: user._id }
             const deleteVotePost = await this.vote_postService.deleteVotePost(data)
-            res.status(201).json({ data: deleteVotePost, message: "deleted successfully" })
+            res.status(200).json({ data: deleteVotePost, message: "deleted successfully" })
         } catch (error) {
             next(error)
         }
