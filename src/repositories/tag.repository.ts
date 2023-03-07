@@ -7,3 +7,4 @@ export default class TagRepository extends BaseRepository<Tag>{
         super(TagModel)
     }
 }
+

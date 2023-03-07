@@ -1,10 +1,9 @@
 import { IsString } from "class-validator";
 
 
-export default class CreatePost_TagData {
+export class CreatePost_TagDto {
     @IsString()
     public postId?: string;
-
     @IsString()
-    public userId?: string;
+    public tagId?: string;
 }

@@ -17,5 +17,3 @@ const tagSchema = new Schema({
 });
 
 export const TagModel = mongoose.model('tag', tagSchema)
-
-module.exports = TagModel

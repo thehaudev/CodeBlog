@@ -3,12 +3,11 @@ import PostRepository from "../repositories/posts.repository";
 import { Post } from "../interfaces/posts.interface";
 import { HttpException } from "../exceptions/HttpException";
 import { isEmpty } from "../utils/validator.util";
-import { CreatePostDto } from "../dtos/post.dto";
+import { CreatePostDto, UpdatePostDto } from "../dtos/post.dto";
 import { UserModel } from "../models/users.model";
 import UserRepository from "../repositories/users.repository";
 
 export default class PostsService {
-    private readonly posts = PostModel
     private readonly users = UserModel
     private readonly postRepository: PostRepository
 
@@ -16,31 +15,33 @@ export default class PostsService {
         this.postRepository = new PostRepository()
     }
 
-    public async findAllPosts(filter?: any): Promise<Post[]> {
-        return this.postRepository.findAndSort(filter.skip, filter.take, filter.sort, filter.search)
+    public async findAllPosts(filter?: any): Promise<{ posts: Post[], total: Number }> {
+        const posts: Post[] = await this.postRepository.findAndSort(filter.skip, filter.take, filter.sort, filter.search)
+        const total: Number = await this.postRepository.count()
+        return { posts, total }
     }
 
     public async findPostById(id: string): Promise<Post> {
         if (isEmpty(id)) throw new HttpException(400, 'PostId is empty');
 
-        const findPost: Post | null = await this.postRepository.findById(id)
+        const findPost: Post | null = await this.postRepository.findWithUserById(id)
         if (!findPost) throw new HttpException(409, "Post doesn't exist");
 
         return findPost
     }
 
-    public async createPost(postData: CreatePostDto): Promise<Post> {
+    public async createPost(postData: CreatePostDto, userId: string): Promise<Post> {
         if (isEmpty(postData)) throw new HttpException(400, 'PostData is empty');
 
-        const checkIdUser = await this.users.findById(postData.userId)
+        const checkIdUser = await this.users.findById(userId)
         if (!checkIdUser) throw new HttpException(409, "User doesn't exist")
 
-        const createPost: Post = await this.postRepository.create(postData)
-
+        const data = { ...postData, userId: userId }
+        const createPost: Post = await this.postRepository.create(data)
         return createPost
     }
 
-    public async updatePost(postData: CreatePostDto, postId: string): Promise<Post> {
+    public async updatePost(postData: UpdatePostDto, postId: string): Promise<Post> {
         if (isEmpty(postData)) throw new HttpException(400, 'PostData is empty');
 
         const checkIdUser = await this.users.findById(postData.userId)
@@ -53,6 +54,7 @@ export default class PostsService {
     }
 
     public async deletePost(postId: string): Promise<void> {
+        if (isEmpty(postId)) throw new HttpException(409, "postId is empty")
         await this.postRepository.delete(postId)
     }
 

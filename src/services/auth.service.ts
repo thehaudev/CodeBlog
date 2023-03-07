@@ -25,7 +25,7 @@ class AuthService {
 
     }
 
-    public async login(userData: any): Promise<{ user: User, cookie: string }> {
+    public async login(userData: any): Promise<{ user: User, cookie: string, auth: string }> {
         if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
 
         const user: User = await this.user.findOne({ email: userData.email });
@@ -36,8 +36,8 @@ class AuthService {
 
         const token = this.createToken(user)
         const cookie = this.createCookie(token)
-
-        return { user, cookie }
+        const auth = token.token
+        return { user, cookie, auth }
     }
 
     public async changePassword(userData: User, body: changePasswordData): Promise<User> {

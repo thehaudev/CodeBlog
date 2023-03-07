@@ -6,4 +6,10 @@ export default class CommentRepository extends BaseRepository<Comment>{
     constructor() {
         super(CommentModel);
     }
+    async findCommentOfPost(filter = {}, take: number, skip: number): Promise<Comment[]> {
+        return this.model.find(filter).skip(skip).limit(take).populate({ path: 'userId', select: ['display_name', 'email', 'avatar'] }).exec();
+    }
+    async total(filter = {}): Promise<Number> {
+        return this.model.find(filter).count().exec();
+    }
 }

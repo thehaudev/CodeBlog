@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-import { upload } from '../utils/multer.util'
+import { uploadAvatar } from '../middlewares/multer.middlewares'
 import { verify } from "../middlewares/auth.middlewares";
 import { validationMiddleware } from "../middlewares/validation.middlewares"
 import { changeProfileDto, CreateUserDto, IdDto, UpdateUserDto } from "../dtos/user.dto";
@@ -15,15 +15,15 @@ router.get('/', usersController.getUsers)
 router.get('/:id', validationMiddleware(IdDto, "params"), usersController.getUserById)
 
 //POST /users/
-router.post('/', upload.single('avatar'), validationMiddleware(CreateUserDto, "body"), usersController.createUser)
+router.post('/', uploadAvatar.single('avatar'), validationMiddleware(CreateUserDto, "body"), usersController.createUser)
 
 //PUT /users/:id
-router.put('/:id', upload.single('avatar'), validationMiddleware(UpdateUserDto, "body"), usersController.updateUser)
+router.put('/:id', uploadAvatar.single('avatar'), validationMiddleware(UpdateUserDto, "body"), usersController.updateUser)
 
 //Delete /users/:id
 router.delete('/:id', validationMiddleware(IdDto, "params"), usersController.deleteUserById)
 
 //patch /users/me
-router.patch('/me', verify, upload.single('avatar'), validationMiddleware(changeProfileDto, "body"), usersController.changeProfile)
+router.patch('/me', verify, uploadAvatar.single('avatar'), validationMiddleware(changeProfileDto, "body"), usersController.changeProfile)
 
 export default router;

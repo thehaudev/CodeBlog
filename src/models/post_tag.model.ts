@@ -3,13 +3,15 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const post_tagSchema = new Schema({
-    post_id: {
+    postId: {
         type: String,
         required: true,
+        ref: 'post'
     },
-    user_id: {
+    tagId: {
         type: String,
         required: true,
+        ref: 'tag'
     }
 }, {
     timestamps: {

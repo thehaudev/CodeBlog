@@ -9,10 +9,4 @@ export class CreateCommentDto {
 
     @IsString()
     public content?: string
-
-    @IsBoolean()
-    public status?: boolean
-
-    @IsNumber()
-    public votes?: number
 }

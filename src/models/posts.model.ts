@@ -7,7 +7,8 @@ const postSchema = new Schema({
         type: String,
         required: true,
         min: 6,
-        max: 255
+        max: 255,
+        ref: 'user'
     },
     title: {
         type: String,
@@ -31,8 +32,22 @@ const postSchema = new Schema({
         updatedAt: 'updated_at' // and `updated_at` to store the last updated date
     }
 }, {
+    toJson: { virtual: true }
+}, {
     collection: "post"
 });
+
+// postSchema.virtual('posts', {
+//     ref: 'post_tag',
+//     localField: 'postId',
+//     foreignField: '_idw ',
+//     strictPopulate: false
+// });
+
+
+
+
+
 
 export const PostModel = mongoose.model('post', postSchema)
 

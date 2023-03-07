@@ -6,21 +6,24 @@ const commentSchema = new Schema({
         type: String,
         required: true,
         min: 6,
-        max: 255
+        max: 255,
+        ref: 'user'
     },
     postId: {
         type: String,
         required: true,
         min: 6,
-        max: 255
+        max: 255,
+        ref: 'post'
+
     },
     content: {
         type: String,
         required: true,
         min: 15
     },
-    status: { type: Boolean },
-    votes: { type: Number },
+    status: { type: Boolean, default: true },
+    votes: { type: Number, default: 0 },
 }, {
     timestamps: {
         createdAt: 'created_at', // Use `created_at` to store the created date
@@ -29,6 +32,6 @@ const commentSchema = new Schema({
 }, { collection: "comment" }
 );
 
-export const CommentModel = mongoose.model('comment', commentSchema)
 
+export const CommentModel = mongoose.model('comment', commentSchema)
 

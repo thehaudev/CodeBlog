@@ -16,7 +16,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+mongoose.set({
+  'strictQuery': false
+})
 mongoose.connect('mongodb://127.0.0.1:27017/blog_technology')
   .then(console.log("Connected"))
   .catch((err: any) => console.log("don't connect"))

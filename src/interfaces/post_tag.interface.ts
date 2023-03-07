@@ -1,5 +1,5 @@
 export default interface Post_tag {
-    id: string;
+    _id: string;
     postId: string;
     tagId: string;
 }

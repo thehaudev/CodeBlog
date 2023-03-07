@@ -1,8 +1,8 @@
 import { plainToClass, plainToClassFromExist } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
-import { RequestHandler } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { HttpException } from '../exceptions/HttpException';
-
+import { ObjectId } from 'mongodb'
 export const validationMiddleware = (
     type: any,
     value: 'body' | 'query' | 'params' = 'body',
@@ -24,3 +24,28 @@ export const validationMiddleware = (
         });
     };
 };
+
+export const validationObjectId = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const objId = req.params.id
+        new ObjectId(objId + "").toString()
+        next()
+    } catch (error) {
+        next(new HttpException(400, "id doesn't object Id"))
+    }
+}
+
+export const validationObjectIdOfPost_tag = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const array = req.body
+        array.map((e: any) => {
+            Object.entries(e).forEach(([key, value]) => {
+                const str = "" + value
+                new ObjectId(str).toString()
+            })
+        })
+        next()
+    } catch (error) {
+        next(new HttpException(400, "id doesn't object Id"))
+    }
+}
