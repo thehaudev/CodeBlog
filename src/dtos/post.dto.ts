@@ -1,33 +1,37 @@
-import { IsBoolean, IsEmpty, IsNotEmpty, IsNumber, IsString, length, Length, Min } from "class-validator";
+import { IsBoolean, IsEmpty, IsNotEmpty, IsNumber, IsOptional, IsString, length, Length, Min } from "class-validator";
 
 export class CreatePostDto {
+    @IsOptional()
+    @IsString()
+    public userId: string
     @IsString()
     @Length(15)
-    public title?: string;
+    public title: string;
     @IsString()
     @Length(15)
-    public content?: string;
+    public content: string;
 }
 
 export class UpdatePostDto {
-    @IsNotEmpty()
-    @IsString()
-    @Length(6, 255)
-    public userId?: string;
+    // @IsOptional()
+    // @IsString()
+    // @Length(6, 255)
+    // public userId: string;
 
     @IsNotEmpty()
     @IsString()
     @Length(15)
-    public title?: string;
+    public title: string;
 
     @IsNotEmpty()
     @IsString()
     @Length(15)
-    public content?: string;
-
+    public content: string;
+    @IsOptional()
     @IsBoolean()
-    public status?: boolean;
-    @IsNumber()
-    public views?: number;
-    public votes?: number;
+    public status: boolean;
+    // @IsOptional()
+    // @IsNumber()
+    // public views: number;
+    // public votes: number;
 }

@@ -3,8 +3,10 @@ var router = express.Router();
 import { uploadAvatar } from '../middlewares/multer.middlewares'
 import { verify } from "../middlewares/auth.middlewares";
 import { validationMiddleware } from "../middlewares/validation.middlewares"
-import { changeProfileDto, CreateUserDto, IdDto, UpdateUserDto } from "../dtos/user.dto";
+import { changeProfileDto, CreateUserDto, UpdateUserDto } from "../dtos/user.dto";
 import UsersController from "../controllers/users.controller";
+import { IdDto } from '../dtos/objecId.dto';
+import { permissionUser } from '../middlewares/permission.middlerwares';
 
 const usersController = new UsersController;
 
@@ -15,15 +17,20 @@ router.get('/', usersController.getUsers)
 router.get('/:id', validationMiddleware(IdDto, "params"), usersController.getUserById)
 
 //POST /users/
-router.post('/', uploadAvatar.single('avatar'), validationMiddleware(CreateUserDto, "body"), usersController.createUser)
+router.post('/', verify, permissionUser, uploadAvatar.single('avatar'),
+    validationMiddleware(CreateUserDto, "body"), usersController.createUser)
 
 //PUT /users/:id
-router.put('/:id', uploadAvatar.single('avatar'), validationMiddleware(UpdateUserDto, "body"), usersController.updateUser)
+router.put('/:id', validationMiddleware(IdDto, "params"), verify, permissionUser,
+    validationMiddleware(UpdateUserDto, "body"), uploadAvatar.single('avatar'),
+    usersController.updateUser)
 
 //Delete /users/:id
-router.delete('/:id', validationMiddleware(IdDto, "params"), usersController.deleteUserById)
+router.delete('/:id', validationMiddleware(IdDto, "params"), verify, permissionUser,
+    usersController.deleteUserById)
 
 //patch /users/me
-router.patch('/me', verify, uploadAvatar.single('avatar'), validationMiddleware(changeProfileDto, "body"), usersController.changeProfile)
+router.patch('/me', verify, validationMiddleware(changeProfileDto, "body"), uploadAvatar.single('avatar'),
+    usersController.changeProfile)
 
 export default router;

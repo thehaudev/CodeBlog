@@ -14,6 +14,7 @@ const vote_commentSchema = new Schema({
     },
     type: {
         type: String,
+        enum: ['Upvote', 'Downvote'],
         require: true,
     }
 

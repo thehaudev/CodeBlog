@@ -8,9 +8,8 @@ require('dotenv').config()
 
 export const verify = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const token = req.cookies['Authorization'];
-
     if (!token) return res.status(401).json('Authentication token missing');
-    const secretKey: string = process.env.SECRET_KEY || ""
+    const secretKey: string = process.env.ACCESS_TOKEN_SECRET || ""
 
     try {
         const verified = await jwt.verify(token, secretKey) as DataInTokenData;
@@ -24,6 +23,6 @@ export const verify = async (req: RequestWithUser, res: Response, next: NextFunc
                 next();
             })
     } catch (err) {
-        return res.status(400).send('Invalid Token');
+        return res.status(400).json({ msg: 'Invalid Token' });
     }
 };

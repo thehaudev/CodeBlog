@@ -3,6 +3,7 @@ import { validate, ValidationError } from 'class-validator';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { HttpException } from '../exceptions/HttpException';
 import { ObjectId } from 'mongodb'
+import { CreatePost_TagDto } from '../dtos/post_tag.dto';
 export const validationMiddleware = (
     type: any,
     value: 'body' | 'query' | 'params' = 'body',
@@ -37,12 +38,13 @@ export const validationObjectId = (req: Request, res: Response, next: NextFuncti
 
 export const validationObjectIdOfPost_tag = (req: Request, res: Response, next: NextFunction) => {
     try {
-        const array = req.body
-        array.map((e: any) => {
+        const array: CreatePost_TagDto[] = req.body
+        array.map((e: CreatePost_TagDto) => {
             Object.entries(e).forEach(([key, value]) => {
                 const str = "" + value
                 new ObjectId(str).toString()
             })
+
         })
         next()
     } catch (error) {

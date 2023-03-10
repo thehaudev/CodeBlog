@@ -15,6 +15,7 @@ const vote_postSchema = new Schema({
     },
     type: {
         type: String,
+        enum: ['Upvote', 'Downvote'],
         require: true,
     }
 

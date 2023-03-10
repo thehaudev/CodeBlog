@@ -8,4 +8,5 @@ export default class UserRepository extends BaseRepository<User> {
     constructor() {
         super(UserModel);
     }
+
 }

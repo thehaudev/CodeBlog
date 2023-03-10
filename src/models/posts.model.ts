@@ -26,7 +26,7 @@ const postSchema = new Schema({
     },
     views: { type: Number, default: 0 },
     votes: { type: Number, default: 0 }
-}, {
+}, { id: false }, {
     timestamps: {
         createdAt: 'created_at', // Use `created_at` to store the created date
         updatedAt: 'updated_at' // and `updated_at` to store the last updated date
@@ -40,7 +40,12 @@ postSchema.virtual("tags", {
     localField: "_id",
     foreignField: "postId",
 });
-
+postSchema.virtual("user", {
+    ref: "user",
+    localField: "userId",
+    foreignField: "_id",
+    justOne: true
+});
 
 export const PostModel = mongoose.model('post', postSchema)
 

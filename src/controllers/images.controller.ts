@@ -10,7 +10,6 @@ export default class ImageController {
 
     public uploadImage = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
-            console.log(req.user._id)
             const imagedata: CreateImageDto = {
                 userId: req.user._id,
                 name: req.file?.filename,
@@ -18,19 +17,18 @@ export default class ImageController {
                 path: req.file?.path
             }
 
-            const createImage = await this.imageService.createImage(imagedata)
+            const createImage: ImagePost = await this.imageService.createImage(imagedata)
 
             res.status(201).json({ data: createImage })
         } catch (error) {
             next(error)
-
         }
     }
 
     public getImagesByUserId = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
-            const id = "" + req.user._id
-            const findImages = await this.imageService.findImagesByUserId(id)
+            const id: string = "" + req.user._id
+            const findImages: ImagePost[] = await this.imageService.findImagesByUserId(id)
             res.status(200).json({ data: findImages })
         } catch (error) {
             next(error)
@@ -39,7 +37,7 @@ export default class ImageController {
 
     public getImageById = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const id = req.params.id
+            const id: string = req.params.id
             const findImageById: ImagePost = await this.imageService.findImageById(id)
             res.status(200).json({ data: findImageById })
         } catch (error) {

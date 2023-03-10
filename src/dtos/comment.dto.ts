@@ -1,12 +1,16 @@
-import { IsBoolean, IsEmpty, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsEmpty, IsNumber, IsString, IsOptional } from "class-validator";
 
 export class CreateCommentDto {
     @IsEmpty()
-    public userId?: string
+    public userId: string
     @IsEmpty()
-
-    public postId?: string
-
+    public postId: string
     @IsString()
-    public content?: string
+    public content: string
+    @IsOptional()
+    @IsString()
+    public inReplyToComment: string
+    @IsOptional()
+    @IsString()
+    public inReplyToUser: string
 }

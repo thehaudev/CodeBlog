@@ -21,7 +21,6 @@ export default class CommentService {
 
         const checkIdPost = await this.posts.findById(commentData.postId)
         if (!checkIdPost) throw new HttpException(409, "Post doesn't exist")
-
         const comment = await this.commentRepository.create(commentData)
         return comment;
     }

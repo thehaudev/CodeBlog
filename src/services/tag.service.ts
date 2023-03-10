@@ -12,7 +12,7 @@ export default class TagService {
         this.tagRepository = new TagRepository()
     }
 
-    public async findTag(search?: any): Promise<Tag[]> {
+    public async findTag(search: {}): Promise<Tag[]> {
         const tags: Tag[] = await this.tagRepository.find(search)
         return tags
     }
@@ -27,12 +27,12 @@ export default class TagService {
     }
 
     public async createTag(tagData: CreateTagDto): Promise<Tag> {
-        if (isEmpty(tagData)) throw new HttpException(409, "tagData is empty")
+        if (isEmpty(tagData)) throw new HttpException(400, "tagData is empty")
         return await this.tagRepository.create(tagData)
     }
 
     public async updateTag(tagData: CreateTagDto, tagId: string): Promise<Tag> {
-        if (isEmpty(tagData)) throw new HttpException(409, "TagData is empty");
+        if (isEmpty(tagData)) throw new HttpException(400, "TagData is empty");
 
         const updateTag: Tag | null = await this.tagRepository.update(tagId, tagData)
         if (!updateTag) throw new HttpException(409, "Tag doesn't exist")
@@ -41,7 +41,7 @@ export default class TagService {
     }
 
     public async deleteTag(tagId: string): Promise<void> {
-        if (isEmpty(tagId)) throw new HttpException(409, "tagId is empty")
+        if (isEmpty(tagId)) throw new HttpException(400, "tagId is empty")
         await this.tagRepository.delete(tagId)
     }
 }

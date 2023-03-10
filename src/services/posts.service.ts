@@ -26,7 +26,6 @@ export default class PostsService {
 
         const findPost: Post | null = await this.postRepository.findWithUserById(id)
         if (!findPost) throw new HttpException(409, "Post doesn't exist");
-
         return findPost
     }
 
@@ -44,8 +43,8 @@ export default class PostsService {
     public async updatePost(postData: UpdatePostDto, postId: string): Promise<Post> {
         if (isEmpty(postData)) throw new HttpException(400, 'PostData is empty');
 
-        const checkIdUser = await this.users.findById(postData.userId)
-        if (!checkIdUser) throw new HttpException(409, "User doesn't exist")
+        // const checkIdUser = await this.users.findById(postData.userId)
+        // if (!checkIdUser) throw new HttpException(409, "User doesn't exist")
 
         const updatePost: Post | null = await this.postRepository.update(postId, postData)
         if (!updatePost) throw new HttpException(409, "Post doesn't exist")

@@ -12,13 +12,13 @@ export default class BookmarkController {
     public createBookmark = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
             const user: User = req.user
-            const postId = req.body.postId
+            const postId = req.params.id
             const data: CreateBookmarkDto = {
                 userId: user._id,
                 postId: postId
             }
 
-            const bookmark: {} = await this.bookmarkService.bookmark(data)
+            const bookmark: Bookmark = await this.bookmarkService.bookmark(data)
             res.status(200).json({ bookmark, message: "created" })
         } catch (error) {
             next(error)
@@ -28,7 +28,7 @@ export default class BookmarkController {
     public deleteBookmark = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
             const user: User = req.user
-            const postId = req.body.postId
+            const postId = req.params.id
             const data: CreateBookmarkDto = {
                 userId: user._id,
                 postId: postId

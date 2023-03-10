@@ -1,5 +1,5 @@
 import { Request } from "express";
-import mongoose from "mongoose";
+import { User } from "./users.interface";
 
 export interface Post {
     _id: string;
@@ -11,6 +11,7 @@ export interface Post {
     votes: number;
     createdAt: string;
     updateAt: string;
+    user: User
 }
 
 export interface RequestWithPost extends Request {

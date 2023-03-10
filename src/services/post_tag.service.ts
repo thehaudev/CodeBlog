@@ -22,23 +22,6 @@ export default class Post_tagService {
     public async createPostTag(postTagData: CreatePost_TagDto[]): Promise<Post_tag[]> {
         if (isEmpty(postTagData)) throw new HttpException(409, "post tag data does't exist")
 
-        // const check = await postTagData.every(async (e) => {
-        //     const checkPostId: Post | null = await this.posts.findById(e.postId)
-        //     const checkTagId: Tag | null = await this.tags.findById(e.tagId)
-        //     return checkPostId != null && checkTagId != null
-        // })
-        // if (!check) throw new HttpException(400, "PostId or TagId doesn't exist")
-
-        const checkPost = await Promise.all(
-            postTagData.filter(async (e) => {
-                console.log(1)
-                const checkPostId: Post | null = await this.posts.findById(e.postId)
-                console.log(2)
-                return checkPostId === null
-            })
-        )
-        console.log(3)
-
         const createPostTag: Post_tag[] = await this.post_tagRepository.insertMany(postTagData)
 
         return createPostTag

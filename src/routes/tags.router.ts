@@ -1,4 +1,8 @@
 import TagController from "../controllers/tags.controller"
+import { IdDto } from "../dtos/objecId.dto"
+import { verify } from "../middlewares/auth.middlewares"
+import { adminRole } from "../middlewares/permission.middlerwares"
+import { validationMiddleware } from "../middlewares/validation.middlewares"
 
 var router = require('express').Router()
 
@@ -7,15 +11,16 @@ const tagController = new TagController
 router.get('/', tagController.getAllTags)
 
 //GET /api/v1/tags/:id
-router.get('/:id', tagController.getTagById)
+router.get('/:id', validationMiddleware(IdDto, 'params'), tagController.getTagById)
 
 //POST /api/v1/tags
-router.post('/', tagController.createTag)
+router.post('/', verify, adminRole, tagController.createTag)
 
 //PUT /api/v1/tags/:id
-router.put('/:id', tagController.findTagAndUpdate)
+router.put('/:id', validationMiddleware(IdDto, 'params'), verify, adminRole, tagController.findTagAndUpdate)
 
 //DELETE /api/v1/tags/:id
-router.delete('/:id', tagController.deleteTag)
+router.delete('/:id', validationMiddleware(IdDto, 'params'), verify, adminRole, tagController.deleteTag)
+
 
 export default router

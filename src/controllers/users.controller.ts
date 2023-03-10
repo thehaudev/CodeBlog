@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import UsersService from "../services/users.service"
 import { User } from '../interfaces/users.interface';
 import { changeProfileDto, CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
+import { RequestWithUser } from '../interfaces/auth.interface';
 
 class UsersController {
     public userService = new UsersService;
@@ -58,7 +59,7 @@ class UsersController {
 
     public updateUser = async (req: any, res: Response, next: NextFunction) => {
         try {
-            const id = req.params.id
+            const id: string = req.params.id
             let userData: UpdateUserDto = req.body
             let avatar = null
             if (req.file) {
@@ -68,7 +69,9 @@ class UsersController {
                 avatar = req.file.filename;
             } else { avatar = userData.oldAvatar }
 
-            const updateUserData = await this.userService.updateUser(id, userData, avatar)
+            userData = { ...userData, avatar: avatar }
+
+            const updateUserData: User = await this.userService.updateUser(id, userData)
 
             res.status(200).json({ data: updateUserData, message: "Update!!!" })
 
@@ -77,7 +80,7 @@ class UsersController {
         }
     }
 
-    public deleteUserById = async (req: Request, res: Response, next: NextFunction) => {
+    public deleteUserById = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
             const id: string = req.params.id
             const deleteUserById = await this.userService.deleteUser(id);
@@ -98,8 +101,9 @@ class UsersController {
                 }
                 avatar = req.file.filename;
             } else { avatar = userData.oldAvatar }
+            userData = { ...userData, avatar: avatar }
 
-            const updateUserData = await this.userService.updateUser(id, userData, avatar)
+            const updateUserData = await this.userService.changeProfile(id, userData)
 
             res.status(200).json({ data: updateUserData, message: "Update!!!" })
 

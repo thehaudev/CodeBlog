@@ -1,17 +1,18 @@
 import { HttpException } from "../exceptions/HttpException";
-import { changePasswordData, DataInTokenData, TokenData } from "../interfaces/auth.interface";
+import { changePasswordData } from "../interfaces/auth.interface";
 import { User } from "../interfaces/users.interface";
 import { UserModel } from "../models/users.model";
+import { createTokenCookie } from "../utils/jwt.util";
 import { isEmpty } from "../utils/validator.util";
+import { LoginDto, RegisterDto } from "../dtos/auth.dto"
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
 
 class AuthService {
     public user = UserModel
 
-    public async register(userData: any): Promise<User> {
+    public async register(userData: RegisterDto): Promise<User> {
         if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
 
         const checkEmailExist = await UserModel.findOne({ email: userData.email });
@@ -20,12 +21,19 @@ class AuthService {
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(userData.password, salt);
 
+        // const newUser: RegisterDto = { ...userData, password: hashPassword }
+
+        // const activation_token = createActivationToken(newUser);
+        // const url = `${CLIENT_URL}/user/activate/${activation_token}`
+        // // sendMail(newUser.email, url)
+
+
         const createUserData: User = await this.user.create({ ...userData, password: hashPassword });
         return createUserData;
 
     }
 
-    public async login(userData: any): Promise<{ user: User, cookie: string, auth: string }> {
+    public async login(userData: LoginDto): Promise<{ user: User, cookie: string, token: string, expiresIn: number }> {
         if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
 
         const user: User = await this.user.findOne({ email: userData.email });
@@ -34,10 +42,8 @@ class AuthService {
         const checkPassword = await bcrypt.compare(userData.password, user.password);
         if (!checkPassword) throw new HttpException(409, 'Email or Password is not correct');
 
-        const token = this.createToken(user)
-        const cookie = this.createCookie(token)
-        const auth = token.token
-        return { user, cookie, auth }
+        const { token, cookie, expiresIn } = createTokenCookie(user)
+        return { user, cookie, token, expiresIn }
     }
 
     public async changePassword(userData: User, body: changePasswordData): Promise<User> {
@@ -51,24 +57,12 @@ class AuthService {
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(body.newPassword, salt);
             const changePassword = await UserModel.findByIdAndUpdate(userData._id, { password: hashPassword })
-
             return changePassword
         }
         else throw new HttpException(409, "Passwords do not match")
 
     }
 
-    public createToken(userData: User): TokenData {
-        const dataStoredInToken: DataInTokenData = { _id: userData._id }
-        const expiresIn: number = 60 * 60 * 24
-        const secretKey: string | undefined = process.env.SECRET_KEY
-
-        return { expiresIn, token: jwt.sign(dataStoredInToken, secretKey, { expiresIn: expiresIn }) }
-    }
-
-    public createCookie(tokenData: TokenData): string {
-        return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`
-    }
 }
 
 export default AuthService

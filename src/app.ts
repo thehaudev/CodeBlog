@@ -6,7 +6,8 @@ var logger = require('morgan');
 import { route } from "./routes/index"
 var app = express();
 var mongoose = require('mongoose')
-
+require('dotenv').config()
+const { MONGODB_URL } = process.env
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -19,7 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 mongoose.set({
   'strictQuery': false
 })
-mongoose.connect('mongodb://127.0.0.1:27017/blog_technology')
+mongoose.connect(MONGODB_URL)
   .then(console.log("Connected"))
   .catch((err: any) => console.log("don't connect"))
 

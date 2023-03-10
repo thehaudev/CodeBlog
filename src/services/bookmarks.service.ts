@@ -1,6 +1,8 @@
 import { CreateBookmarkDto as BookmarkDto } from "../dtos/bookmarks.dto"
 import { HttpException } from "../exceptions/HttpException"
 import { Bookmark, BookmarkWithUser } from "../interfaces/ bookmarks.interface"
+import { Post } from "../interfaces/posts.interface"
+import { User } from "../interfaces/users.interface"
 import { PostModel } from "../models/posts.model"
 import { UserModel } from "../models/users.model"
 import BookMarkRepository from "../repositories/bookmarks.repository"
@@ -21,13 +23,13 @@ export default class BookmarkService {
     public async bookmark(data: BookmarkDto): Promise<Bookmark> {
         if (isEmpty(data)) throw new HttpException(409, "bookmark data is empty")
 
-        const checkPostId = await this.posts.findById(data.postId)
+        const checkPostId: Post = await this.posts.findById(data.postId)
         if (!checkPostId) throw new HttpException(409, "Post doesn't exist")
 
-        const checkUserId = await this.users.findById(data.userId)
+        const checkUserId: User = await this.users.findById(data.userId)
         if (!checkUserId) throw new HttpException(409, "User doesn't exist")
 
-        const checkBookmark = await this.bookmarkRepository.findOne({ postId: data.postId, userId: data.userId })
+        const checkBookmark: Bookmark | null = await this.bookmarkRepository.findOne({ postId: data.postId, userId: data.userId })
         if (!checkBookmark) {
             const bookmark = await this.bookmarkRepository.create(data)
             return bookmark

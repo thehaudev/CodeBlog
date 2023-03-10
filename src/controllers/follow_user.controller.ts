@@ -1,5 +1,7 @@
 import { NextFunction, Response } from "express"
+import { FollowUserDto } from "../dtos/follow.dto"
 import { RequestWithUser } from "../interfaces/auth.interface"
+import { Follow_User } from "../interfaces/follow_user.interface"
 import Follow_UserService from "../services/follow_user.service"
 
 
@@ -9,9 +11,9 @@ export default class Follow_UsersController {
     public createFollowUser = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
             const user = req.user
-            const data = { ...req.body, follower: user._id }
+            const data: FollowUserDto = { ...req.body, follower: user._id }
 
-            const createFollowUSer = await this.follow_userService.createFollowUser(data)
+            const createFollowUSer: Follow_User = await this.follow_userService.createFollowUser(data)
 
             res.status(201).json({ data: createFollowUSer, message: "follow" })
         } catch (error) {
@@ -22,11 +24,11 @@ export default class Follow_UsersController {
     public deleteFollowUser = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
             const user = req.user
-            const data = { ...req.body, follower: user._id }
+            const data: FollowUserDto = { ...req.body, follower: user._id }
 
-            const deleteFollow = await this.follow_userService.deleteFollowUser(data)
+            await this.follow_userService.deleteFollowUser(data)
 
-            res.status(201).json({ data: deleteFollow, message: "un follow" })
+            res.status(201).json({ message: "un follow" })
         } catch (error) {
             next(error)
         }

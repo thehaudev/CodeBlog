@@ -13,6 +13,6 @@ export default class BookMarkRepository extends BaseRepository<Bookmark>{
     }
 
     async findBookmarksOfPost(filter = {}) {
-        return await this.model.find(filter).populate('userId', '-created_at -updated_at -__v').exec()
+        return await this.model.find(filter).populate('user', '-created_at -updated_at -__v').exec()
     }
 }

@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import { CreateCommentDto } from '../dtos/comment.dto'
 import { UpdatePostDto } from '../dtos/post.dto'
 import { RequestWithUser } from '../interfaces/auth.interface'
 import { Comment } from '../interfaces/comment.interface'
@@ -20,14 +21,9 @@ export class PostsController {
         try {
             const postId = req.params.id
             const userId = req.user._id
-            const CommentData = { ...req.body, postId: postId, userId: userId }
-
+            const CommentData: CreateCommentDto = { ...req.body, postId: postId, userId: userId }
             const createComment: Comment = await this.commentService.comment(CommentData)
-            let data: any = createComment
-            const user: User = await this.userService.findUserById(createComment.userId || "")
-            data = { ...data['_doc'], user }
-
-            res.status(201).json({ comment: data, message: "comment" })
+            res.status(201).json({ comment: createComment, message: "comment" })
         } catch (error) {
             next(error)
         }
@@ -52,7 +48,7 @@ export class PostsController {
                 current_page: +page,
                 total_pages: +total_pages
             }
-            res.status(200).json({ count: count, comment: { data: commentOfPost, meta: { pagination } }, message: "get comments" })
+            res.status(200).json({ comment: { count: count, data: commentOfPost, pagination }, message: "get comments" })
 
         } catch (error) {
             next(error)
@@ -98,7 +94,7 @@ export class PostsController {
                 total_pages: +total_pages
             }
 
-            res.status(200).json({ count: count, posts: { data: posts, meta: { pagination } } })
+            res.status(200).json({ count: count, posts: posts, pagination })
 
         } catch (error) {
             next(error)
@@ -125,9 +121,9 @@ export class PostsController {
             }
             const tagData = { data: tags, meta: tagPagination }
 
-            post = { ...post['_doc'], countBookmark: countBookmark, tags: tagData }
+            const data2 = { ...post['_doc'], user: post['user'], countBookmark: countBookmark, tags: tagData }
 
-            res.status(200).json({ post: post, message: "get post by id" })
+            res.status(200).json({ post: data2, message: "get post by id" })
         } catch (error) {
             next(error)
         }

@@ -9,5 +9,6 @@
       "es6"
     ],
     "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
   }
 }

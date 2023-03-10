@@ -1,18 +1,19 @@
 var express = require('express');
 var router = express.Router();
 import Vote_PostController from "../controllers/vote_post.controller";
+import { VotePostDto, DeleteVotePostDto } from "../dtos/vote.dto";
 import { verify } from '../middlewares/auth.middlewares'
+import { validationMiddleware } from "../middlewares/validation.middlewares";
 const votePostController = new Vote_PostController
 
 //POST, /api/v1/vote_post
-router.post("/", verify, votePostController.createVotePost)
+router.post("/", verify, validationMiddleware(VotePostDto, 'body'), votePostController.createVotePost)
 
 //PUT /api/v1/vote_post
-router.put("/", verify, votePostController.updateVotePost)
+router.put("/", verify, validationMiddleware(VotePostDto, 'body'), votePostController.updateVotePost)
 
 //DELETE /api/v1/vote_post
-router.delete("/", verify, votePostController.deleteVotePost)
-
+router.delete("/", verify, validationMiddleware(DeleteVotePostDto, 'body'), votePostController.deleteVotePost)
 
 export default router
 

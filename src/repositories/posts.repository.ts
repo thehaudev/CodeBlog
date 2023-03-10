@@ -8,14 +8,16 @@ export default class PostRepository extends BaseRepository<Post> {
     }
 
     async findAndSort(skip: number, take: number, sort?: {}, search?: {}) {
+        //argument
         return await this.model.find(search || {}).sort(sort || {}).skip(skip).limit(take)
-            .populate('userId', '-created_at -updated_at -__v')
+            .populate('user', '-created_at -updated_at -__v')
             .populate({ path: 'tags', select: "tagId -postId -_id", populate: { path: 'tagId', select: 'title' } }).exec()
+    }
 
-    }
     async findWithUserById(id: string): Promise<Post | null> {
-        return this.model.findById(id).populate('userId').exec();
+        return await this.model.findById(id).populate('user').exec();
     }
+
     async count(): Promise<Number> {
         return this.model.count().exec();
     }

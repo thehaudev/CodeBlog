@@ -2,8 +2,8 @@ import { IsString } from "class-validator";
 
 export class CreateBookmarkDto {
     @IsString()
-    public userId?: string
+    public userId: string
 
     @IsString()
-    public postId?: string
+    public postId: string
 }

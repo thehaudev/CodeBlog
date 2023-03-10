@@ -1,69 +1,96 @@
 
-import { IsEmail, IsEmpty, IsNotEmpty, IsString, Length, Matches } from 'class-validator'
+import { IsEmail, IsEmpty, IsNotEmpty, IsOptional, IsString, Length, Matches } from 'class-validator'
 
-export class IdDto {
-    @IsString()
-    @IsNotEmpty()
-    public id?: string
-}
 
 export class CreateUserDto {
     @IsEmail()
-    public email?: string
+    public email: string
 
     @IsString()
     @Length(6, 25)
     @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'password too weak' })
-    public password?: string
+    public password: string
 
     @IsString()
     @Length(2, 25)
-    public display_name?: string
+    public display_name: string
+
+    @IsOptional()
     @IsString()
-    public bio?: string
+    public bio: string
+
+    @IsOptional()
     @IsString()
-    public location?: string
+    public location: string
+
+    @IsOptional()
     @IsString()
-    public about?: string
+    public about: string
+
+    @IsOptional()
     @IsEmpty()
-    public avatar?: string
+    public avatar: string
 }
 
 export class UpdateUserDto {
-    @IsEmail()
-    public email?: string
 
+    @IsOptional()
     @IsString()
     @Length(6, 25)
     @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'password too weak' })
-    public password?: string
+    public password: string
 
+    @IsOptional()
     @IsString()
     @Length(2, 25)
-    public display_name?: string
+    public display_name: string
+
+    @IsOptional()
     @IsString()
-    public bio?: string
+    public bio: string
+
+    @IsOptional()
     @IsString()
-    public location?: string
+    public location: string
+
+    @IsOptional()
     @IsString()
-    public about?: string
+    public about: string
+
+    @IsOptional()
     @IsEmpty()
-    public avatar?: string
+    public avatar: string
+
+    @IsOptional()
     @IsString()
     public oldAvatar?: string
+
+    @IsOptional()
+    public role: number
 }
 export class changeProfileDto {
+    @IsOptional()
     @IsString()
     @Length(2, 25)
-    public display_name?: string
+    public display_name: string
+
+    @IsOptional()
     @IsString()
-    public bio?: string
+    public bio: string
+
+    @IsOptional()
     @IsString()
-    public location?: string
+    public location: string
+
+    @IsOptional()
     @IsString()
-    public about?: string
+    public about: string
+
+    @IsOptional()
     @IsEmpty()
-    public avatar?: string
+    public avatar: string
+
+    @IsOptional()
     @IsString()
     public oldAvatar?: string
 }
