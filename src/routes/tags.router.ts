@@ -23,4 +23,8 @@ router.put('/:id', validationMiddleware(IdDto, 'params'), verify, adminRole, tag
 router.delete('/:id', validationMiddleware(IdDto, 'params'), verify, adminRole, tagController.deleteTag)
 
 
+//tao mot thong bao khi tag minh theo doi co bai viet moi
+//post /api/v1/tag/:id/notification
+router.post("/:id/notification",)
+
 export default router

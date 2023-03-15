@@ -2,9 +2,11 @@ import { ObjectId } from "mongoose";
 
 export default interface Notification {
     _id: ObjectId
-    userId: ObjectId
-    link: string
     sender: ObjectId
+    link: string
+    recipient: ObjectId
     isRead: boolean
-    title: string
+    content: string
+    createdAt: Date
+    updatedAt: Date
 }

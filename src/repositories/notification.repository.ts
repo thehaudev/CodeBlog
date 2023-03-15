@@ -1,3 +1,4 @@
+import { CreateNotificationDto } from "../dtos/notification.dto";
 import Notification from "../interfaces/notifications.interface";
 import { NotificationModel } from "../models/notification.model";
 import BaseRepository from "./base.repository";
@@ -12,5 +13,9 @@ export default class NotificationRepository extends BaseRepository<Notification>
 
     public async countNotification(): Promise<number> {
         return await this.model.count().exec()
+    }
+
+    public async createMany(data: CreateNotificationDto[]): Promise<Notification[]> {
+        return await this.model.insertMany(data)
     }
 }

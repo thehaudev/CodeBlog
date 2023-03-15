@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { Schema, ObjectId } = mongoose;
 
 const bookmarkSchema = new Schema({
     userId: {
-        type: String,
+        type: ObjectId,
         required: true,
         min: 6,
         max: 255,
         ref: 'user'
     },
     postId: {
-        type: String,
+        type: ObjectId,
         required: true,
         min: 6,
         max: 255,

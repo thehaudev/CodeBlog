@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { Tag } from "./tag.interface";
 import { User } from "./users.interface";
 
 export interface Post {
@@ -9,9 +10,11 @@ export interface Post {
     status: boolean;
     views: number;
     votes: number;
+    bookmarks: number
+    user: User;
+    tags: Tag[];
     createdAt: string;
     updateAt: string;
-    user: User
 }
 
 export interface RequestWithPost extends Request {

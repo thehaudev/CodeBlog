@@ -3,31 +3,30 @@ const { Schema } = mongoose
 import { ObjectId } from "mongodb";
 
 const notificationSchema = new Schema({
-    userId: {
+    sender: {
         type: ObjectId,
+        require: true,
         ref: 'user'
     },
     link: {
         type: String,
         require: true
     },
-    sender: {
+    recipient: {
         type: ObjectId,
+        require: true,
         ref: 'user'
+    },
+    content: {
+        type: String,
+        require: true
     },
     isRead: {
         type: Boolean,
         default: false
-    },
-    title: {
-        type: String,
-        require: true
     }
 }, {
-    timestamps: {
-        createdAt: 'created_at', // Use `created_at` to store the created date
-        updatedAt: 'updated_at' // and `updated_at` to store the last updated date
-    }
+    timestamps: true
 })
 
 export const NotificationModel = mongoose.model('notification', notificationSchema)

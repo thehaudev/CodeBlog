@@ -13,25 +13,23 @@ const postSchema = new Schema({
     title: {
         type: String,
         required: true,
+        text: true,
         min: 15
     },
     content: {
         type: String,
         required: true,
+        text: true,
         min: 15
     },
     status: {
         type: Boolean,
         default: true,
-    },
-    views: { type: Number, default: 0 },
-    votes: { type: Number, default: 0 }
-}, { id: false }, {
-    timestamps: {
-        createdAt: 'created_at', // Use `created_at` to store the created date
-        updatedAt: 'updated_at' // and `updated_at` to store the last updated date
     }
-});
+}, {
+    timestamps: true
+}
+);
 
 postSchema.set('toObject', { virtuals: true });
 postSchema.set('toJSON', { virtuals: true });

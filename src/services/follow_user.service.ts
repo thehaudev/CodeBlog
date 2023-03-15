@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { FollowUserDto } from "../dtos/follow.dto";
 import { HttpException } from "../exceptions/HttpException";
 import { Follow_User } from "../interfaces/follow_user.interface";
@@ -12,6 +13,17 @@ export default class Follow_UserService {
     private readonly follow_userRepository: Follow_UserRepository
     constructor() {
         this.follow_userRepository = new Follow_UserRepository()
+    }
+
+    public async getListFollowerIds(id: string): Promise<ObjectId[]> {
+
+
+        const checkUserId: User = await this.users.findById(id)
+        if (!checkUserId) throw new HttpException(409, "user doesn't exist")
+
+        const listFollowers: Follow_User[] = await this.follow_userRepository.find({ userId: id })
+        const listFollowerIds: ObjectId[] = listFollowers.map(e => new ObjectId(e.follower.toString()))
+        return listFollowerIds
     }
 
     public async createFollowUser(data: FollowUserDto): Promise<Follow_User> {

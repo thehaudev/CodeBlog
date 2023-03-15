@@ -7,11 +7,15 @@ import { changeProfileDto, CreateUserDto, UpdateUserDto } from "../dtos/user.dto
 import UsersController from "../controllers/users.controller";
 import { IdDto } from '../dtos/objecId.dto';
 import { permissionUser } from '../middlewares/permission.middlerwares';
+import NotificationController from '../controllers/notification.controller';
 
 const usersController = new UsersController;
-
+const notificationController = new NotificationController;
 // router.get('/', getAllUsers)
 router.get('/', usersController.getUsers)
+
+//get /api/v1/users/notifications
+router.get('/notifications', verify, notificationController.getNotificationsOfUser)
 
 //GET /users/:id
 router.get('/:id', validationMiddleware(IdDto, "params"), usersController.getUserById)
@@ -32,5 +36,7 @@ router.delete('/:id', validationMiddleware(IdDto, "params"), verify, permissionU
 //patch /users/me
 router.patch('/me', verify, validationMiddleware(changeProfileDto, "body"), uploadAvatar.single('avatar'),
     usersController.changeProfile)
+
+
 
 export default router;

@@ -12,6 +12,9 @@ const postsController = new PostsController
 //GET /api/v1/posts
 router.get('/', postsController.getAllPosts)
 
+//GET /api/v1/post/test
+router.get("/test", postsController.test)
+
 //GET /api/v1/posts/:id
 router.get('/:id', validationMiddleware(IdDto, "params"), postsController.getPostById)
 
@@ -34,5 +37,14 @@ router.get('/:id/comments', validationMiddleware(IdDto, "params"), postsControll
 
 //GET /api/v1/posts/:id/bookmarks
 router.get('/:id/bookmarks', validationMiddleware(IdDto, "params"), postsController.getBookmarksOfPost)
+
+
+//tao mot thong bao khi nguoi minh theo doi tao mot bai viet moi
+//post /api/v1/post/:id/notification
+router.post("/:id/notification",)
+
+//tao mot thong bao khi co nguoi like bai viet cua chu tus
+//post /posts/:postId/likes/notifications
+router.post("/:id/likes/notification",)
 
 export default router

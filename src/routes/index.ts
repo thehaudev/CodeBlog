@@ -9,6 +9,7 @@ import vote_postRouter from './vote_post.router'
 import vote_commentRouter from './vote_comment.router'
 import follow_tagRouter from './follow_tag.router'
 import follow_userRouter from './follow_user.router'
+import notificationRouter from './notification.router'
 
 export function route(app: any) {
   app.use('/api/v1/auth', authRouter);
@@ -22,6 +23,7 @@ export function route(app: any) {
   app.use('/api/v1/vote_comment', vote_commentRouter)
   app.use('/api/v1/follow_tag', follow_tagRouter)
   app.use('/api/v1/follow_user', follow_userRouter)
+  app.use('/api/v1/notifications', notificationRouter)
 };
 
 

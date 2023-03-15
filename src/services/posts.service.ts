@@ -1,11 +1,10 @@
-import { PostModel } from "../models/posts.model";
 import PostRepository from "../repositories/posts.repository";
 import { Post } from "../interfaces/posts.interface";
 import { HttpException } from "../exceptions/HttpException";
 import { isEmpty } from "../utils/validator.util";
 import { CreatePostDto, UpdatePostDto } from "../dtos/post.dto";
 import { UserModel } from "../models/users.model";
-import UserRepository from "../repositories/users.repository";
+import { ObjectId } from "mongodb";
 
 export default class PostsService {
     private readonly users = UserModel
@@ -15,17 +14,30 @@ export default class PostsService {
         this.postRepository = new PostRepository()
     }
 
-    public async findAllPosts(filter?: any): Promise<{ posts: any, total: Number }> {
-        const posts: any = await this.postRepository.findAndSort(filter.skip, filter.take, filter.sort, filter.search)
+
+    public async getListFollowerIds(id: string): Promise<ObjectId[]> {
+        if (isEmpty(id)) throw new HttpException(409, 'post id is empty')
+
+        const checkPost: Post | null = await this.postRepository.findById(id)
+        if (!checkPost) throw new HttpException(409, "post doesn't exist")
+
+        const listFollowerIds: ObjectId[] = await this.postRepository.findListFollowerTag(id)
+        return listFollowerIds
+    }
+
+
+    public async findAllPosts(filter?: any): Promise<{ posts: Post[], total: Number }> {
+        const posts: Post[] = await this.postRepository.findAndSort(filter.skip, filter.take, filter.sort, filter.search)
         const total: Number = await this.postRepository.count()
         return { posts, total }
     }
 
     public async findPostById(id: string): Promise<Post> {
         if (isEmpty(id)) throw new HttpException(400, 'PostId is empty');
-
-        const findPost: Post | null = await this.postRepository.findWithUserById(id)
+        console.log(id)
+        const findPost: Post | null = await this.postRepository.findPostById(id)
         if (!findPost) throw new HttpException(409, "Post doesn't exist");
+
         return findPost
     }
 

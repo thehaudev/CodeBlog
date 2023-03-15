@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const post_tagSchema = new Schema({
     postId: {
-        type: String,
+        type: mongoose.Types.ObjectId,
         required: true,
         ref: 'post'
     },
@@ -21,6 +21,9 @@ const post_tagSchema = new Schema({
 }, {
     collection: "post_tag"
 });
+
+post_tagSchema.set('toObject', { virtuals: true });
+post_tagSchema.set('toJSON', { virtuals: true });
 
 export const PostTagModel = mongoose.model('post_tag', post_tagSchema)
 
