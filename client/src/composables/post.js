@@ -26,6 +26,20 @@ async function createPost(title,content,tags){
         isPending.value = false
     }
 }
+
+async function getPost(postId){
+    isPending.value = true;
+    error.value = null
+    try {
+        const res = await instance.get('/posts/'+postId)
+        return res.data.post
+    } catch (err) {
+        error.value = err.response.data.message
+    } finally{
+        isPending.value = false
+    }
+}
+
 export function usePost(){
-    return {error,isPending,createPost}
+    return {error,isPending,createPost,getPost}
 }
