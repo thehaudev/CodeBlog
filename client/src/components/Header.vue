@@ -1,9 +1,6 @@
 <template>
   <header>
     <div class="container">
-      <!-- <section class="bars">
-        <i class="fa-solid fa-bars"></i>
-      </section> -->
       <router-link to="/" class="logo">
         <img src="../assets/favicon/ms-icon-70x70.png" alt="favicon" />
         <p>codeBlog</p>
@@ -15,7 +12,12 @@
       </ul>
       <section class="search">
         <i class="fa-solid fa-magnifying-glass" style="color: #838c95"></i>
-        <input type="text" placeholder="Search..." />
+        <input
+          type="text"
+          v-model="searchInput"
+          @keyup.enter="searchSubmit"
+          placeholder="Search..."
+        />
       </section>
       <section v-if="!user" class="auth">
         <router-link class="login" to="/auth/login">Log in</router-link>
@@ -79,8 +81,11 @@
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants/index";
-const store = useStore();
+import { useRouter } from "vue-router";
 
+const router = useRouter();
+const searchInput = ref("");
+const store = useStore();
 const user = computed(() => {
   return store.getters["auth/getUser"];
 });

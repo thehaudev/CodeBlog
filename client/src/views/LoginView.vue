@@ -19,7 +19,12 @@
           <input autofocus v-model="email" required type="email" name="email" />
         </div>
         <div class="row">
-          <label for="password">Password</label>
+          <div class="label-password">
+            <label for="password">Password</label>
+            <router-link :to="{ name: 'account-recovery' }"
+              >Forgot password?</router-link
+            >
+          </div>
           <input v-model="password" required type="password" name="password" />
           <p class="error" v-if="error">{{ error }}</p>
         </div>
@@ -150,5 +155,13 @@ p.error {
 }
 .sign-up a {
   color: #0a95ff;
+}
+.label-password {
+  display: flex;
+  justify-content: space-between;
+}
+.label-password a {
+  color: #21a7ef;
+  font-size: 14px;
 }
 </style>

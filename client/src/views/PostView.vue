@@ -3,7 +3,11 @@
     <div class="container title">
       <h2>Title</h2>
       <span>Tiêu đề của bài viết.</span>
-      <input type="text" placeholder="ex: cách hoạt động của express..." />
+      <input
+        v-model="title"
+        type="text"
+        placeholder="ex: cách hoạt động của express..."
+      />
     </div>
     <div class="container tags">
       <h2>Tags</h2>
@@ -13,7 +17,7 @@
       >
       <div class="input">
         <input
-          v-model="tags"
+          v-model="search"
           type="text"
           placeholder="Ít nhất 1 thẻ tối đa 5 thẻ"
         />
@@ -21,20 +25,53 @@
           <i class="loader"></i>
         </div>
       </div>
+      <ul class="sub-menu">
+        <li v-for="tag in listTags" :key="tag._id" @click="addTag(tag._id)">
+          {{ tag.title }}
+        </li>
+      </ul>
     </div>
     <div class="container content">
-      <EditorMarkdown></EditorMarkdown>
+      <EditorMarkdown v-model:content="content"></EditorMarkdown>
     </div>
-
-    <div class="container submit">
-      <Button>Post</Button>
+    <div>
+      {{ error }}
+    </div>
+    <div @click="post" class="container submit">
+      <button>Post</button>
     </div>
   </main>
 </template>
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import EditorMarkdown from "../components/EditorMarkdown.vue";
-const tags = ref("");
+import { usePost } from "../composables/post";
+const { error, isPending, createPost } = usePost();
+const router = useRouter();
+const search = ref("");
+const store = useStore();
+const tags = ref([]);
+const title = ref("");
+const content = ref("");
+(async function () {
+  isPending.value = true;
+  await store.dispatch("tags/fetchData");
+  isPending.value = false;
+})();
+const listTags = computed(() =>
+  store.getters["tags/getAllTags"].filter(
+    (item) => !tags.value.includes(item._id)
+  )
+);
+function addTag(tagId) {
+  tags.value.push(tagId);
+}
+async function post() {
+  await createPost(title.value, content.value, tags.value);
+  router.push({ name: "home", params: {} });
+}
 </script>
 <style scoped>
 main {
@@ -64,6 +101,7 @@ main {
   color: #fff;
   align-self: normal;
   margin: 10px 0 0 100px;
+  cursor: pointer;
 }
 
 .container.content {
@@ -152,5 +190,12 @@ main {
 .loader::after {
   animation: around 0.7s ease-in-out 0.1s infinite;
   background: transparent;
+}
+
+.sub-menu {
+  border: 1px solid gray;
+}
+.sub-menu li {
+  cursor: pointer;
 }
 </style>

@@ -19,6 +19,7 @@ async function login(email, password){
         isPending.value = false
     }
 }
+
 async function signUp(email, password,displayName){
     isPending.value = true;
     error.value = null
@@ -32,7 +33,20 @@ async function signUp(email, password,displayName){
         isPending.value = false
     }
 }
-
+async function accountRecovery(email){
+    isPending.value = true;
+    error.value = null
+    try {
+        const res = await axios.post('http://localhost:3000/api/v1/auth/forgotPassword',{
+            email:email
+        })
+        return res.data
+    } catch (err) {
+        error.value = err.response.data.message
+    } finally{
+        isPending.value = false
+    }
+}
 
 
 export function useLogin(){
@@ -42,4 +56,9 @@ export function useLogin(){
 export function useSignUp(){
     return {error,isPending,signUp}
 }
+
+export function useRecovery(){
+    return {error,isPending,accountRecovery}
+}
+
 

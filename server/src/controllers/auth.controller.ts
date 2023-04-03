@@ -16,7 +16,7 @@ class AuthController {
     public userService = new UsersService
 
 
-    public forgotPassword =  async (req: Request, res: Response, next: NextFunction) => {
+    public  forgotPassword =  async (req: Request, res: Response, next: NextFunction) => {
         try {
             const {email} = req.body
             const token = await this.authService.forgotPassword(email)

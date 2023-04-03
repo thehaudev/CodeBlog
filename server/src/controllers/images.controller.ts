@@ -16,9 +16,7 @@ export default class ImageController {
                 basename: req.file?.originalname,
                 path: req.file?.path
             }
-            console.log(imagedata)
             const createImage: ImagePost = await this.imageService.createImage(imagedata)
-            console.log(createImage)
             res.status(201).json({ data: createImage })
         } catch (error) {
             next(error)

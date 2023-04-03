@@ -1,30 +1,10 @@
-<template>
-  <QuillEditor
-    :modules="modules"
-    :toolbar="[
-      ['bold', 'italic', 'underline', 'strike'],
-      ['blockquote', 'code-block'],
-      [{ header: 1 }, { header: 2 }],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      [{ script: 'sub' }, { script: 'super' }],
-      [{ indent: '-1' }, { indent: '+1' }],
-      [{ direction: 'rtl' }],
-      [{ size: ['small', false, 'large', 'huge'] }],
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      [{ color: [] }, { background: [] }],
-      [{ font: [] }],
-      [{ align: [] }],
-      ['image', 'link'],
-    ]"
-    theme="snow"
-  />
-</template>
 <script setup>
 import { URL_IMG } from "../constants/index";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import ImageUploader from "quill-image-uploader";
 import instance from "../configs/axios";
+import { watch, ref } from "vue";
 const modules = {
   name: "imageUploader",
   module: ImageUploader,
@@ -47,4 +27,16 @@ const modules = {
     },
   },
 };
+// const content = ref("");
+// watch(content, (newValue) => {
+//   console.log(newValue);
+// });
 </script>
+<template>
+  <QuillEditor
+    :modules="modules"
+    contentType="html"
+    toolbar="full"
+    @change="onEditorChange($event)"
+  />
+</template>
