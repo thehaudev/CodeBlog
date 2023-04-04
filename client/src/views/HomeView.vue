@@ -60,11 +60,6 @@ const posts = computed(() => store.getters["posts/getAllPosts"]);
   </div>
 </template>
 <style>
-.container {
-  display: flex;
-  justify-content: center;
-  margin: 0 20%;
-}
 nav {
   position: -webkit-sticky;
   position: sticky;

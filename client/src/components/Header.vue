@@ -1,78 +1,100 @@
 <template>
-  <header>
-    <div class="container">
-      <router-link to="/" class="logo">
-        <img src="../assets/favicon/ms-icon-70x70.png" alt="favicon" />
-        <p>codeBlog</p>
+  <header
+    class=" bg-gray-50 py-3 border-solid border-t-4 border-blue-800 shadow-md w-full fixed top-0"
+  >
+    <div class="container mx-auto flex justify-around items-center">
+      <router-link to="/" class="flex items-end">
+        <div id="logo" class="relative">
+          <div class="rounded-full bg-blue-600 h-10 w-10"></div>
+          <div
+            class="rounded-full bg-white h-5 w-5 absolute bottom-1 right-1"
+          ></div>
+        </div>
+        <div class="text-gray-800 font-semibold font-serif text-2xl ml-2">
+          codeBlog
+        </div>
       </router-link>
-      <ul class="menu">
-        <li><a href="#">About</a></li>
-        <li><a href="#">Products</a></li>
-        <li><a href="#">For Teams</a></li>
+      <ul class="flex gap-6 text-md">
+        <li class="hover:text-blue-800 p-2"><a href="#">About</a></li>
+        <li class="hover:text-blue-800 p-2"><a href="#">Products</a></li>
+        <li class="hover:text-blue-800 p-2"><a href="#">For Teams</a></li>
       </ul>
-      <section class="search">
-        <i class="fa-solid fa-magnifying-glass" style="color: #838c95"></i>
-        <input
-          type="text"
-          v-model="searchInput"
-          @keyup.enter="searchSubmit"
-          placeholder="Search..."
-        />
-      </section>
-      <section v-if="!user" class="auth">
-        <router-link class="login" to="/auth/login">Log in</router-link>
-        <router-link class="signup" to="/auth/register">Sign up</router-link>
-      </section>
-      <section v-else class="isLogged">
-        <div class="bell">
-          <i class="fa-regular fa-bell"></i>
-          <span class="badge">12</span>
-        </div>
-        <div class="write">
-          <i class="fa-regular fa-pen-to-square"></i>
-          <ul class="sub-menu">
-            <li>
-              <router-link :to="{ name: 'post' }"
-                ><i class="fa-solid fa-pencil"></i>Write post</router-link
-              >
-            </li>
-            <li>
-              <router-link to="#"
-                ><i class="fa-solid fa-circle-question"></i>Ask
-                question</router-link
-              >
-            </li>
-          </ul>
-        </div>
-        <div class="avatar">
-          <img :src="URL_AVATAR + user.avatar" alt="avatar" />
-          <ul class="sub-menu">
-            <li class="account">
-              <img :src="URL_AVATAR + user.avatar" alt="avatar" />
-              <div class="name">
-                <p class="display">Huỳnh thế hậu</p>
-                <p class="email">@thehau</p>
-              </div>
-            </li>
-            <li>
-              <router-link to="#!"
-                ><i class="fa-solid fa-user"></i>Profile</router-link
-              >
-            </li>
-            <li>
-              <router-link to="#!"
-                ><i class="fa-solid fa-gear"></i>Preferences</router-link
-              >
-            </li>
-            <li>
-              <router-link :to="{ name: 'logout' }"
-                ><i class="fa-solid fa-right-from-bracket"></i>Sign
-                out</router-link
-              >
-            </li>
-          </ul>
-        </div>
-      </section>
+      <div class="flex gap-5">
+        <section
+          class="px-2 py-1 bg-white rounded-md border-solid border border-blue-500"
+        >
+          <i class="fa-solid fa-magnifying-glass mr-2 text-blue-500"></i>
+          <input
+            type="text"
+            v-model="searchInput"
+            @keyup.enter="searchSubmit"
+            placeholder="Search..."
+          />
+        </section>
+
+        <section v-if="!user" class="flex gap-2">
+          <router-link
+            class="bg-blue-600 px-2 py-1 text-white rounded-md border border-solid font-semibold border-blue-800"
+            to="/auth/login"
+            >Log in</router-link
+          >
+          <router-link
+            class="bg-blue-100 px-2 py-1 text-blue-800 rounded-md border border-solid font-semibold border-blue-800"
+            to="/auth/register"
+            >Sign up</router-link
+          >
+        </section>
+        <section v-else class="isLogged">
+          <div class="bell">
+            <i class="fa-regular fa-bell"></i>
+            <span class="badge">12</span>
+          </div>
+          <div class="write">
+            <i class="fa-regular fa-pen-to-square"></i>
+            <ul class="sub-menu">
+              <li>
+                <router-link :to="{ name: 'post' }"
+                  ><i class="fa-solid fa-pencil"></i>Write post</router-link
+                >
+              </li>
+              <li>
+                <router-link to="#"
+                  ><i class="fa-solid fa-circle-question"></i>Ask
+                  question</router-link
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="avatar">
+            <img :src="URL_AVATAR + user.avatar" alt="avatar" />
+            <ul class="sub-menu">
+              <li class="account">
+                <img :src="URL_AVATAR + user.avatar" alt="avatar" />
+                <div class="name">
+                  <p class="display">Huỳnh thế hậu</p>
+                  <p class="email">@thehau</p>
+                </div>
+              </li>
+              <li>
+                <router-link to="#!"
+                  ><i class="fa-solid fa-user"></i>Profile</router-link
+                >
+              </li>
+              <li>
+                <router-link to="#!"
+                  ><i class="fa-solid fa-gear"></i>Preferences</router-link
+                >
+              </li>
+              <li>
+                <router-link :to="{ name: 'logout' }"
+                  ><i class="fa-solid fa-right-from-bracket"></i>Sign
+                  out</router-link
+                >
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
     </div>
   </header>
 </template>
@@ -91,26 +113,6 @@ const user = computed(() => {
 });
 </script>
 <style scoped>
-header {
-  height: 50px;
-  background-color: #f1f2f3;
-  border-bottom: 0.1px solid #e1e2e2;
-  border-top: 0.2px solid #f48225;
-  box-shadow: 0 4px 2px -2px rgb(206, 205, 205);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  position: fixed;
-  left: 0;
-  right: 0;
-}
-.container {
-  height: 100%;
-  width: 60%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
 textarea:focus,
 input:focus {
   outline: none;
@@ -124,19 +126,6 @@ input:focus {
 .bars i {
   font-size: 24px;
   color: #525960;
-}
-.logo {
-  display: flex;
-  align-items: center;
-  height: 100%;
-}
-.logo img {
-  object-fit: contain;
-  max-height: 40px;
-}
-.logo p {
-  margin-left: 5px;
-  font-size: 24px;
 }
 
 .menu {
@@ -157,20 +146,6 @@ input:focus {
   min-width: 450px;
   max-width: 500px;
   border-radius: 5px;
-}
-.search i {
-  margin: 0 10px;
-  font-size: 18px;
-}
-.search input {
-  width: 90%;
-  height: 70%;
-}
-
-.search input:focus .search {
-  border-color: #1b74e4;
-  box-shadow: 3px#5d98e0;
-  outline: 0;
 }
 
 .auth {

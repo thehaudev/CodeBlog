@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header></Header>
-    <div style="height: 50px"></div>
+    <div style="height: 67px"></div>
     <body>
       <slot></slot>
     </body>
