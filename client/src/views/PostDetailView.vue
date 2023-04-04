@@ -1,5 +1,4 @@
 <script setup>
-import { Comment } from "../components/Comment.vue";
 import { computed, reactive, ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -44,7 +43,7 @@ onMounted(fetchData);
     </main>
   </div>
 </template>
-<style>
+<style scoped>
 .container {
   display: flex;
   justify-content: center;
@@ -83,10 +82,6 @@ main .post {
 .post .title {
   font-size: 24px;
   font-weight: bold;
-  cursor: pointer;
-}
-.post .title:hover {
-  color: blue;
 }
 .content-header {
   display: flex;

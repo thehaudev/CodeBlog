@@ -70,6 +70,7 @@ function addTag(tagId) {
 }
 async function post() {
   await createPost(title.value, content.value, tags.value);
+  await store.dispatch("posts/fetchData");
   router.push({ name: "home", params: {} });
 }
 </script>

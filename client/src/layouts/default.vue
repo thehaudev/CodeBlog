@@ -5,7 +5,7 @@
     <body>
       <slot></slot>
     </body>
-    <Footer></Footer>
+    <!-- <Footer></Footer> -->
   </div>
 </template>
 <script setup>

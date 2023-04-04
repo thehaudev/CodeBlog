@@ -37,7 +37,7 @@ const posts = computed(() => {
             <p>about {{ getTimeSincePost(post.createdAt) }}</p>
           </div>
           <div class="title">
-            <h2>
+            <h2 @click="getPostDetail(post._id)">
               {{ post.title }}
             </h2>
           </div>
@@ -65,7 +65,7 @@ const posts = computed(() => {
     </main>
   </div>
 </template>
-<style>
+<style scoped>
 .container {
   display: flex;
   justify-content: center;
@@ -101,9 +101,14 @@ main .post {
   width: 100%;
   border-radius: 50%;
 }
+
 .post .title {
   font-size: 24px;
   font-weight: bold;
+  cursor: pointer;
+}
+.post .title:hover {
+  color: blue;
 }
 .content-header {
   display: flex;
