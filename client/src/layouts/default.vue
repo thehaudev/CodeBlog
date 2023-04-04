@@ -13,9 +13,8 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 </script>
 
-<style scoped>
+<style>
 body {
   height: calc(100vh-50px);
-  width: 100%;
 }
 </style>

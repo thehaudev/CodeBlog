@@ -145,7 +145,7 @@ export class PostsController {
                 current_page: +page,
                 total_pages: +total_pages
             }
-            res.status(200).json({ comment: { count: count, data: commentOfPost, pagination }, message: "get comments" })
+            res.status(200).json({ data: { count: count, comments: commentOfPost, pagination }, message: "get comments" })
 
         } catch (error) {
             next(error)

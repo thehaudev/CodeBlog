@@ -68,6 +68,14 @@ export default class PostRepository extends BaseRepository<Post> {
             },
             {
                 $lookup: {
+                    from: "comments",
+                    localField: "_id",
+                    foreignField: "postId",
+                    as: "comments"
+                },
+            },
+            {
+                $lookup: {
                     from: "view_posts",
                     localField: "_id",
                     foreignField: "postId",
@@ -122,6 +130,7 @@ export default class PostRepository extends BaseRepository<Post> {
                     status: 1,
                     bookmarks: { $size: "$bookmarks" },
                     views: { $size: "$views" },
+                    comments:{$size:"$comments"},
                     votes: {
                         // $sum: {
                         //     $cond: {
@@ -189,6 +198,13 @@ export default class PostRepository extends BaseRepository<Post> {
                     foreignField: "postId",
                     as: "bookmarks"
                 },
+            },{
+                $lookup: {
+                    from: "comments",
+                    localField: "_id",
+                    foreignField: "postId",
+                    as: "comments"
+                },
             },
             {
                 $lookup: {
@@ -246,6 +262,7 @@ export default class PostRepository extends BaseRepository<Post> {
                     status: 1,
                     bookmarks: { $size: "$bookmarks" },
                     views: { $size: "$views" },
+                    comments:{$size: "$comments"},
                     votes: {
                         // $sum: {
                         //     $cond: {
