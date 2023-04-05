@@ -17,17 +17,28 @@ const content = ref("");
   isPending.value = false;
 })();
 const listTags = computed(() =>
-  store.getters["tags/getAllTags"].filter(
-    (item) => !tags.value.includes(item._id)
-  )
+  store.getters["tags/getAllTags"]
+    .filter((item) =>
+      item.title.toLowerCase().includes(search.value.toLowerCase())
+    )
+    .filter((item) => !tags.value.includes(item._id))
 );
-function addTag(tagId) {
-  tags.value.push(tagId);
+function addTag(tag) {
+  search.value = "";
+  tags.value.push(tag);
 }
 async function post() {
-  await createPost(title.value, content.value, tags.value);
+  const tagId = tags.value.map((e) => e._id);
+  await createPost(title.value, content.value, tagId);
   await store.dispatch("posts/fetchData");
   router.push({ name: "home", params: {} });
+}
+function removeItem(arr, item) {
+  const index = arr.indexOf(item);
+
+  if (index !== -1) {
+    arr.splice(index, 1);
+  }
 }
 </script>
 <template>
@@ -48,17 +59,23 @@ async function post() {
         xem gợi ý.</span
       >
       <div class="input">
+        <ul v-if="tags != []" class="flex items-center">
+          <li v-for="tag in tags" :key="tag._id" class="mr-3">
+            {{ tag.title }}
+            <i
+              @click="removeItem(tags, tag)"
+              class="fa-solid fa-xmark cursor-pointer"
+            ></i>
+          </li>
+        </ul>
         <input
           v-model="search"
           type="text"
           placeholder="Ít nhất 1 thẻ tối đa 5 thẻ"
         />
-        <div v-if="isPending" class="icon-container">
-          <i class="loader"></i>
-        </div>
       </div>
-      <ul class="sub-menu">
-        <li v-for="tag in listTags" :key="tag._id" @click="addTag(tag._id)">
+      <ul v-if="search" class="sub-menu pl-2 pb-2 pt-1">
+        <li v-for="tag in listTags" :key="tag._id" @click="addTag(tag)">
           {{ tag.title }}
         </li>
       </ul>
@@ -196,7 +213,8 @@ main {
 }
 
 .sub-menu {
-  border: 1px solid gray;
+  border: 1px solid #e3e5e7;
+  border-radius: 3px;
 }
 .sub-menu li {
   cursor: pointer;

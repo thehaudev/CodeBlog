@@ -36,7 +36,7 @@ var toolbarOptions = [
 ];
 </script>
 <template>
-  <div v-if="user" class="comments mt-10 p-4">
+  <div v-if="user" class="comments mt-3 p-4">
     <div class="postComment">
       <div class="avatar mr-2">
         <img :src="URL_AVATAR + user.avatar" alt="avatar" />

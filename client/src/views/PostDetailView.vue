@@ -129,6 +129,7 @@ onMounted(fetchData);
           <section v-html="post.content"></section>
         </div>
       </div>
+      <span class="mt-3 text-2xl">Comments</span>
       <CommentComponent
         :inReplyToComment="null"
         :inReplyToUser="null"
@@ -321,5 +322,8 @@ main .post-active i {
 .listComments .comment {
   border-bottom: 0.5px solid #d6d6d7;
   padding: 15px;
+}
+.listComments .listComments {
+  margin: 0 0 0 25px;
 }
 </style>
