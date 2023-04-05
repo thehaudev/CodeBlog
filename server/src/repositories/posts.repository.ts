@@ -191,6 +191,7 @@ export default class PostRepository extends BaseRepository<Post> {
 
                 }
             },
+
             {
                 $lookup: {
                     from: "bookmarks",
@@ -229,6 +230,21 @@ export default class PostRepository extends BaseRepository<Post> {
                     foreignField: "_id",
                     as: "user"
                 }
+
+            },{
+                $lookup: {
+                    from: "follow_users",
+                    localField: "user._id",
+                    foreignField: "userId",
+                    as: "follower"
+                }
+            },{
+                $lookup: {
+                    from: "posts",
+                    localField: "user._id",
+                    foreignField: "userId",
+                    as: "posts"
+                }
             }
             , {
                 $lookup: {
@@ -263,6 +279,8 @@ export default class PostRepository extends BaseRepository<Post> {
                     bookmarks: { $size: "$bookmarks" },
                     views: { $size: "$views" },
                     comments:{$size: "$comments"},
+                    followers:{$size: "$follower"},
+                    posts:{$size: "$posts"},
                     votes: {
                         // $sum: {
                         //     $cond: {
@@ -298,7 +316,8 @@ export default class PostRepository extends BaseRepository<Post> {
                             }
                         }
                     },
-                    user: { $arrayElemAt: ["$user", 0] },
+                    user: { $arrayElemAt: ["$user", 0]},
+
                     // tags: "$tags.title"
                     tags: {
                         _id: 1,

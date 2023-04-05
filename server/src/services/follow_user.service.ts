@@ -15,6 +15,13 @@ export default class Follow_UserService {
         this.follow_userRepository = new Follow_UserRepository()
     }
 
+    public async getFollow(data:any):Promise<Follow_User|null>{
+        if (isEmpty(data)) throw new HttpException(409, "data is empty")
+        const checkFollow: Follow_User | null = await this.follow_userRepository.findOne(data)
+        if (!checkFollow) return null
+        return checkFollow
+    }
+
     public async getListFollowerIds(id: string): Promise<ObjectId[]> {
 
 

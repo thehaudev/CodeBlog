@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmpty, IsNumber, IsString, IsOptional } from "class-validator";
+import { IsBoolean, IsEmpty, IsNumber, IsString, IsOptional, MinLength } from "class-validator";
 
 export class CreateCommentDto {
     @IsEmpty()
@@ -6,6 +6,7 @@ export class CreateCommentDto {
     @IsEmpty()
     public postId: string
     @IsString()
+    @MinLength(15)
     public content: string
     @IsOptional()
     @IsString()

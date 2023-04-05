@@ -4,7 +4,6 @@ import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import ImageUploader from "quill-image-uploader";
 import instance from "../configs/axios";
-import { watch, ref } from "vue";
 const modules = {
   name: "imageUploader",
   module: ImageUploader,
@@ -27,10 +26,6 @@ const modules = {
     },
   },
 };
-// const content = ref("");
-// watch(content, (newValue) => {
-//   console.log(newValue);
-// });
 </script>
 <template>
   <QuillEditor

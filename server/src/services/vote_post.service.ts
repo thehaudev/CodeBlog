@@ -14,6 +14,14 @@ export default class Vote_PostService {
     constructor() {
         this.vote_postRepository = new Vote_postRepository()
     }
+
+    public async getVotePost(data:any):Promise<Vote_post|null>{
+        if (isEmpty(data)) throw new HttpException(409, "data is empty")
+        const checkVote: Vote_post | null = await this.vote_postRepository.findOne(data)
+        if (!checkVote) return null
+        return checkVote
+    }
+
     public async createVotePost(data: any): Promise<Vote_post> {
         if (isEmpty(data)) throw new HttpException(409, "data is empty")
 
