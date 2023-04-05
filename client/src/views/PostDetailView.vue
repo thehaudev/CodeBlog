@@ -255,7 +255,4 @@ main .post-active i {
   display: flex;
   justify-content: flex-start;
 }
-.listComments {
-  height: 500px;
-}
 </style>

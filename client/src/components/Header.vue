@@ -1,6 +1,6 @@
 <template>
   <header
-    class=" bg-gray-50 py-3 border-solid border-t-4 border-blue-800 shadow-md w-full fixed top-0"
+    class="bg-gray-50 py-3 border-solid border-t-4 border-blue-800 shadow-md w-full fixed top-0"
   >
     <div class="container mx-auto flex justify-around items-center">
       <router-link to="/" class="flex items-end">
@@ -13,7 +13,6 @@
         <div class="text-gray-800 font-semibold font-serif text-2xl ml-2">
           codeBlog
         </div>
-
       </router-link>
       <ul class="flex gap-6 text-md">
         <li class="hover:text-blue-800 p-2"><a href="#">About</a></li>
@@ -45,7 +44,7 @@
             >Sign up</router-link
           >
         </section>
-        <section v-else class="isLogged">
+        <section v-else class="isLogged flex gap-2">
           <div class="bell">
             <i class="fa-regular fa-bell"></i>
             <span class="badge">12</span>
@@ -96,7 +95,6 @@
           </div>
         </section>
       </div>
-
     </div>
   </header>
 </template>
@@ -191,7 +189,7 @@ input:focus {
   position: relative;
 
   /* Size */
-  height: 80%;
+  height: 40px;
 }
 .isLogged .avatar img {
   height: 100%;

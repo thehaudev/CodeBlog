@@ -5,7 +5,7 @@
     <body>
       <slot></slot>
     </body>
-    <!-- <Footer></Footer> -->
+    <Footer></Footer>
   </div>
 </template>
 <script setup>
@@ -13,8 +13,4 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 </script>
 
-<style scoped>
-body {
-  height: calc(100vh-50px);
-}
-</style>
+<style scoped></style>

@@ -16,7 +16,7 @@ const posts = computed(() => {
 </script>
 
 <template>
-  <div class="container">
+  <div class="flex">
     <nav>
       <ul>
         <li>Posts</li>
@@ -26,8 +26,8 @@ const posts = computed(() => {
       </ul>
     </nav>
     <main v-if="posts">
-      <div v-for="post in posts" :key="post._id" class="post">
-        <div class="avatar">
+      <div v-for="post in posts" :key="post._id" class="post flex">
+        <div class="avatar mr-2">
           <img :src="URL_AVATAR + post.user.avatar" alt="avatar" />
         </div>
         <div class="content">
@@ -66,12 +66,10 @@ const posts = computed(() => {
   </div>
 </template>
 
-<style>
-
+<style scoped>
 nav {
   position: -webkit-sticky;
   position: sticky;
-  top: 100px;
   flex: 1;
 }
 main {
@@ -80,8 +78,6 @@ main {
 main .post {
   width: 100%;
   min-height: 160px;
-  display: flex;
-  justify-content: flex-start;
 }
 .post .avatar {
   /* Center the content */
