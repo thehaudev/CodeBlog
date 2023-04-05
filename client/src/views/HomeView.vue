@@ -65,12 +65,9 @@ const posts = computed(() => {
     </main>
   </div>
 </template>
-<style scoped>
-.container {
-  display: flex;
-  justify-content: center;
-  margin: 0 20%;
-}
+
+<style>
+
 nav {
   position: -webkit-sticky;
   position: sticky;
