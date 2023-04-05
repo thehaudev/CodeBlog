@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full bg-blue-800 text-white pt-6 pb-10 px-6 border-solid border-t-4 border-blue-600"
+    class="mt-6 w-full bg-blue-800 text-white pt-6 pb-10 px-6 border-solid border-t-4 border-blue-600"
   >
     <div class="container flex justify-around mx-auto">
       <div class="w-3/12 flex flex-col items-center p-3">

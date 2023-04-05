@@ -2,9 +2,7 @@
   <div>
     <Header></Header>
     <div style="height: 67px"></div>
-    <body>
-      <slot></slot>
-    </body>
+    <slot></slot>
     <Footer></Footer>
   </div>
 </template>

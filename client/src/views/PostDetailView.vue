@@ -18,21 +18,27 @@ const post = computed(() => store.getters["postDetail/getPost"]);
 const listComments = computed(
   () => store.getters["postDetail/getCommentsInPost"]
 );
+const isVote = computed(() => store.getters["postDetail/isVote"]);
+const isBookmark = computed(() => store.getters["postDetail/isBookmark"]);
+const isFollow = computed(() => store.getters["postDetail/isFollow"]);
 async function followBtn(followingId) {
   await follow(followingId);
   await store.dispatch("postDetail/fetchData", { postId: postId.value });
+  await store.dispatch("postDetail/fetchActive", { postId: postId.value });
 }
 async function vote(type) {
   await votePost(postId.value, type);
   await store.dispatch("postDetail/fetchData", { postId: postId.value });
+  await store.dispatch("postDetail/fetchActive", { postId: postId.value });
 }
 async function bookmarkBtn() {
   await bookmark(postId.value);
   await store.dispatch("postDetail/fetchData", { postId: postId.value });
+  await store.dispatch("postDetail/fetchActive", { postId: postId.value });
 }
 const fetchData = async () => {
-  await store.dispatch("vote/fetchData", { postId: postId.value });
   await store.dispatch("postDetail/fetchData", { postId: postId.value });
+  await store.dispatch("postDetail/fetchActive", { postId: postId.value });
 };
 onMounted(fetchData);
 </script>
@@ -44,17 +50,19 @@ onMounted(fetchData);
         <i
           title="Upvote"
           class="fa-solid fa-caret-up"
+          :class="{ active: isVote == 'Upvote' }"
           @click="vote('Upvote')"
         ></i>
         <span>{{ post.votes }}</span>
         <i
           title="Downvote"
           class="fa-solid fa-caret-down"
+          :class="{ active: isVote == 'Downvote' }"
           @click="vote('Downvote')"
         ></i>
       </div>
       <div @click="bookmarkBtn()" title="Bookmarks this post" class="bookmark">
-        <i v-if="true" class="fa-solid fa-bookmark"></i
+        <i v-if="isBookmark" class="fa-solid fa-bookmark"></i
         ><i v-else class="fa-regular fa-bookmark"></i>
       </div>
       <div title="Share a link to post on facebook" class="share">
@@ -72,7 +80,11 @@ onMounted(fetchData);
               <div class="user">
                 <p class="username">{{ post.user.display_name }}</p>
                 <p class="email">@{{ post.user.email.split("@")[0] }}</p>
-                <button @click="followBtn(post.user._id)" class="follow">
+                <button
+                  @click="followBtn(post.user._id)"
+                  class="follow"
+                  :class="{ active: isFollow }"
+                >
                   Follow
                 </button>
               </div>
@@ -254,5 +266,11 @@ main .post-active i {
 .action {
   display: flex;
   justify-content: flex-start;
+}
+.profile .active {
+  background-color: blue;
+}
+.vote .active {
+  color: black;
 }
 </style>
