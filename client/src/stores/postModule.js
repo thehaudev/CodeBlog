@@ -65,7 +65,6 @@ const postDetail = {
             const isVote = await instance.get('/vote_post/'+postId)
             const isBookmark = await  instance.get('/bookmarks/'+postId)
             const isFollow =  await instance.get('/follow_user/'+state.post.user._id)
-            console.log(isVote.data.data?.type,isBookmark.data.data,isFollow.data.data)
             commit('setActive', {voteType:isVote.data.data?.type
               ,isBookmark:isBookmark.data.data,isFollow:isFollow.data.data})
           }

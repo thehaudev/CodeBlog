@@ -3,7 +3,7 @@ import { computed, reactive, ref, onMounted, provide } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants/index";
-import { getTimeSincePost } from "../utils/timeSincePost";
+import { getTimeSincePost, getReadableDate } from "../utils/time";
 import CommentComponent from "../components/CommentComponent.vue";
 import { useVotePost } from "../composables/votePost";
 import { useBookmark } from "../composables/bookmark";
@@ -15,6 +15,12 @@ const store = useStore();
 const route = useRoute();
 const postId = computed(() => route.params.id);
 const post = computed(() => store.getters["postDetail/getPost"]);
+const selectedComment = ref(null);
+const selectedReplyComment = ref(null);
+function commented() {
+  selectedComment.value = null;
+  selectedReplyComment.value = null;
+}
 const listComments = computed(
   () => store.getters["postDetail/getCommentsInPost"]
 );
@@ -46,6 +52,9 @@ onMounted(fetchData);
 <template>
   <main v-if="post">
     <div class="post-active">
+      <div class="w-16">
+        <img :src="URL_AVATAR + post.user.avatar" alt="avatar" />
+      </div>
       <div class="vote">
         <i
           title="Upvote"
@@ -65,21 +74,20 @@ onMounted(fetchData);
         <i v-if="isBookmark" class="fa-solid fa-bookmark"></i
         ><i v-else class="fa-regular fa-bookmark"></i>
       </div>
-      <div title="Share a link to post on facebook" class="share">
+      <div title="Share a link to post on facebook" class="share mt-3">
         <i class="fa-brands fa-facebook-f"></i>
       </div>
     </div>
     <div class="container">
       <div class="post">
         <div class="content-header">
-          <div class="avatar">
-            <img :src="URL_AVATAR + post.user.avatar" alt="avatar" />
-          </div>
           <div class="profile">
             <div class="top">
-              <div class="user">
+              <div class="user item-center">
                 <p class="username">{{ post.user.display_name }}</p>
-                <p class="email">@{{ post.user.email.split("@")[0] }}</p>
+                <p class="email ml-1 mr-1 text-gray-400">
+                  @{{ post.user.email.split("@")[0] }}
+                </p>
                 <button
                   @click="followBtn(post.user._id)"
                   class="follow"
@@ -88,7 +96,7 @@ onMounted(fetchData);
                   Follow
                 </button>
               </div>
-              <span>Published Feb 10th, 1:43 p.m. 5 min read</span>
+              <span>{{ getReadableDate(post.updatedAt) }}</span>
             </div>
             <div class="bottom">
               <p>
@@ -121,24 +129,76 @@ onMounted(fetchData);
           <section v-html="post.content"></section>
         </div>
       </div>
-      <CommentComponent></CommentComponent>
+      <CommentComponent
+        :inReplyToComment="null"
+        :inReplyToUser="null"
+      ></CommentComponent>
       <div v-if="listComments" class="listComments">
-        <div v-for="comment in listComments" :key="comment._id" class="comment">
-          <div class="content-header">
-            <div class="avatar">
-              <img :src="URL_AVATAR + comment.user.avatar" alt="avatar" />
-            </div>
-            <div class="profile">
-              <div class="top">
-                <div class="user">
-                  <p class="username">{{ comment.user.display_name }}</p>
-                  <p class="email">@{{ comment.user.email.split("@")[0] }}</p>
-                </div>
-                <span>Published Feb 10th, 1:43 p.m.</span>
+        <div v-for="comment in listComments" :key="comment._id">
+          <div class="comment border-solid border-blue-400">
+            <div class="flex">
+              <div class="w-14">
+                <img :src="URL_AVATAR + comment.user.avatar" alt="avatar" />
+              </div>
+              <div class="flex mt-3 ml-3">
+                <p class="">@{{ comment.user.email.split("@")[0] }}</p>
+                <span class="ml-14 text-slate-500">{{
+                  getReadableDate(comment.updatedAt)
+                }}</span>
               </div>
             </div>
+            <div v-html="comment.content" class="commentContent"></div>
+            <span
+              @click="
+                (selectedReplyComment = null), (selectedComment = comment._id)
+              "
+              class="text-blue-500 cursor-pointer"
+              >Reply</span
+            >
+            <CommentComponent
+              @commented="commented"
+              v-if="selectedComment === comment._id"
+              :inReplyToComment="comment._id"
+              :inReplyToUser="comment.user.email.split('@')[0]"
+            ></CommentComponent>
           </div>
-          <div v-html="comment.content" class="commentContent"></div>
+          <div v-if="comment.commentsReply.length" class="listComments">
+            <div
+              v-for="commentReply in comment.commentsReply"
+              :key="commentReply._id"
+              class="comment border-solid border-blue-400"
+            >
+              <div class="flex">
+                <div class="w-14">
+                  <img
+                    :src="URL_AVATAR + commentReply.user.avatar"
+                    alt="avatar"
+                  />
+                </div>
+                <div class="flex mt-3 ml-3">
+                  <p class="">@{{ commentReply.user.email.split("@")[0] }}</p>
+                  <span class="ml-14 text-slate-500">{{
+                    getReadableDate(commentReply.updatedAt)
+                  }}</span>
+                </div>
+              </div>
+              <div v-html="commentReply.content" class="commentContent"></div>
+              <span
+                @click="
+                  (selectedReplyComment = commentReply._id),
+                    (selectedComment = null)
+                "
+                class="text-blue-500 cursor-pointer"
+                >Reply</span
+              >
+              <CommentComponent
+                @commented="commented"
+                v-if="selectedReplyComment === commentReply._id"
+                :inReplyToComment="comment._id"
+                :inReplyToUser="commentReply.user.email.split('@')[0]"
+              ></CommentComponent>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -207,35 +267,19 @@ main .post-active i {
 }
 
 .follow {
-  padding: 5px 20px;
-  border: 1px solid blue;
+  border: 1px solid #0e5dc5;
+  padding: 3px 10px;
+  border-radius: 5px;
 }
 .follow:hover {
-  background-color: blue;
+  background-color: #0e5dc5;
 }
 
-.post .avatar {
-  /* Center the content */
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  position: relative;
-
-  /* Size */
-  width: 40px;
-}
-.post .avatar img {
-  width: 100%;
-  border-radius: 50%;
-}
 .post .title {
   font-size: 24px;
   font-weight: bold;
 }
-.content-header {
-  display: flex;
-}
+
 .profile {
   display: flex;
   flex-direction: column;
@@ -268,9 +312,14 @@ main .post-active i {
   justify-content: flex-start;
 }
 .profile .active {
-  background-color: blue;
+  background-color: #0e5dc5;
 }
 .vote .active {
   color: black;
+}
+
+.listComments .comment {
+  border-bottom: 0.5px solid #d6d6d7;
+  padding: 15px;
 }
 </style>

@@ -12,7 +12,7 @@ const commentSchema = new Schema({
     },
     postId: {
         type: ObjectId,
-        required: true,
+        default: null,
         min: 6,
         max: 255,
         ref: 'post'
@@ -26,7 +26,7 @@ const commentSchema = new Schema({
     status: { type: Boolean, default: true },
 
     inReplyToComment: {
-        type: String,
+        type: ObjectId,
         default: null
     },
     inReplyToUser: {

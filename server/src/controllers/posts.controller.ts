@@ -20,11 +20,17 @@ export class PostsController {
 
     public comment = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
-            const postId = req.params.id
             const userId = req.user._id
-            const CommentData: CreateCommentDto = { ...req.body, postId: postId, userId: userId }
-            const createComment: Comment = await this.commentService.comment(CommentData)
-            res.status(201).json({ comment: createComment, message: "comment" })
+            let postId:any = req.params.id
+            if(req.body.inReplyToComment){
+                const CommentData: CreateCommentDto = { ...req.body, userId: userId }
+                const createComment: Comment = await this.commentService.commentReplyComment(CommentData)
+                res.status(201).json({ comment: createComment, message: "comment reply comment" })
+            }else{
+                const CommentData: CreateCommentDto = { ...req.body, postId: postId, userId: userId }
+                const createComment: Comment = await this.commentService.comment(CommentData)
+                res.status(201).json({ comment: createComment, message: "comment post" })
+            }
         } catch (error) {
             next(error)
         }

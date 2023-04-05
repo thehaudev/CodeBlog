@@ -3,7 +3,7 @@ import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { ref, computed } from "vue";
 import { URL_AVATAR } from "../constants/index";
-import { getTimeSincePost } from "../utils/timeSincePost";
+import { getTimeSincePost } from "../utils/time";
 const store = useStore();
 const router = useRouter();
 async function getPostDetail(postId) {

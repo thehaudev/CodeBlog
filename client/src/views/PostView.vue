@@ -1,3 +1,35 @@
+<script setup>
+import { ref, computed, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import EditorMarkdown from "../components/EditorMarkdown.vue";
+import { usePost } from "../composables/post";
+const { error, isPending, createPost } = usePost();
+const router = useRouter();
+const search = ref("");
+const store = useStore();
+const tags = ref([]);
+const title = ref("");
+const content = ref("");
+(async function () {
+  isPending.value = true;
+  await store.dispatch("tags/fetchData");
+  isPending.value = false;
+})();
+const listTags = computed(() =>
+  store.getters["tags/getAllTags"].filter(
+    (item) => !tags.value.includes(item._id)
+  )
+);
+function addTag(tagId) {
+  tags.value.push(tagId);
+}
+async function post() {
+  await createPost(title.value, content.value, tags.value);
+  await store.dispatch("posts/fetchData");
+  router.push({ name: "home", params: {} });
+}
+</script>
 <template>
   <main>
     <div class="container title">
@@ -42,42 +74,11 @@
     </div>
   </main>
 </template>
-<script setup>
-import { ref, computed, watch } from "vue";
-import { useRouter } from "vue-router";
-import { useStore } from "vuex";
-import EditorMarkdown from "../components/EditorMarkdown.vue";
-import { usePost } from "../composables/post";
-const { error, isPending, createPost } = usePost();
-const router = useRouter();
-const search = ref("");
-const store = useStore();
-const tags = ref([]);
-const title = ref("");
-const content = ref("");
-(async function () {
-  isPending.value = true;
-  await store.dispatch("tags/fetchData");
-  isPending.value = false;
-})();
-const listTags = computed(() =>
-  store.getters["tags/getAllTags"].filter(
-    (item) => !tags.value.includes(item._id)
-  )
-);
-function addTag(tagId) {
-  tags.value.push(tagId);
-}
-async function post() {
-  await createPost(title.value, content.value, tags.value);
-  await store.dispatch("posts/fetchData");
-  router.push({ name: "home", params: {} });
-}
-</script>
+
 <style scoped>
 main {
   width: 60%;
-  height: 95%;
+  height: 100vh;
   margin: 10px auto;
   display: flex;
   flex-direction: column;
@@ -108,6 +109,7 @@ main {
 .container.content {
   padding: 0;
   border: none;
+  flex: 5;
 }
 .container h2 {
   font-size: 24px;

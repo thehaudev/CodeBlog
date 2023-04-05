@@ -8,4 +8,5 @@ export interface Comment {
     status: boolean;
     votes: number;
     user: User;
+    commentsReply:Comment[];
 }

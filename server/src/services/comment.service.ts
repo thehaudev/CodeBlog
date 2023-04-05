@@ -15,6 +15,16 @@ export default class CommentService {
         this.commentRepository = new CommentRepository()
     }
 
+    public async commentReplyComment(commentData: CreateCommentDto):Promise<Comment> {
+        const checkIdUser = await this.users.findById(commentData.userId)
+        if (!checkIdUser) throw new HttpException(409, "User doesn't exist")
+
+        const checkCommentId = await this.commentRepository.findById(commentData.inReplyToComment)
+        if (!checkCommentId) throw new HttpException(409, "Comment doesn't exist")
+        const comment = await this.commentRepository.create(commentData)
+        return comment;
+    }
+
     public async comment(commentData: CreateCommentDto): Promise<Comment> {
         const checkIdUser = await this.users.findById(commentData.userId)
         if (!checkIdUser) throw new HttpException(409, "User doesn't exist")

@@ -3,14 +3,14 @@ import { ref } from "vue";
 const error = ref(null)
 const isPending = ref(false)
 
-async function createComment(postId,content){
+async function createComment(inReplyToComment,inReplyToUser,postId,content){
     isPending.value = true;
     error.value = null
     try {
+        console.log(inReplyToComment,inReplyToUser)
         const res = await instance.post('/posts/'+postId+'/comments',{
-            content:content
+            content:content,inReplyToComment:inReplyToComment,inReplyToUser:inReplyToUser
         })
-        console.log(res)
     } catch (err) {
         error.value = err.response.data.message
     } finally{
