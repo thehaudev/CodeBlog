@@ -11,6 +11,7 @@ export interface Post {
     views: number;
     votes: number;
     bookmarks: number
+    comments: number
     user: User;
     tags: Tag[];
     createdAt: string;

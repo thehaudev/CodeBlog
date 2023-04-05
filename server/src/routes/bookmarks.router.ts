@@ -5,7 +5,7 @@ import { validationMiddleware } from "../middlewares/validation.middlewares"
 
 var router = require("express").Router()
 const bookmarkController = new BookmarkController
-
+router.get('/:id',validationMiddleware(IdDto, "params"), verify, bookmarkController.getBookmark)
 //POST /api/v1/bookmarks
 router.post('/:id', validationMiddleware(IdDto, "params"), verify, bookmarkController.createBookmark)
 //DELETE /api/v1/bookmarks

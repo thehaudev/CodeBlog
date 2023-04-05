@@ -20,6 +20,14 @@ export default class BookmarkService {
         this.bookmarkRepository = new BookMarkRepository
     }
 
+    public async getBookmark(data:any):Promise<Bookmark|null>{
+        if (isEmpty(data)) throw new HttpException(409, "bookmark data is empty")
+        const checkBookmark: Bookmark | null = await this.bookmarkRepository.findOne(data)
+        if (!checkBookmark)  return null
+        return checkBookmark
+
+    }
+
     public async bookmark(data: BookmarkDto): Promise<Bookmark> {
         if (isEmpty(data)) throw new HttpException(409, "bookmark data is empty")
 

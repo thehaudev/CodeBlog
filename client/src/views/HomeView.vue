@@ -1,11 +1,18 @@
 <script setup>
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import { ref, computed } from "vue";
 import { URL_AVATAR } from "../constants/index";
 import { getTimeSincePost } from "../utils/timeSincePost";
 const store = useStore();
-
-const posts = computed(() => store.getters["posts/getAllPosts"]);
+const router = useRouter();
+async function getPostDetail(postId) {
+  await store.dispatch("postDetail/fetchData", { postId: postId });
+  router.push({ name: "postDetail", params: { id: postId } });
+}
+const posts = computed(() => {
+  return store.getters["posts/getAllPosts"];
+});
 </script>
 
 <template>
@@ -18,7 +25,7 @@ const posts = computed(() => store.getters["posts/getAllPosts"]);
         <li>Users</li>
       </ul>
     </nav>
-    <main>
+    <main v-if="posts">
       <div v-for="post in posts" :key="post._id" class="post">
         <div class="avatar">
           <img :src="URL_AVATAR + post.user.avatar" alt="avatar" />
@@ -27,12 +34,11 @@ const posts = computed(() => store.getters["posts/getAllPosts"]);
           <div class="content-header">
             <p class="username">{{ post.user.display_name }}</p>
             -
-            <p>about {{ getTimeSincePost(post.createdAt) }} hours ago</p>
+            <p>about {{ getTimeSincePost(post.createdAt) }}</p>
           </div>
           <div class="title">
-            <h2>
-              [Paper Explain] Clustering trong Computer Vision: Hướng đi mới
-              thay thế CNN và Transformer?
+            <h2 @click="getPostDetail(post._id)">
+              {{ post.title }}
             </h2>
           </div>
           <ul class="tags">
@@ -59,7 +65,9 @@ const posts = computed(() => store.getters["posts/getAllPosts"]);
     </main>
   </div>
 </template>
+
 <style>
+
 nav {
   position: -webkit-sticky;
   position: sticky;
@@ -90,6 +98,7 @@ main .post {
   width: 100%;
   border-radius: 50%;
 }
+
 .post .title {
   font-size: 24px;
   font-weight: bold;

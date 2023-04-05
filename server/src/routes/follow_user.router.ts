@@ -6,11 +6,11 @@ import { validationMiddleware } from "../middlewares/validation.middlewares"
 var router = require('express').Router()
 
 const follow_userController = new Follow_UsersController
-
-//POST /api/v1/follow_tag
+router.get('/:following', verify,  follow_userController.getFollow)
+//POST /api/v1/follow_user
 router.post('/', verify, validationMiddleware(FollowUserDto, 'body'), follow_userController.createFollowUser)
 
-//DELETE /api/v1/follow_tag
+//DELETE /api/v1/follow_user
 router.delete('/', verify, validationMiddleware(FollowUserDto, 'body'), follow_userController.deleteFollowUser)
 
 export default router

@@ -9,6 +9,19 @@ export default class Vote_PostController {
 
     public vote_postService = new Vote_PostService
 
+    public getVotePost = async (req:RequestWithUser,res:Response,next:NextFunction)=>{
+        try {
+            const postId = req.params.id
+            const userId = req.user._id
+            const votePost = await this.vote_postService.getVotePost({postId:postId,userId:userId})
+            res.status(200).json({
+                data:votePost
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
     public createVotePost = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
             const user: User = req.user

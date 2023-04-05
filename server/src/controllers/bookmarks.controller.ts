@@ -9,6 +9,17 @@ import BookmarkService from "../services/bookmarks.service";
 export default class BookmarkController {
     public bookmarkService = new BookmarkService
 
+    public getBookmark = async (req:RequestWithUser,res:Response,next:NextFunction)=>{
+        try {
+            const userId= req.user._id
+            const postId = req.params.id
+            const bookmark: Bookmark|null = await this.bookmarkService.getBookmark({postId:postId,userId:userId})
+            res.status(200).json({ data:bookmark})
+        } catch (error) {
+            next(error)
+        }
+    }
+
     public createBookmark = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
             const user: User = req.user

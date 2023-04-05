@@ -5,7 +5,7 @@
     <body>
       <slot></slot>
     </body>
-    <Footer></Footer>
+    <!-- <Footer></Footer> -->
   </div>
 </template>
 <script setup>
@@ -16,6 +16,5 @@ import Footer from "../components/Footer.vue";
 <style scoped>
 body {
   height: calc(100vh-50px);
-  width: 100%;
 }
 </style>

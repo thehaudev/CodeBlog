@@ -68,6 +68,14 @@ export default class PostRepository extends BaseRepository<Post> {
             },
             {
                 $lookup: {
+                    from: "comments",
+                    localField: "_id",
+                    foreignField: "postId",
+                    as: "comments"
+                },
+            },
+            {
+                $lookup: {
                     from: "view_posts",
                     localField: "_id",
                     foreignField: "postId",
@@ -122,6 +130,7 @@ export default class PostRepository extends BaseRepository<Post> {
                     status: 1,
                     bookmarks: { $size: "$bookmarks" },
                     views: { $size: "$views" },
+                    comments:{$size:"$comments"},
                     votes: {
                         // $sum: {
                         //     $cond: {
@@ -182,12 +191,20 @@ export default class PostRepository extends BaseRepository<Post> {
 
                 }
             },
+
             {
                 $lookup: {
                     from: "bookmarks",
                     localField: "_id",
                     foreignField: "postId",
                     as: "bookmarks"
+                },
+            },{
+                $lookup: {
+                    from: "comments",
+                    localField: "_id",
+                    foreignField: "postId",
+                    as: "comments"
                 },
             },
             {
@@ -212,6 +229,21 @@ export default class PostRepository extends BaseRepository<Post> {
                     localField: "userId",
                     foreignField: "_id",
                     as: "user"
+                }
+
+            },{
+                $lookup: {
+                    from: "follow_users",
+                    localField: "user._id",
+                    foreignField: "userId",
+                    as: "follower"
+                }
+            },{
+                $lookup: {
+                    from: "posts",
+                    localField: "user._id",
+                    foreignField: "userId",
+                    as: "posts"
                 }
             }
             , {
@@ -246,6 +278,9 @@ export default class PostRepository extends BaseRepository<Post> {
                     status: 1,
                     bookmarks: { $size: "$bookmarks" },
                     views: { $size: "$views" },
+                    comments:{$size: "$comments"},
+                    followers:{$size: "$follower"},
+                    posts:{$size: "$posts"},
                     votes: {
                         // $sum: {
                         //     $cond: {
@@ -281,7 +316,8 @@ export default class PostRepository extends BaseRepository<Post> {
                             }
                         }
                     },
-                    user: { $arrayElemAt: ["$user", 0] },
+                    user: { $arrayElemAt: ["$user", 0]},
+
                     // tags: "$tags.title"
                     tags: {
                         _id: 1,

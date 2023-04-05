@@ -16,7 +16,6 @@ export const validationMiddleware = (
         validate(plainToClass(type, req[value]), { skipMissingProperties, whitelist, forbidNonWhitelisted }).then(errors => {
             // errors is an array of validation errors
             if (errors.length > 0) {
-                console.log(errors)
                 const message = errors.map((error: ValidationError) => { if (error.constraints) return Object.values(error.constraints) }).join(', ');
                 next(new HttpException(400, message))
             } else {

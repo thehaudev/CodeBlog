@@ -13,6 +13,7 @@
         <div class="text-gray-800 font-semibold font-serif text-2xl ml-2">
           codeBlog
         </div>
+
       </router-link>
       <ul class="flex gap-6 text-md">
         <li class="hover:text-blue-800 p-2"><a href="#">About</a></li>
@@ -95,6 +96,7 @@
           </div>
         </section>
       </div>
+
     </div>
   </header>
 </template>
