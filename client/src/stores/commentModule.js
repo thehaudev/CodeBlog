@@ -28,9 +28,7 @@ const comments = {
             state.paginationOfComments = data.pagination
             state.current_page = data.pagination.current_page
         },
-        // setCurrent_page:(state,data)=>{
-        //     state.current_page = data
-        // }
+
     },
     actions:{
         async fetchData({commit },{postId}) {

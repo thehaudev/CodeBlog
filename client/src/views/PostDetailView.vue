@@ -3,11 +3,12 @@ import { computed, reactive, ref, onMounted, provide } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants/index";
-import { getTimeSincePost, getReadableDate } from "../utils/time";
-import CommentComponent from "../components/CommentComponent.vue";
+import CommentEditor from "../components/CommentEditor.vue";
+import Comment from "../components/Comment.vue";
 import { useVotePost } from "../composables/votePost";
 import { useBookmark } from "../composables/bookmark";
 import { useFollow } from "../composables/follow";
+import { getReadableDate, getTimeSincePost } from "../utils/time";
 const { follow } = useFollow();
 const { bookmark } = useBookmark();
 const { votePost } = useVotePost();
@@ -17,6 +18,7 @@ const postId = computed(() => route.params.id);
 const post = computed(() => store.getters["postDetail/getPost"]);
 const selectedComment = ref(null);
 const selectedReplyComment = ref(null);
+const maxReplies = ref(2);
 function commented() {
   selectedComment.value = null;
   selectedReplyComment.value = null;
@@ -24,6 +26,7 @@ function commented() {
 const listComments = computed(
   () => store.getters["comments/getCommentsInPost"]
 );
+
 const paginationOfComment = computed(
   () => store.getters["comments/getPaginationOfComments"]
 );
@@ -33,7 +36,6 @@ async function setCommentPage(page) {
     postId: postId.value,
   });
 }
-const isDisplayListCommentReply = ref([]);
 const isVote = computed(() => store.getters["postDetail/isVote"]);
 const isBookmark = computed(() => store.getters["postDetail/isBookmark"]);
 const isFollow = computed(() => store.getters["postDetail/isFollow"]);
@@ -141,12 +143,17 @@ onMounted(fetchData);
         </div>
       </div>
       <span class="mt-3 text-2xl">Comments</span>
-      <CommentComponent
+      <CommentEditor
         :inReplyToComment="null"
         :inReplyToUser="null"
-      ></CommentComponent>
-      <div v-if="listComments" class="listComments">
-        <div v-for="comment in listComments" :key="comment._id">
+      ></CommentEditor>
+      <div v-if="listComments">
+        <Comment
+          v-for="comment in listComments"
+          :key="comment._id"
+          :comment="comment"
+        ></Comment>
+        <!-- <div v-for="comment in listComments" :key="comment._id">
           <div class="comment border-solid border-blue-400">
             <div class="flex">
               <div class="w-14">
@@ -167,16 +174,6 @@ onMounted(fetchData);
               class="text-blue-500 cursor-pointer"
               >Reply</span
             >
-            <!-- <span
-              v-if="
-                comment.commentsReply.length < 4 && comment.commentReply.length
-              "
-              class="text-blue-500 cursor-pointer ml-3"
-              >Hidden Comments</span
-            >
-            <span v-else class="text-blue-500 cursor-pointer ml-3"
-              >Display Comments</span
-            > -->
             <CommentComponent
               @commented="commented"
               v-if="selectedComment === comment._id"
@@ -184,14 +181,9 @@ onMounted(fetchData);
               :inReplyToUser="comment.user.email.split('@')[0]"
             ></CommentComponent>
           </div>
-          <div
-            v-if="
-              comment.commentsReply.length && comment.commentsReply.length < 5
-            "
-            class="listComments"
-          >
+          <div class="listComments">
             <div
-              v-for="commentReply in comment.commentsReply"
+              v-for="commentReply in comment.commentsReply.slice(0, maxReplies)"
               :key="commentReply._id"
               class="comment border-solid border-blue-400"
             >
@@ -218,6 +210,7 @@ onMounted(fetchData);
                 class="text-blue-500 cursor-pointer"
                 >Reply</span
               >
+
               <CommentComponent
                 @commented="commented"
                 v-if="selectedReplyComment === commentReply._id"
@@ -225,8 +218,15 @@ onMounted(fetchData);
                 :inReplyToUser="commentReply.user.email.split('@')[0]"
               ></CommentComponent>
             </div>
+            <span
+              v-if="comment.commentsReply.length > maxReplies"
+              class="flex justify-center text-blue-500 cursor-pointer"
+              @click="maxReplies = comment.commentsReply.length"
+            >
+              Show all {{ comment.commentsReply.length }} replies
+            </span>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <ul
@@ -260,7 +260,7 @@ main .post-active {
   right: 0px;
   display: flex;
   flex-direction: column;
-  justify-content: start;
+
   align-items: center;
 }
 main .post-active i {
@@ -362,13 +362,6 @@ main .post-active i {
   color: black;
 }
 
-.listComments .comment {
-  border-bottom: 0.5px solid #d6d6d7;
-  padding: 15px;
-}
-.listComments .listComments {
-  margin: 0 0 0 25px;
-}
 .pagination {
   margin: 10px auto;
   display: inline-block;

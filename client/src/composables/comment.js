@@ -7,7 +7,6 @@ async function createComment(inReplyToComment,inReplyToUser,postId,content){
     isPending.value = true;
     error.value = null
     try {
-        console.log(inReplyToComment,inReplyToUser)
         const res = await instance.post('/posts/'+postId+'/comments',{
             content:content,inReplyToComment:inReplyToComment,inReplyToUser:inReplyToUser
         })
