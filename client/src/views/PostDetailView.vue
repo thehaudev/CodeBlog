@@ -229,7 +229,10 @@ onMounted(fetchData);
         </div>
       </div>
 
-      <ul v-if="paginationOfComment && listComments.length" class="pagination">
+      <ul
+        v-if="paginationOfComment && listComments && listComments.length"
+        class="pagination"
+      >
         <li href="#">&laquo;</li>
         <li
           v-for="n in paginationOfComment.total_pages"

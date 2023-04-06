@@ -9,7 +9,7 @@ const comments = {
         paginationOfComments:{},
         // countOfComments:0,
         // totalComment:1,
-        current_page:1,
+        // current_page:1,
         // total_page:1,
         // per_page:null,
       }
@@ -28,24 +28,24 @@ const comments = {
             state.paginationOfComments = data.pagination
             state.current_page = data.pagination.current_page
         },
-        setCurrent_page:(state,data)=>{
-            state.current_page = data
-        }
+        // setCurrent_page:(state,data)=>{
+        //     state.current_page = data
+        // }
     },
     actions:{
-        async fetchData({state,commit },{postId}) {
+        async fetchData({commit },{postId}) {
             const comments = await instance.get('/posts/'+postId+'/comments',{
                 params:{
-                    page:state.current_page
+                    page:1
                 }
             })
             commit('setData', comments.data.data)
         },
         async setCurrent_page({state,commit},{current_page,postId}){
-            await commit('setCurrent_page', current_page)
+            // await commit('setCurrent_page', current_page)
             const comments = await instance.get('/posts/'+postId+'/comments',{
               params:{
-                  page:state.current_page
+                  page:current_page
               }
           })
             commit('setData', comments.data.data)
