@@ -25,7 +25,7 @@ async function postComment() {
   );
   content.value = " ";
   emit("commented");
-  await store.dispatch("postDetail/fetchData", { postId: postId.value });
+  await store.dispatch("comments/fetchData", { postId: postId.value });
 }
 var toolbarOptions = [
   ["bold", "italic", "underline"],

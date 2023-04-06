@@ -20,7 +20,11 @@ export default class CommentRepository extends BaseRepository<Comment>{
         return this.model.aggregate([
             {
                 $match: { postId: new ObjectId(id) }
-            }, {
+            },
+            { $sort: { updatedAt: -1 } },
+            { $skip: skip },
+            { $limit: take },
+            {
                 $lookup: {
                     from: "vote_comments",
                     localField: "_id",

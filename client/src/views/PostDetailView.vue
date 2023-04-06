@@ -22,8 +22,18 @@ function commented() {
   selectedReplyComment.value = null;
 }
 const listComments = computed(
-  () => store.getters["postDetail/getCommentsInPost"]
+  () => store.getters["comments/getCommentsInPost"]
 );
+const paginationOfComment = computed(
+  () => store.getters["comments/getPaginationOfComments"]
+);
+async function setCommentPage(page) {
+  await store.dispatch("comments/setCurrent_page", {
+    current_page: page,
+    postId: postId.value,
+  });
+}
+const isDisplayListCommentReply = ref([]);
 const isVote = computed(() => store.getters["postDetail/isVote"]);
 const isBookmark = computed(() => store.getters["postDetail/isBookmark"]);
 const isFollow = computed(() => store.getters["postDetail/isFollow"]);
@@ -45,6 +55,7 @@ async function bookmarkBtn() {
 const fetchData = async () => {
   await store.dispatch("postDetail/fetchData", { postId: postId.value });
   await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+  await store.dispatch("comments/fetchData", { postId: postId.value });
 };
 onMounted(fetchData);
 </script>
@@ -156,6 +167,16 @@ onMounted(fetchData);
               class="text-blue-500 cursor-pointer"
               >Reply</span
             >
+            <!-- <span
+              v-if="
+                comment.commentsReply.length < 4 && comment.commentReply.length
+              "
+              class="text-blue-500 cursor-pointer ml-3"
+              >Hidden Comments</span
+            >
+            <span v-else class="text-blue-500 cursor-pointer ml-3"
+              >Display Comments</span
+            > -->
             <CommentComponent
               @commented="commented"
               v-if="selectedComment === comment._id"
@@ -163,7 +184,12 @@ onMounted(fetchData);
               :inReplyToUser="comment.user.email.split('@')[0]"
             ></CommentComponent>
           </div>
-          <div v-if="comment.commentsReply.length" class="listComments">
+          <div
+            v-if="
+              comment.commentsReply.length && comment.commentsReply.length < 5
+            "
+            class="listComments"
+          >
             <div
               v-for="commentReply in comment.commentsReply"
               :key="commentReply._id"
@@ -202,6 +228,20 @@ onMounted(fetchData);
           </div>
         </div>
       </div>
+
+      <ul v-if="paginationOfComment && listComments.length" class="pagination">
+        <li href="#">&laquo;</li>
+        <li
+          v-for="n in paginationOfComment.total_pages"
+          @click="setCommentPage(n)"
+          :key="n"
+          :class="{ active: paginationOfComment.current_page == n }"
+          href="#"
+        >
+          {{ n }}
+        </li>
+        <li href="#">&raquo;</li>
+      </ul>
     </div>
   </main>
 </template>
@@ -325,5 +365,22 @@ main .post-active i {
 }
 .listComments .listComments {
   margin: 0 0 0 25px;
+}
+.pagination {
+  margin: 10px auto;
+  display: inline-block;
+}
+
+.pagination li {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pagination li.active {
+  background-color: #4caf50;
+  color: white;
 }
 </style>
