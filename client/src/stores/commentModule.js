@@ -39,8 +39,7 @@ const comments = {
             })
             commit('setData', comments.data.data)
         },
-        async setCurrent_page({state,commit},{current_page,postId}){
-            // await commit('setCurrent_page', current_page)
+        async setCurrent_page({commit},{current_page,postId}){
             const comments = await instance.get('/posts/'+postId+'/comments',{
               params:{
                   page:current_page

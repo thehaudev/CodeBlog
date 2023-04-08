@@ -8,7 +8,8 @@ var router = require('express').Router()
 
 const tagController = new TagController
 //GET /api/v1/tags
-router.get('/', tagController.getAllTags)
+// router.get('/', tagController.getAllTags)
+router.get('/', tagController.findAndSortTags)
 
 //GET /api/v1/tags/:id
 router.get('/:id', validationMiddleware(IdDto, 'params'), tagController.getTagById)

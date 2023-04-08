@@ -6,6 +6,8 @@ const tagSchema = new Schema({
     title: {
         type: String,
         required: true,
+        text: true,
+
     }
 }, {
     timestamps: {

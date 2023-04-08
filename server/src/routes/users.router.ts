@@ -8,11 +8,13 @@ import UsersController from "../controllers/users.controller";
 import { IdDto } from '../dtos/objecId.dto';
 import { permissionUser } from '../middlewares/permission.middlerwares';
 import NotificationController from '../controllers/notification.controller';
+import Follow_TagController from '../controllers/follow_tag.controller';
 
 const usersController = new UsersController;
 const notificationController = new NotificationController;
+const follow_TagController = new Follow_TagController
 // router.get('/', getAllUsers)
-router.get('/', usersController.getUsers)
+router.get('/', usersController.findAndSortUser)
 
 //get /api/v1/users/notifications
 router.get('/notifications', verify, notificationController.getNotificationsOfUser)
@@ -37,6 +39,6 @@ router.delete('/:id', validationMiddleware(IdDto, "params"), verify, permissionU
 router.patch('/me', verify, validationMiddleware(changeProfileDto, "body"), uploadAvatar.single('avatar'),
     usersController.changeProfile)
 
-
+router.get('/me/tagsFollowing',verify,follow_TagController.findFollowTagOfUser)
 
 export default router;

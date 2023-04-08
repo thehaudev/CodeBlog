@@ -1,17 +1,35 @@
 import { NextFunction, Request, Response } from 'express'
 import UsersService from "../services/users.service"
-import { User } from '../interfaces/users.interface';
+import { User, UserWithoutPassword } from '../interfaces/users.interface';
 import { changeProfileDto, CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 import { RequestWithUser } from '../interfaces/auth.interface';
 
 class UsersController {
     public userService = new UsersService;
 
-    public getUsers = async (req: Request, res: Response, next: NextFunction) => {
+    public findAndSortUser = async (req: Request, res: Response, next: NextFunction) => {
 
         try {
-            const findAllUsersData: User[] = await this.userService.findAllUser();
-            res.status(200).json({ data: findAllUsersData, message: "find All User" })
+            const { limit = 20, page = 1, search = null } = req.query;
+            //sort "","newest","trending"
+
+            let pagination: any = {
+                skip: (+page - 1) * +limit,
+                take: +limit,
+                search: search && { display_name: { '$regex': `${search}`, '$options': 'i' } },
+            };
+            const {findAllUsersData,total} = await this.userService.findAndSortUser(pagination);
+            const count = findAllUsersData.length
+            const total_pages = Math.floor(+total % +limit == 0 ? +total / +limit : +total / +limit + 1)
+            pagination = {
+                count: +count,
+                total: +total,
+                per_page: +limit,
+                current_page: +page,
+                total_pages: +total_pages
+            }
+            res.status(200).json({ data: findAllUsersData,pagination:pagination, message: "get and filter users" })
+
         } catch (error) {
             next(error)
         }

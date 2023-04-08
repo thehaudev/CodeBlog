@@ -35,6 +35,11 @@ const userSchema = new Schema({
     },
     location: String,
     about: String
+}, {
+    timestamps: {
+        createdAt: 'created_at', // Use `created_at` to store the created date
+        updatedAt: 'updated_at' // and `updated_at` to store the last updated date
+    }
 },
     {
         toObject: {
@@ -45,12 +50,7 @@ const userSchema = new Schema({
                 delete ret.password
             },
         },
-    }, {
-    timestamps: {
-        createdAt: 'created_at', // Use `created_at` to store the created date
-        updatedAt: 'updated_at' // and `updated_at` to store the last updated date
-    }
-}, {
+    } ,{
     collection: "user"
 });
 export const UserModel = mongoose.model('user', userSchema)

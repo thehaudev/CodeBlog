@@ -12,11 +12,16 @@ export default class TagService {
         this.tagRepository = new TagRepository()
     }
 
-    public async findTag(search: {}): Promise<Tag[]> {
-        const tags: Tag[] = await this.tagRepository.find(search)
+    public async findTag(): Promise<Tag[]> {
+        const tags: Tag[] = await this.tagRepository.find()
         return tags
     }
+    public async findAndSortTag(filter:any):Promise<{tags:Tag[],total:Number}>{
 
+        const tags: Tag[]  = await this.tagRepository.findAndSortTags(filter.skip,filter.take,filter.search)
+        const total: Number = await this.tagRepository.count(filter.search)
+        return {tags,total}
+    }
     public async findTagById(id: string): Promise<Tag> {
         if (isEmpty(id)) throw new HttpException(400, 'tagId is empty');
 

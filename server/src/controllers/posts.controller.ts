@@ -185,7 +185,6 @@ export class PostsController {
                 search: search && { $text: { $search: `"${search}"` } },
                 sort: curr
             };
-            console.log(pagination)
             const { posts, total } = await this.postService.findAllPosts(pagination);
             const count = posts.length
             const total_pages = Math.floor(+total % +limit == 0 ? +total / +limit : +total / +limit + 1)

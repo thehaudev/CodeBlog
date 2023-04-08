@@ -16,13 +16,7 @@ const store = useStore();
 const route = useRoute();
 const postId = computed(() => route.params.id);
 const post = computed(() => store.getters["postDetail/getPost"]);
-const selectedComment = ref(null);
-const selectedReplyComment = ref(null);
-const maxReplies = ref(2);
-function commented() {
-  selectedComment.value = null;
-  selectedReplyComment.value = null;
-}
+
 const listComments = computed(
   () => store.getters["comments/getCommentsInPost"]
 );
@@ -106,7 +100,7 @@ onMounted(fetchData);
                   class="follow"
                   :class="{ active: isFollow }"
                 >
-                  Follow
+                  {{ isFollow ? "Following" : "Follow" }}
                 </button>
               </div>
               <span>{{ getReadableDate(post.updatedAt) }}</span>
@@ -153,80 +147,6 @@ onMounted(fetchData);
           :key="comment._id"
           :comment="comment"
         ></Comment>
-        <!-- <div v-for="comment in listComments" :key="comment._id">
-          <div class="comment border-solid border-blue-400">
-            <div class="flex">
-              <div class="w-14">
-                <img :src="URL_AVATAR + comment.user.avatar" alt="avatar" />
-              </div>
-              <div class="flex mt-3 ml-3">
-                <p class="">@{{ comment.user.email.split("@")[0] }}</p>
-                <span class="ml-14 text-slate-500">{{
-                  getReadableDate(comment.updatedAt)
-                }}</span>
-              </div>
-            </div>
-            <div v-html="comment.content" class="commentContent"></div>
-            <span
-              @click="
-                (selectedReplyComment = null), (selectedComment = comment._id)
-              "
-              class="text-blue-500 cursor-pointer"
-              >Reply</span
-            >
-            <CommentComponent
-              @commented="commented"
-              v-if="selectedComment === comment._id"
-              :inReplyToComment="comment._id"
-              :inReplyToUser="comment.user.email.split('@')[0]"
-            ></CommentComponent>
-          </div>
-          <div class="listComments">
-            <div
-              v-for="commentReply in comment.commentsReply.slice(0, maxReplies)"
-              :key="commentReply._id"
-              class="comment border-solid border-blue-400"
-            >
-              <div class="flex">
-                <div class="w-14">
-                  <img
-                    :src="URL_AVATAR + commentReply.user.avatar"
-                    alt="avatar"
-                  />
-                </div>
-                <div class="flex mt-3 ml-3">
-                  <p class="">@{{ commentReply.user.email.split("@")[0] }}</p>
-                  <span class="ml-14 text-slate-500">{{
-                    getReadableDate(commentReply.updatedAt)
-                  }}</span>
-                </div>
-              </div>
-              <div v-html="commentReply.content" class="commentContent"></div>
-              <span
-                @click="
-                  (selectedReplyComment = commentReply._id),
-                    (selectedComment = null)
-                "
-                class="text-blue-500 cursor-pointer"
-                >Reply</span
-              >
-
-              <CommentComponent
-                @commented="commented"
-                v-if="selectedReplyComment === commentReply._id"
-                :inReplyToComment="comment._id"
-                :inReplyToUser="commentReply.user.email.split('@')[0]"
-              ></CommentComponent>
-            </div>
-            <span
-              v-if="comment.commentsReply.length > maxReplies"
-              class="flex justify-center text-blue-500 cursor-pointer"
-              @click="maxReplies = comment.commentsReply.length"
-            >
-              Show all {{ comment.commentsReply.length }} replies
-            </span>
-          </div>
-        </div> -->
       </div>
 
       <ul

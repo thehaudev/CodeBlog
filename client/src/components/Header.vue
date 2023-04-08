@@ -1,3 +1,14 @@
+<script setup>
+import { computed, ref } from "vue";
+import { useStore } from "vuex";
+import { URL_AVATAR } from "../constants/index";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const searchInput = ref("");
+const store = useStore();
+const user = computed(() => store.getters["auth/getUser"]);
+</script>
 <template>
   <header
     class="bg-gray-50 py-3 border-solid border-t-4 border-blue-800 shadow-md w-full fixed top-0"
@@ -99,19 +110,6 @@
   </header>
 </template>
 
-<script setup>
-import { computed, ref } from "vue";
-import { useStore } from "vuex";
-import { URL_AVATAR } from "../constants/index";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-const searchInput = ref("");
-const store = useStore();
-const user = computed(() => {
-  return store.getters["auth/getUser"];
-});
-</script>
 <style scoped>
 textarea:focus,
 input:focus {

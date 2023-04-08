@@ -1,10 +1,11 @@
 import { HttpException } from "../exceptions/HttpException";
 import { changePasswordData } from "../interfaces/auth.interface";
-import { User } from "../interfaces/users.interface";
+import { User, UserWithoutPassword } from "../interfaces/users.interface";
 import { UserModel } from "../models/users.model";
 import { createAccessToken, createRefreshTokenCookie } from "../utils/jwt.util";
 import { isEmpty } from "../utils/validator.util";
 import { LoginDto, RegisterDto } from "../dtos/auth.dto"
+import UserRepository from "../repositories/users.repository";
 
 const bcrypt = require('bcryptjs')
 require('dotenv').config()
@@ -12,7 +13,10 @@ require('dotenv').config()
 
 class AuthService {
     public user = UserModel
-
+    public readonly userRepository:UserRepository
+    constructor() {
+        this.userRepository = new UserRepository
+    }
     public async register(userData: RegisterDto): Promise<User> {
         if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
 
@@ -30,12 +34,11 @@ class AuthService {
     public async login(userData: LoginDto): Promise<{ user: User, refreshCookie: string, expiresIn: number,accessToken:string}> {
         if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
 
-        const user: User = await this.user.findOne({ email: userData.email });
+        const user: User|null = await this.userRepository.findUser(userData.email );
         if (!user) throw new HttpException(409, 'Email or Password is not correct');
 
         const checkPassword = await bcrypt.compare(userData.password, user.password);
         if (!checkPassword) throw new HttpException(409, 'Email or Password is not correct');
-
         const {accessToken,expiresIn} = createAccessToken(user)
         const refreshCookie = createRefreshTokenCookie(user)
         return { user, refreshCookie, expiresIn, accessToken }

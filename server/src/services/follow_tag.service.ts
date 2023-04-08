@@ -15,6 +15,26 @@ export default class Follow_TagService {
         this.follow_tagRepository = new Follow_TagRepository()
     }
 
+    public async findFollowTagOfUser(data:any):Promise<Follow_Tag[]|null>{
+        if (isEmpty(data)) throw new HttpException(409, "data is empty")
+
+        const tagsFollowing: Follow_Tag[] | null = await this.follow_tagRepository.find(data)
+        if (!tagsFollowing) return null
+
+        return tagsFollowing
+    }
+
+    public async findFollowTag(data: FollowTagDto): Promise<Follow_Tag|null> {
+        if (isEmpty(data)) throw new HttpException(409, "data is empty")
+
+        const checkTagId: Tag = await this.tags.findById(data.tagId)
+        if (!checkTagId) throw new HttpException(409, "tag doesn't exist")
+
+        const checkFollow: Follow_Tag | null = await this.follow_tagRepository.findOne({ tagId: data.tagId, follower: data.follower })
+        if (!checkFollow) return null
+        return checkFollow
+    }
+
     public async createFollowTag(data: FollowTagDto): Promise<Follow_Tag> {
         if (isEmpty(data)) throw new HttpException(409, "data is empty")
 

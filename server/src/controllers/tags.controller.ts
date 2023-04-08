@@ -9,13 +9,34 @@ export default class TagController {
 
     public getAllTags = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            var search: {} = {}
-            if (req.query.search) search = req.query.search
-            search = {
-                title: { '$regex': `${search}`, '$options': 'i' }
-            }
-            const findAllTags: Tag[] = await this.tagService.findTag(search)
+            const findAllTags: Tag[] = await this.tagService.findTag()
             res.status(200).json({ data: findAllTags, message: "get all tags" })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    public findAndSortTags = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { limit = 20, page = 1, search = null } = req.query;
+            //sort "","newest","trending"
+
+            let pagination: any = {
+                skip: (+page - 1) * +limit,
+                take: +limit,
+                search: search && { title: { '$regex': `${search}`, '$options': 'i' } },
+            };
+            const {tags,total} = await this.tagService.findAndSortTag(pagination)
+            const count = tags.length
+            const total_pages = Math.floor(+total % +limit == 0 ? +total / +limit : +total / +limit + 1)
+            pagination = {
+                count: +count,
+                total: +total,
+                per_page: +limit,
+                current_page: +page,
+                total_pages: +total_pages
+            }
+            res.status(200).json({ data: tags,pagination:pagination, message: "get and filter tags" })
         } catch (error) {
             next(error)
         }

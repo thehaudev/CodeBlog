@@ -4,8 +4,10 @@ import tags from './tagsModule'
 import posts from './postsModule'
 import postDetail from './postModule'
 import comments from "./commentModule"
+import users from "./userModule"
 const store = createStore({
   modules:{
+    users,
     postDetail,
     posts,
     tags,

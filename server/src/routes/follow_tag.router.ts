@@ -6,7 +6,8 @@ import { validationMiddleware } from "../middlewares/validation.middlewares"
 var router = require('express').Router()
 
 const follow_tagController = new Follow_TagController
-
+//GET /api/v1/follow_tag
+router.get('/', verify, validationMiddleware(FollowTagDto, 'query'), follow_tagController.findFollowTag)
 //POST /api/v1/follow_tag
 router.post('/', verify, validationMiddleware(FollowTagDto, 'body'), follow_tagController.createFollowTag)
 

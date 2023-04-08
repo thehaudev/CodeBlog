@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import EditorMarkdown from "../components/EditorMarkdown.vue";
@@ -11,18 +11,22 @@ const store = useStore();
 const tags = ref([]);
 const title = ref("");
 const content = ref("");
-(async function () {
-  isPending.value = true;
-  await store.dispatch("tags/fetchData");
-  isPending.value = false;
-})();
-const listTags = computed(() =>
-  store.getters["tags/getAllTags"]
-    .filter((item) =>
-      item.title.toLowerCase().includes(search.value.toLowerCase())
-    )
-    .filter((item) => !tags.value.includes(item._id))
-);
+async function fetchData() {
+  await store.dispatch("tags/filterTag", {
+    search: search.value,
+  });
+}
+watch(search, async () => {
+  await store.dispatch("tags/filterTag", {
+    search: search.value,
+  });
+});
+const listTags = computed(() => {
+  const tagsTitle = tags.value.map((e) => e.title);
+  return store.getters["tags/getAllTags"].filter((item) => {
+    return !tagsTitle.includes(item.title);
+  });
+});
 function addTag(tag) {
   search.value = "";
   tags.value.push(tag);
@@ -40,6 +44,7 @@ function removeItem(arr, item) {
     arr.splice(index, 1);
   }
 }
+onMounted(fetchData);
 </script>
 <template>
   <main>

@@ -1,6 +1,6 @@
 import { UserModel } from '../models/users.model'
 import UserRepository from '../repositories/users.repository'
-import { User } from '../interfaces/users.interface'
+import { User, UserWithoutPassword } from '../interfaces/users.interface'
 import { HttpException } from '../exceptions/HttpException'
 import { isEmpty } from '../utils/validator.util'
 import * as bcrypt from 'bcryptjs'
@@ -15,9 +15,10 @@ class UsersService {
         this.userRepository = new UserRepository();
     }
 
-    public async findAllUser(): Promise<User[]> {
-        const users: User[] = await this.userRepository.find({ role: 0 });
-        return users;
+    public async findAndSortUser(filter:any): Promise<{findAllUsersData:UserWithoutPassword[],total:Number}> {
+        const findAllUsersData: UserWithoutPassword[] = await this.userRepository.findAndSortUser(filter.skip,filter.take,filter.search);
+        const total:Number = await this.userRepository.count(filter.search)
+        return {findAllUsersData,total};
     }
 
     public async findUserById(userId: string): Promise<User> {

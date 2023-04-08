@@ -12,6 +12,9 @@ const posts = {
     getters:{
       getAllPosts (state) {
         return state.allPosts
+      },
+      getPaginationPost (state){
+        return state.pagination
       }
     },
     mutations: {
@@ -19,13 +22,21 @@ const posts = {
             state.allPosts = listPosts.posts
             state.count = listPosts.count
             state.pagination =listPosts.pagination
-        }
+        },
     },
     actions:{
         async fetchData({ commit }) {
             const response = await instance.get('/posts')
             commit('setData', response.data)
         },
+        async setCurrent_page({commit},{current_page}){
+          const response = await instance.get('/posts',{
+            params:{
+                page:current_page
+            }
+        })
+        commit('setData', response.data)
+      },
     }
   }
   export default posts

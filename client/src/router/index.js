@@ -6,6 +6,10 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
+      meta:{
+        layout:'home'
+      }
+      ,
       component: () => import('../views/HomeView.vue')
     },{
       path: '/auth/login',
@@ -23,6 +27,20 @@ const router = createRouter({
       path: '/auth/logout',
       name: 'logout',
       component: () => import('../views/LogoutView.vue')
+    },{
+      path:'/tags',
+      name:'tags',
+      meta:{
+        layout:'home'
+      },
+      component:()=> import('../views/TagView.vue')
+    },{
+      path:'/users',
+      name:'users',
+      meta:{
+        layout:'home'
+      },
+      component:()=> import('../views/UsersView.vue')
     }
     ,{
       path: '/publish/post',

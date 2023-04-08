@@ -59,6 +59,7 @@ class AuthController {
             const loginData: LoginDto = req.body
             let { user, refreshCookie, expiresIn, accessToken } = await this.authService.login(loginData);
             res.setHeader('Set-Cookie', [refreshCookie])
+            user = {...user,password:''}
             res.status(200).json({ user, auth: accessToken, expiresIn: expiresIn, message: "login" })
         } catch (error) {
             next(error)
