@@ -10,6 +10,7 @@ async function createComment(inReplyToComment,inReplyToUser,postId,content){
         const res = await instance.post('/posts/'+postId+'/comments',{
             content:content,inReplyToComment:inReplyToComment,inReplyToUser:inReplyToUser
         })
+        return res.data.comment
     } catch (err) {
         error.value = err.response.data.message
     } finally{

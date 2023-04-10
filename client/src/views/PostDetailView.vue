@@ -1,5 +1,13 @@
 <script setup>
-import { computed, reactive, ref, onMounted, provide } from "vue";
+import {
+  computed,
+  reactive,
+  ref,
+  onMounted,
+  watch,
+  watchEffect,
+  inject,
+} from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants/index";
@@ -8,6 +16,7 @@ import Comment from "../components/Comment.vue";
 import { useVotePost } from "../composables/votePost";
 import { useBookmark } from "../composables/bookmark";
 import { useFollow } from "../composables/followUser";
+
 import { getReadableDate, getTimeSincePost } from "../utils/time";
 const { follow } = useFollow();
 const { bookmark } = useBookmark();
@@ -15,7 +24,17 @@ const { votePost } = useVotePost();
 const store = useStore();
 const route = useRoute();
 const router = useRouter();
-const postId = computed(() => route.params.id);
+const commentId = ref(route.query.commentId);
+if (commentId.value) {
+  onMounted(() => {
+    const commentElement = document.getElementById(commentId.value);
+    if (commentElement) {
+      commentElement.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+}
+const postId = ref(route.params.id);
+
 const post = computed(() => store.getters["postDetail/getPost"]);
 
 const user = computed(() => store.getters["auth/getUser"]);
@@ -156,6 +175,7 @@ onMounted(fetchData);
           v-for="comment in listComments"
           :key="comment._id"
           :comment="comment"
+          :id="comment._id"
         ></Comment>
       </div>
 

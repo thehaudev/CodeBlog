@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 import EditorMarkdown from "../components/EditorMarkdown.vue";
 import { usePost } from "../composables/post";
@@ -11,6 +11,7 @@ const store = useStore();
 const tags = ref([]);
 const title = ref("");
 const content = ref("");
+
 async function fetchData() {
   await store.dispatch("tags/filterTag", {
     search: search.value,
@@ -33,8 +34,13 @@ function addTag(tag) {
 }
 async function post() {
   const tagId = tags.value.map((e) => e._id);
-  await createPost(title.value, content.value, tagId);
+  const post = await createPost(title.value, content.value, tagId);
   await store.dispatch("posts/fetchData");
+  await store.dispatch("notifications/createNewPostNotification", {
+    postId: post._id,
+    link: "/post/" + post._id,
+    content: `<p>Có một bài viết mới <span style="color:#709bd0;">${post.title}</span> mà có thể bạn quan tâm.</p>`,
+  });
   router.push({ name: "home", params: {} });
 }
 function removeItem(arr, item) {

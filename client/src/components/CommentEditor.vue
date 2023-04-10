@@ -15,14 +15,21 @@ const { createComment } = useComment();
 const props = defineProps({ inReplyToComment: String, inReplyToUser: String });
 const emit = defineEmits(["commented"]);
 const content = ref(" ");
-if (props.inReplyToUser) content.value = "@" + props.inReplyToUser + " ";
+if (props.inReplyToUser)
+  content.value = "@" + props.inReplyToUser.split("@")[0] + " ";
 async function postComment() {
-  await createComment(
+  const comment = await createComment(
     props.inReplyToComment,
     props.inReplyToUser,
     postId.value,
     content.value
   );
+  if (comment) {
+    await store.dispatch("notifications/createNewCommentNotification", {
+      commentId: comment._id,
+      link: "/post/" + postId.value + "?commentId=" + comment._id,
+    });
+  }
   content.value = " ";
   emit("commented");
   await store.dispatch("comments/fetchData", { postId: postId.value });

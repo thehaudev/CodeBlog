@@ -14,6 +14,22 @@ export default class CommentRepository extends BaseRepository<Comment>{
             .populate({ path: 'user', select: ['display_name', 'email', 'avatar'] })
             .exec();
     }
+    async findCommentById(commentId:string):Promise<any>{
+        const data = this.model.aggregate([
+            {
+                $match: { _id: new ObjectId(commentId) }
+            },{
+                $lookup: {
+                    from: "comments",
+                    localField: "_id",
+                    foreignField: "inReplyToComment",
+                    as: "commentsReply"
+                }
+            }
+        ]).exec()
+        console.log(data)
+        return data
+    }
     async findCommentOfPost(id: string, take: number, skip: number): Promise<Comment[]> {
 
 

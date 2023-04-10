@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { ObjectId } from "mongodb";
 import { CreateNotificationDto } from "../dtos/notification.dto";
-import { RequestWithUser } from "../interfaces/auth.interface";
+import { RequestWithUser, RequestWithUserAndComment } from "../interfaces/auth.interface";
 import { User } from "../interfaces/users.interface";
+import CommentService from "../services/comment.service";
 import Follow_UserService from "../services/follow_user.service";
 import NotificationService from "../services/notifications.service";
 import PostsService from "../services/posts.service";
@@ -12,6 +13,7 @@ export default class NotificationController {
     public notificationService = new NotificationService
     public followUserService = new Follow_UserService
     public postService = new PostsService
+    public commentsService = new CommentService
 
     public getNotificationsOfUser = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
@@ -24,7 +26,7 @@ export default class NotificationController {
                 filter: { recipient: user._id }
             }
 
-            const { notifications, total } = await this.notificationService.findNotificationsOfUser(pagination)
+            const { notifications, total,totalNotRead } = await this.notificationService.findNotificationsOfUser(pagination)
 
             const count: number = notifications.length
             const total_pages = Math.floor(+total % +limit == 0 ? +total / +limit : +total / +limit + 1)
@@ -35,9 +37,53 @@ export default class NotificationController {
                 current_page: +page,
                 total_pages: +total_pages
             }
-            res.status(200).json({ count: count, notifications, pagination })
+            res.status(200).json({ count: count,totalNotRead, notifications, pagination })
         } catch (error) {
             next(error)
+        }
+    }
+
+    public createNotificationWhenNewComment = async (req:RequestWithUserAndComment,res:Response,next:NextFunction)=>{
+        try {
+            const user =req.user;
+            const comment = req.comment;
+            const {link} = req.body
+            if(comment.postId){
+                const post = await this.postService.findPostById(comment.postId+"")
+                const data:CreateNotificationDto = {
+                    sender: user._id,
+                    link: link,
+                    recipient: post.user._id,
+                    content: `<p><span style="color:#709bd0;">${user.display_name}</span > đã bình luận về bài viết <span style="color:#709bd0;">${post.title}</span></p>`
+                }
+               const notification =  await this.notificationService.createNotification(data)
+               res.status(201).json({
+                notification: notification, msg: 'create notification when new comment'
+            })
+            }
+            if(comment.inReplyToComment){
+                const inReplyToComment = await this.commentsService.findCommentById(comment.inReplyToComment+"")
+                const post = await this.postService.findPostById(inReplyToComment.postId+"")
+                const notificationCommentData:CreateNotificationDto = {
+                    sender: user._id,
+                    link: link,
+                    recipient: inReplyToComment.userId,
+                    content: `<p><span style="color:#709bd0;">${user.display_name}</span > đã trả lời bình luận của bạn</p>`
+                }
+                const notificationPostData:CreateNotificationDto = {
+                    sender: user._id,
+                    link: link,
+                    recipient: post.user._id,
+                    content: `<p><span style="color:#709bd0;">${user.display_name}</span > đã bình luận về bài viết <span style="color:#709bd0;">${post.title}</span></p>`
+                }
+                const notificationComment = await this.notificationService.createNotification(notificationCommentData)
+               const notificationPost =  await this.notificationService.createNotification(notificationPostData)
+               res.status(201).json({
+                notifications: [notificationComment,notificationPost], msg: 'create notification when new comment'
+               })
+            }
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -50,21 +96,19 @@ export default class NotificationController {
             const listFollowerUserId: ObjectId[] = await this.followUserService.getListFollowerIds(user._id)
             const listFollowerTagId: ObjectId[] = await this.postService.getListFollowerIds(postId)
 
-            //hợp 2 mảng và loại bỏ phần tử trùng nhau
-            // const listFollowerId = [...listFollowerUserId, ...listFollowerTagId];
             const listFollowerId: ObjectId[] = listFollowerUserId.concat(listFollowerTagId).filter(
                 (value, index, self) => self.findIndex(v => v.toHexString() === value.toHexString()) === index
             );
 
             const notification: CreateNotificationDto[] = listFollowerId.map(e => {
                 return {
-                    sender: new ObjectId(user._id),
+                    sender: user._id,
                     link: link,
-                    recipient: e,
+                    recipient: e.toString(),
                     content: content
                 }
             })
-            const createNotifications = await this.notificationService.createNotificationsWithNewPost(notification)
+            const createNotifications = await this.notificationService.createNotifications(notification)
             res.status(201).json({
                 notifications: createNotifications, msg: 'create notifications when new post'
             })

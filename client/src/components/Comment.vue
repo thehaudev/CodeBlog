@@ -45,13 +45,14 @@ function commented() {
         @commented="commented"
         v-if="selectedComment === comment._id"
         :inReplyToComment="comment._id"
-        :inReplyToUser="comment.user.email.split('@')[0]"
+        :inReplyToUser="comment.user.email"
       ></CommentEditor>
     </div>
     <div class="">
       <div
         v-for="commentReply in comment.commentsReply.slice(0, maxReplies)"
         :key="commentReply._id"
+        :id="commentReply._id"
         class="commentReply"
       >
         <div class="flex">
@@ -78,7 +79,7 @@ function commented() {
           @commented="commented"
           v-if="selectedReplyComment === commentReply._id"
           :inReplyToComment="comment._id"
-          :inReplyToUser="commentReply.user.email.split('@')[0]"
+          :inReplyToUser="commentReply.user.email"
         ></CommentEditor>
       </div>
       <span

@@ -80,6 +80,7 @@ onMounted(fetchData);
             <i class="fa-solid fa-user mr-1" style="color: #4ca8d6"></i
             >{{ user.display_name }}
           </p>
+          <p class="ml-3 text-gray-400">@{{ user.email.split("@")[0] }}</p>
           <div class="flex">
             <p>
               <i class="fa-solid fa-user-plus"></i>

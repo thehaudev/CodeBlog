@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { Comment } from "./comment.interface";
 import { User } from './users.interface'
 
 export interface DataInTokenData {
@@ -12,6 +13,10 @@ export interface TokenData {
 
 export interface RequestWithUser extends Request {
     user: User;
+}
+export interface RequestWithUserAndComment extends Request {
+    user: User;
+    comment:Comment
 }
 
 export interface changePasswordData {

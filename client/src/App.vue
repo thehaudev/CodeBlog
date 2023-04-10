@@ -1,6 +1,6 @@
 <template>
   <component :is="layout">
-    <RouterView></RouterView>
+    <RouterView :key="route.fullPath"></RouterView>
   </component>
 </template>
 <script setup>

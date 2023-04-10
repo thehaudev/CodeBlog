@@ -34,7 +34,6 @@ export default class PostsService {
 
     public async findPostById(id: string): Promise<Post> {
         if (isEmpty(id)) throw new HttpException(400, 'PostId is empty');
-        console.log(id)
         const findPost: Post | null = await this.postRepository.findPostById(id)
         if (!findPost) throw new HttpException(409, "Post doesn't exist");
 

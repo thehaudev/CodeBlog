@@ -8,11 +8,15 @@ export default class NotificationRepository extends BaseRepository<Notification>
         super(NotificationModel)
     }
     public async findAndSort(filter: {}, skip: number, take: number) {
-        return await this.model.find(filter).skip(skip).limit(take).exec()
+        return await this.model.find(filter).sort({updatedAt:-1}).skip(skip).limit(take).exec()
     }
 
     public async countNotification(): Promise<number> {
         return await this.model.count().exec()
+    }
+
+    public async countNotificationNotRead(filter:{}):Promise<number>{
+        return await this.model.find(filter,{isRead:false}).count().exec()
     }
 
     public async createMany(data: CreateNotificationDto[]): Promise<Notification[]> {

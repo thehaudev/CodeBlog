@@ -1,13 +1,25 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants/index";
 import { useRouter } from "vue-router";
+import { getReadableDate, getTimeSincePost } from "../utils/time";
 
+async function fetchData() {
+  await store.dispatch("notifications/setNotificationOfUser");
+}
 const router = useRouter();
+
 const searchInput = ref("");
 const store = useStore();
 const user = computed(() => store.getters["auth/getUser"]);
+const notifications = computed(
+  () => store.getters["notifications/getNotifications"]
+);
+const totalNotRead = computed(
+  () => store.getters["notifications/getTotalNotRead"]
+);
+onMounted(fetchData);
 </script>
 <template>
   <header
@@ -58,7 +70,15 @@ const user = computed(() => store.getters["auth/getUser"]);
         <section v-else class="isLogged flex gap-2">
           <div class="bell">
             <i class="fa-regular fa-bell"></i>
-            <span class="badge">12</span>
+            <span class="badge">{{ totalNotRead }}</span>
+            <ul class="sub-menu">
+              <li v-for="notification in notifications" :key="notification._id">
+                <router-link :to="notification.link">
+                  <div v-html="notification.content"></div>
+                  <span>{{ getTimeSincePost(notification.updatedAt) }}</span>
+                </router-link>
+              </li>
+            </ul>
           </div>
           <div class="write">
             <i class="fa-regular fa-pen-to-square"></i>
@@ -211,8 +231,11 @@ input:focus {
   color: #fff;
   background: #f56c6c;
   font-size: 12px;
-  padding: 1px;
-  border-radius: 4px;
+  padding: 1px 2px;
+  border-radius: 50%;
+}
+.bell:hover .sub-menu {
+  display: flex;
 }
 /* .bell .write  */
 .write:hover .sub-menu {
@@ -249,6 +272,11 @@ input:focus {
   height: 80px;
   font-size: 16px;
   right: -100%;
+}
+.bell .sub-menu {
+  width: 400px;
+  font-size: 16px;
+  right: -300%;
 }
 .sub-menu li {
   flex: 1;
@@ -290,7 +318,7 @@ input:focus {
   padding: 8px 16px;
   color: #333;
 }
-.sub-menu > li:last-child {
+.avatar .sub-menu > li:last-child {
   border-top: 1px solid #ccc;
 }
 </style>

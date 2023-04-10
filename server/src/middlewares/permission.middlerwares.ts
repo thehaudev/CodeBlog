@@ -1,13 +1,16 @@
 import { NextFunction, Response } from "express"
 import { HttpException } from "../exceptions/HttpException"
-import { RequestWithUser } from "../interfaces/auth.interface"
+import { RequestWithUser, RequestWithUserAndComment } from "../interfaces/auth.interface"
+import { Comment } from "../interfaces/comment.interface"
 import Notification from "../interfaces/notifications.interface"
 import { Post } from "../interfaces/posts.interface"
 import { User } from "../interfaces/users.interface"
+import CommentRepository from "../repositories/comments.repository"
 import NotificationRepository from "../repositories/notification.repository"
 import PostRepository from "../repositories/posts.repository"
 
 const postRepository = new PostRepository()
+const commentRepository = new CommentRepository()
 const notificationRepository = new NotificationRepository()
 
 export const adminRole = (req: RequestWithUser, res: Response, next: NextFunction) => {
@@ -15,6 +18,24 @@ export const adminRole = (req: RequestWithUser, res: Response, next: NextFunctio
     if (req.user.role != 1) res.status(403).json({ msg: "not allowed" })
     next()
 
+}
+
+///permission posts
+
+export const permissionComment = async (req: RequestWithUserAndComment, res: Response, next: NextFunction) => {
+    try {
+        const comment: Comment | null = await commentRepository.findById(req.params.id)
+        if (!comment) throw new HttpException(400, "comment don't exist")
+        if (!canCRUDComment(req.user, comment)) throw new HttpException(403, "not allowed")
+        req.comment = comment;
+        next()
+    } catch (error) {
+        next(error)
+    }
+}
+
+const canCRUDComment = (user: User, comment: Comment | null) => {
+    return (user.role == 1 || user._id + "" === comment?.userId + "")
 }
 
 ///permission posts
