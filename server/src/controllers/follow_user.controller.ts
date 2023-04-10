@@ -8,12 +8,27 @@ import Follow_UserService from "../services/follow_user.service"
 export default class Follow_UsersController {
     public follow_userService = new Follow_UserService
 
-    public getFollow = async(req: RequestWithUser, res: Response, next: NextFunction) => {
+    public findFollowUserOfUser = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
-            const userId = req.user._id
-            const following = req.params.following
-            const Follow: Follow_User|null = await this.follow_userService.getFollow({userId:following,follower:userId})
-            res.status(200).json({ data: Follow })
+            const user = req.user
+            const data = { follower: user._id }
+
+            const usersFollowing: Follow_User[]|null = await this.follow_userService.findFollowUserOfUser(data)
+            res.status(201).json({ data: usersFollowing, message: "users following by user" })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    public findFollowUser = async(req: RequestWithUser, res: Response, next: NextFunction) => {
+        try {
+            const user = req.user
+            const userId:string = req.query.userId +""
+            const data: FollowUserDto = { userId:userId, follower: user._id }
+
+            const followTag: Follow_User|null = await this.follow_userService.findFollowUser(data)
+
+            res.status(201).json({ data: followTag, message: "find follow tag" })
         } catch (error) {
             next(error)
         }

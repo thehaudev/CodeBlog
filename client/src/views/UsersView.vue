@@ -1,21 +1,59 @@
 <script setup>
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants";
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter();
+const route = useRoute();
 const store = useStore();
 const search = ref("");
 const page = ref(1);
+const user = computed(() => store.getters["auth/getUser"]);
 const listUsers = computed(() => store.getters["users/getAllUsers"]);
 const paginationOfUsers = computed(() => store.getters["users/getPagination"]);
 async function fetchData() {
+  if (user.value) await store.dispatch("auth/setUsersFollowing");
   await store.dispatch("users/filterUser", {
     current_page: page.value,
     search: search.value,
   });
 }
-async function checkFollowUser(id) {}
-async function followUser(id) {}
-async function setUserPage(pageUser) {}
+async function setUserPage(pageTag) {
+  page.value = pageTag;
+  await store.dispatch("users/filterUser", {
+    current_page: page.value,
+    search: search.value,
+  });
+}
+watch(search, async () => {
+  page.value = 1;
+  await store.dispatch("users/filterUser", {
+    current_page: page.value,
+    search: search.value,
+  });
+});
+const usersFollowing = computed(
+  () => (user.value && store.getters["auth/getUsersFollowing"]) || []
+);
+function checkFollowUser(id) {
+  return usersFollowing.value.some((e) => e.userId == id);
+}
+
+async function followUser(userId) {
+  if (user.value) {
+    await store.dispatch("users/follow", { userId: userId });
+    await store.dispatch("auth/setUsersFollowing");
+    await store.dispatch("users/filterUser", {
+      current_page: page.value,
+      search: search.value,
+    });
+  } else {
+    await store.dispatch("route/setRouteBeforeLogin", {
+      route: route.name,
+    });
+    router.push({ name: "login", params: {} });
+  }
+}
 onMounted(fetchData);
 </script>
 
@@ -54,6 +92,7 @@ onMounted(fetchData);
           </div>
           <button
             v-if="checkFollowUser(user._id)"
+            @click="followUser(user._id)"
             style="color: #fff; background-color: #5488c7"
           >
             Following
@@ -65,7 +104,7 @@ onMounted(fetchData);
     <ul v-if="paginationOfUsers" class="pagination">
       <li href="#">&laquo;</li>
       <li
-        v-for="n in paginationOfUsers.total_pages"
+        v-for="n in paginationOfUsers.total_pages || 1"
         @click="setUserPage(n)"
         :key="n"
         :class="{ active: paginationOfUsers.current_page == n }"

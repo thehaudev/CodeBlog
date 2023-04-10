@@ -82,8 +82,8 @@ const user = computed(() => store.getters["auth/getUser"]);
               <li class="account">
                 <img :src="URL_AVATAR + user.avatar" alt="avatar" />
                 <div class="name">
-                  <p class="display">Huỳnh thế hậu</p>
-                  <p class="email">@thehau</p>
+                  <p class="display">{{ user.display_name }}</p>
+                  <p class="email">@{{ user.email.split("@")[0] }}</p>
                 </div>
               </li>
               <li>

@@ -1,21 +1,24 @@
 <script setup>
 import { computed, reactive, ref, onMounted, provide } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants/index";
 import CommentEditor from "../components/CommentEditor.vue";
 import Comment from "../components/Comment.vue";
 import { useVotePost } from "../composables/votePost";
 import { useBookmark } from "../composables/bookmark";
-import { useFollow } from "../composables/follow";
+import { useFollow } from "../composables/followUser";
 import { getReadableDate, getTimeSincePost } from "../utils/time";
 const { follow } = useFollow();
 const { bookmark } = useBookmark();
 const { votePost } = useVotePost();
 const store = useStore();
 const route = useRoute();
+const router = useRouter();
 const postId = computed(() => route.params.id);
 const post = computed(() => store.getters["postDetail/getPost"]);
+
+const user = computed(() => store.getters["auth/getUser"]);
 
 const listComments = computed(
   () => store.getters["comments/getCommentsInPost"]
@@ -34,23 +37,30 @@ const isVote = computed(() => store.getters["postDetail/isVote"]);
 const isBookmark = computed(() => store.getters["postDetail/isBookmark"]);
 const isFollow = computed(() => store.getters["postDetail/isFollow"]);
 async function followBtn(followingId) {
-  await follow(followingId);
-  await store.dispatch("postDetail/fetchData", { postId: postId.value });
-  await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+  if (user.value) {
+    await follow(followingId);
+    await store.dispatch("postDetail/fetchData", { postId: postId.value });
+    await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+  }
 }
 async function vote(type) {
-  await votePost(postId.value, type);
-  await store.dispatch("postDetail/fetchData", { postId: postId.value });
-  await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+  if (user.value) {
+    await votePost(postId.value, type);
+    await store.dispatch("postDetail/fetchData", { postId: postId.value });
+    await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+  }
 }
 async function bookmarkBtn() {
-  await bookmark(postId.value);
-  await store.dispatch("postDetail/fetchData", { postId: postId.value });
-  await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+  if (user.value) {
+    await bookmark(postId.value);
+    await store.dispatch("postDetail/fetchData", { postId: postId.value });
+    await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+  }
 }
 const fetchData = async () => {
   await store.dispatch("postDetail/fetchData", { postId: postId.value });
-  await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+  if (user.value)
+    await store.dispatch("postDetail/fetchActive", { postId: postId.value });
   await store.dispatch("comments/fetchData", { postId: postId.value });
 };
 onMounted(fetchData);

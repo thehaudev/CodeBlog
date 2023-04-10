@@ -47,7 +47,11 @@ const postDetail = {
           if(localStorage.getItem("accessToken")){
             const isVote = await instance.get('/vote_post/'+postId)
             const isBookmark = await  instance.get('/bookmarks/'+postId)
-            const isFollow =  await instance.get('/follow_user/'+state.post.user._id)
+            const isFollow =  await instance.get('/follow_user/',{
+              params:{
+                userId:state.post.user._id
+              }
+            })
             commit('setActive', {voteType:isVote.data.data?.type
               ,isBookmark:isBookmark.data.data,isFollow:isFollow.data.data})
           }

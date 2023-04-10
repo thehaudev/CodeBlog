@@ -1,5 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router'
-
+import { createRouter, createWebHistory, useRoute } from 'vue-router'
+import {useStore} from 'vuex'
+const store = useStore()
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -51,11 +52,32 @@ const router = createRouter({
       name: 'postDetail',
       component: () => import('../views/PostDetailView.vue')
     },{
+      path: '/me/profile',
+      name: 'profile',
+      meta:{
+        requiresAuth:true
+      },
+      component: () => import('../views/ProfileView.vue')
+    },{
       path: "/:pathMatch(.*)*",
       name: "not-found",
       component: () => import("../views/NotFound.vue"),
     },
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!store.getters['auth/getUser']) {
+      next({
+        path: '/auth/login',
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
 
 export default router
