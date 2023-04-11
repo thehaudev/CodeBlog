@@ -23,30 +23,30 @@ onMounted(fetchData);
 </script>
 <template>
   <header
-    class="bg-gray-50 py-3 border-solid border-t-4 border-blue-800 shadow-md w-full fixed top-0"
+    class="fixed top-0 w-full py-3 border-t-4 border-blue-800 border-solid shadow-md bg-gray-50"
   >
-    <div class="container mx-auto flex justify-around items-center">
+    <div class="container flex items-center justify-around mx-auto">
       <router-link to="/" class="flex items-end">
         <div id="logo" class="relative">
-          <div class="rounded-full bg-blue-600 h-10 w-10"></div>
+          <div class="w-10 h-10 bg-blue-600 rounded-full"></div>
           <div
-            class="rounded-full bg-white h-5 w-5 absolute bottom-1 right-1"
+            class="absolute w-5 h-5 bg-white rounded-full bottom-1 right-1"
           ></div>
         </div>
-        <div class="text-gray-800 font-semibold font-serif text-2xl ml-2">
+        <div class="ml-2 font-serif text-2xl font-semibold text-gray-800">
           codeBlog
         </div>
       </router-link>
       <ul class="flex gap-6 text-md">
-        <li class="hover:text-blue-800 p-2"><a href="#">About</a></li>
-        <li class="hover:text-blue-800 p-2"><a href="#">Products</a></li>
-        <li class="hover:text-blue-800 p-2"><a href="#">For Teams</a></li>
+        <li class="p-2 hover:text-blue-800"><a href="#">About</a></li>
+        <li class="p-2 hover:text-blue-800"><a href="#">Products</a></li>
+        <li class="p-2 hover:text-blue-800"><a href="#">For Teams</a></li>
       </ul>
       <div class="flex gap-5">
         <section
-          class="px-2 py-1 bg-white rounded-md border-solid border border-blue-500"
+          class="flex items-center px-3 py-1 bg-white border border-blue-500 border-solid rounded-md"
         >
-          <i class="fa-solid fa-magnifying-glass mr-2 text-blue-500"></i>
+          <i class="mr-2 text-blue-500 fa-solid fa-magnifying-glass"></i>
           <input
             type="text"
             v-model="searchInput"
@@ -57,72 +57,92 @@ onMounted(fetchData);
 
         <section v-if="!user" class="flex gap-2">
           <router-link
-            class="bg-blue-600 px-2 py-1 text-white rounded-md border border-solid font-semibold border-blue-800"
+            class="px-2 py-1 font-semibold text-white bg-blue-600 border border-blue-800 border-solid rounded-md"
             to="/auth/login"
             >Log in</router-link
           >
           <router-link
-            class="bg-blue-100 px-2 py-1 text-blue-800 rounded-md border border-solid font-semibold border-blue-800"
+            class="px-2 py-1 font-semibold text-blue-800 bg-blue-100 border border-blue-800 border-solid rounded-md"
             to="/auth/register"
             >Sign up</router-link
           >
         </section>
-        <section v-else class="isLogged flex gap-2">
-          <div class="bell">
-            <i class="fa-regular fa-bell"></i>
-            <span class="badge">{{ totalNotRead }}</span>
-            <ul class="sub-menu">
-              <li v-for="notification in notifications" :key="notification._id">
-                <router-link :to="notification.link">
-                  <div v-html="notification.content"></div>
-                  <span>{{ getTimeSincePost(notification.updatedAt) }}</span>
-                </router-link>
-              </li>
-            </ul>
+        <section v-else class="isLogged flex items-end gap-2">
+          <div class="relative bell">
+            <div class="px-2 text-2xl">
+              <i class="fa-regular fa-bell"></i>
+            </div>
+            <div class="absolute flex items-center justify-center px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-full left-4 bottom-4">99</div>
+       // <section v-else class=" flex gap-2">
+         // <div class="bell">
+           // <i class="fa-regular fa-bell"></i>
+            //<span class="badge">{{ totalNotRead }}</span>
+            //<ul class="sub-menu">
+              //<li v-for="notification in notifications" :key="notification._id">
+                //<router-link :to="notification.link">
+                  //<div v-html="notification.content"></div>
+                 // <span>{{ getTimeSincePost(notification.updatedAt) }}</span>
+                //</router-link>
+              //</li>
+           // </ul>
           </div>
-          <div class="write">
-            <i class="fa-regular fa-pen-to-square"></i>
-            <ul class="sub-menu">
-              <li>
-                <router-link :to="{ name: 'post' }"
-                  ><i class="fa-solid fa-pencil"></i>Write post</router-link
+          <div class="relative write">
+            <div class="px-2 text-2xl">
+              <i class="fa-regular fa-pen-to-square"></i>
+            </div>
+            <ul
+              class="absolute right-0 z-10 flex-col hidden py-5 origin-top-right bg-white rounded-sm shadow-xl sub-menu min-w-max"
+            >
+              <li class="hover:text-gray-700 hover:bg-gray-50">
+                <router-link :to="{ name: 'post' }" class="block px-4 py-1"
+                  ><i class="mr-2 fa-solid fa-pencil"></i>Write
+                  post</router-link
                 >
               </li>
-              <li>
-                <router-link to="#"
-                  ><i class="fa-solid fa-circle-question"></i>Ask
+              <li class="hover:text-gray-700 hover:bg-gray-50">
+                <router-link to="#" class="block px-4 py-1"
+                  ><i class="mr-2 fa-solid fa-circle-question"></i>Ask
                   question</router-link
                 >
               </li>
             </ul>
           </div>
-          <div class="avatar">
-            <img :src="URL_AVATAR + user.avatar" alt="avatar" />
-            <ul class="sub-menu">
-              <li class="account">
-                <img :src="URL_AVATAR + user.avatar" alt="avatar" />
-                <div class="name">
+          <div class="relative avatar">
+            <div class="w-10 h-10">
+              <img :src="URL_AVATAR + user.avatar" />
+            </div>
+            <div
+              class="absolute right-0 z-10 flex-col hidden py-5 origin-top-right bg-white rounded-sm shadow-xl sub-menu min-w-max"
+            >
+              <div class="flex items-center h-10 gap-3 px-4 mb-4">
+                <img
+                  class="h-14"
+                  :src="URL_AVATAR + user.avatar"
+                  alt="avatar"
+                />
+                <div class="">
                   <p class="display">{{ user.display_name }}</p>
                   <p class="email">@{{ user.email.split("@")[0] }}</p>
+
                 </div>
-              </li>
-              <li>
-                <router-link to="#!"
-                  ><i class="fa-solid fa-user"></i>Profile</router-link
+              </div>
+              <div class="hover:text-gray-700 hover:bg-gray-50">
+                <router-link class="block px-4 py-1" to="#!"
+                  ><i class="mr-2 fa-solid fa-user"></i>Profile</router-link
                 >
-              </li>
-              <li>
-                <router-link to="#!"
-                  ><i class="fa-solid fa-gear"></i>Preferences</router-link
+              </div>
+              <div class="hover:text-gray-700 hover:bg-gray-50">
+                <router-link class="block px-4 py-1" to="#!"
+                  ><i class="mr-2 fa-solid fa-gear"></i>Preferences</router-link
                 >
-              </li>
-              <li>
-                <router-link :to="{ name: 'logout' }"
-                  ><i class="fa-solid fa-right-from-bracket"></i>Sign
+              </div>
+              <div class="hover:text-gray-700 hover:bg-gray-50">
+                <router-link class="block px-4 py-1" :to="{ name: 'logout' }"
+                  ><i class="mr-2 fa-solid fa-right-from-bracket"></i>Sign
                   out</router-link
                 >
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </section>
       </div>
@@ -245,80 +265,4 @@ input:focus {
   display: flex;
 }
 
-.avatar a {
-  color: #fff;
-  text-decoration: none;
-}
-
-.sub-menu {
-  color: #606266;
-  flex-direction: column;
-  justify-content: space-between;
-  position: absolute;
-  top: 100%;
-  right: 0px;
-
-  background: #fff;
-  border-radius: 5px;
-  border: 0.5px solid #e4e4e4;
-  display: none;
-}
-.avatar .sub-menu {
-  width: 220px;
-  height: 200px;
-}
-.write .sub-menu {
-  width: 150px;
-  height: 80px;
-  font-size: 16px;
-  right: -100%;
-}
-.bell .sub-menu {
-  width: 400px;
-  font-size: 16px;
-  right: -300%;
-}
-.sub-menu li {
-  flex: 1;
-}
-
-.sub-menu .account {
-  display: flex;
-  align-items: self-start;
-  justify-content: space-around;
-  color: #5488c7;
-  background-color: #f0f0f0;
-  padding: 5px 0;
-}
-.sub-menu i {
-  margin: 0 10px 0 0;
-}
-
-.account img {
-  height: 70px;
-  width: 70px;
-  border-radius: 50%;
-}
-
-.account .name {
-  margin: 10px 0 0;
-}
-
-.name .email {
-  margin: 5px 0 0;
-  color: #b1c1d5;
-}
-
-.sub-menu li:hover {
-  background: #ddd;
-}
-
-.sub-menu a {
-  display: block;
-  padding: 8px 16px;
-  color: #333;
-}
-.avatar .sub-menu > li:last-child {
-  border-top: 1px solid #ccc;
-}
 </style>

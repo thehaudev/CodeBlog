@@ -3,10 +3,10 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 </script>
 <template>
-  <div>
+  <div class="flex flex-col min-h-screen">
     <Header></Header>
     <div style="height: 67px"></div>
-    <div class="flex">
+    <div class="flex flex-grow">
       <nav>
         <ul>
           <li><router-link :to="{ name: 'home' }">Posts</router-link></li>
