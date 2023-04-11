@@ -72,20 +72,27 @@ onMounted(fetchData);
             <div class="px-2 text-2xl">
               <i class="fa-regular fa-bell"></i>
             </div>
-            <div class="absolute flex items-center justify-center px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-full left-4 bottom-4">99</div>
-       // <section v-else class=" flex gap-2">
-         // <div class="bell">
-           // <i class="fa-regular fa-bell"></i>
-            //<span class="badge">{{ totalNotRead }}</span>
-            //<ul class="sub-menu">
-              //<li v-for="notification in notifications" :key="notification._id">
-                //<router-link :to="notification.link">
-                  //<div v-html="notification.content"></div>
-                 // <span>{{ getTimeSincePost(notification.updatedAt) }}</span>
-                //</router-link>
-              //</li>
-           // </ul>
+            <ul
+              class="absolute right-0 z-10 flex-col hidden py-5 origin-top-right bg-white rounded-sm shadow-xl sub-menu min-w-max"
+            >
+              <li
+                v-for="notification in notifications"
+                :key="notification._id"
+                class="hover:text-gray-700 hover:bg-gray-50"
+              >
+                <router-link :to="notification.link">
+                  <div v-html="notification.content"></div>
+                  <span>{{ getTimeSincePost(notification.updatedAt) }}</span>
+                </router-link>
+              </li>
+            </ul>
+            <div
+              class="absolute flex items-center justify-center px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-full left-4 bottom-4"
+            >
+              {{ totalNotRead }}
+            </div>
           </div>
+
           <div class="relative write">
             <div class="px-2 text-2xl">
               <i class="fa-regular fa-pen-to-square"></i>
@@ -123,7 +130,6 @@ onMounted(fetchData);
                 <div class="">
                   <p class="display">{{ user.display_name }}</p>
                   <p class="email">@{{ user.email.split("@")[0] }}</p>
-
                 </div>
               </div>
               <div class="hover:text-gray-700 hover:bg-gray-50">
@@ -212,48 +218,6 @@ input:focus {
   color: #fff;
 }
 
-.isLogged {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 100%;
-  width: 120px;
-}
-.isLogged .avatar {
-  /* Center the content */
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  position: relative;
-
-  /* Size */
-  height: 40px;
-}
-.isLogged .avatar img {
-  height: 100%;
-  border-radius: 50%;
-}
-.isLogged .write {
-  font-size: 22px;
-  color: #666;
-  position: relative;
-  padding: 0 0 0 0;
-}
-.bell {
-  position: relative;
-  font-size: 22px;
-  color: #666;
-}
-.bell .badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  color: #fff;
-  background: #f56c6c;
-  font-size: 12px;
-  padding: 1px 2px;
-  border-radius: 50%;
-}
 .bell:hover .sub-menu {
   display: flex;
 }
@@ -264,5 +228,7 @@ input:focus {
 .avatar:hover .sub-menu {
   display: flex;
 }
-
+/* .sub-menu {
+  display: none;
+} */
 </style>
