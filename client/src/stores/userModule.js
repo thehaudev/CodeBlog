@@ -31,6 +31,24 @@ const users = {
             }
         })
         commit('setData', response.data)
+        },
+        async follow({commit},{userId}){
+          const res = await instance.get('/follow_user/',{
+            params:{
+                userId:userId
+            }
+        })
+        if(res.data.data){
+            await instance.delete('/follow_user',{
+                data:{
+                    userId:userId
+                }
+            })
+        }else{
+            await instance.post('/follow_user',{
+                userId:userId
+            })
+        }
         }
     }
   }

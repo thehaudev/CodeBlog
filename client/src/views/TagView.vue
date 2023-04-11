@@ -1,17 +1,23 @@
 <script setup>
 import { useStore } from "vuex";
 import { computed, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+const route = useRoute();
+const router = useRouter();
 const store = useStore();
 const search = ref("");
 const page = ref(1);
 const listTags = computed(() => store.getters["tags/getAllTags"]);
 const paginationOfTags = computed(() => store.getters["tags/getPagination"]);
-const tagsFollowing = computed(() => store.getters["auth/getTagsFollowing"]);
+const user = computed(() => store.getters["auth/getUser"]);
+const tagsFollowing = computed(
+  () => (user.value && store.getters["auth/getTagsFollowing"]) || []
+);
 function checkFollowTag(id) {
   return tagsFollowing.value.some((e) => e.tagId == id);
 }
 async function fetchData() {
-  await store.dispatch("auth/setTagsFollowing");
+  if (user.value) await store.dispatch("auth/setTagsFollowing");
   await store.dispatch("tags/filterTag", {
     current_page: page.value,
     search: search.value,
@@ -33,12 +39,19 @@ watch(search, async () => {
 });
 
 async function followTag(tagId) {
-  await store.dispatch("tags/follow", { tagId: tagId });
-  await store.dispatch("auth/setTagsFollowing");
-  await store.dispatch("tags/filterTag", {
-    current_page: page.value,
-    search: search.value,
-  });
+  if (user.value) {
+    await store.dispatch("tags/follow", { tagId: tagId });
+    await store.dispatch("auth/setTagsFollowing");
+    await store.dispatch("tags/filterTag", {
+      current_page: page.value,
+      search: search.value,
+    });
+  } else {
+    await store.dispatch("route/setRouteBeforeLogin", {
+      route: route.name,
+    });
+    router.push({ name: "login", params: {} });
+  }
 }
 
 onMounted(fetchData);
@@ -80,7 +93,7 @@ onMounted(fetchData);
     <ul v-if="paginationOfTags" class="pagination">
       <li href="#">&laquo;</li>
       <li
-        v-for="n in paginationOfTags.total_pages"
+        v-for="n in paginationOfTags.total_pages || 1"
         @click="setTagPage(n)"
         :key="n"
         :class="{ active: paginationOfTags.current_page == n }"

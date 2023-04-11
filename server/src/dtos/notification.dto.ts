@@ -1,13 +1,14 @@
-import { IsEmpty, IsString, Length } from "class-validator";
+import { IsEmpty, IsOptional, IsString, Length } from "class-validator";
 import { ObjectId } from 'mongodb'
 export class CreateNotificationDto {
     @IsEmpty()
-    sender: ObjectId
+    sender: string
     @IsString()
     link: string
     @IsEmpty()
-    recipient: ObjectId
+    recipient: string
     @IsString()
     @Length(10)
+    @IsOptional()
     content: string
 }

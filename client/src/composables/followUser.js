@@ -3,7 +3,11 @@ import instance from '../configs/axios'
 
 async function follow(followingId){
    try {
-    const res = await instance.get('/follow_user/'+followingId)
+    const res = await instance.get('/follow_user/',{
+        params:{
+            userId:followingId
+        }
+    })
     if(res.data.data){
         await instance.delete('/follow_user',{
             data:{

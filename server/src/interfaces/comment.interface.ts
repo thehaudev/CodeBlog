@@ -8,5 +8,7 @@ export interface Comment {
     status: boolean;
     votes: number;
     user: User;
+    inReplyToComment:string;
+    inReplyToUser:string;
     commentsReply:Comment[];
 }

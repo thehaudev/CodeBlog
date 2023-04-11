@@ -45,6 +45,15 @@ export default class CommentService {
         return comments
     }
 
+    public async findCommentById(commentId:string): Promise<Comment> {
+        if (isEmpty(commentId)) throw new HttpException(409, "comment id is empty")
+
+        const checkComment = await this.commentRepository.findById(commentId)
+        if (!checkComment) throw new HttpException(409, "Comment doesn't exist")
+
+        return checkComment
+    }
+
     public async totalCommentOfPost(postId: string): Promise<Number> {
         if (isEmpty(postId)) throw new HttpException(409, "post id is empty")
 

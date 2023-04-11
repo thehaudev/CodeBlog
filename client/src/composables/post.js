@@ -20,6 +20,7 @@ async function createPost(title,content,tags){
             return obj
         })
         await instance.post('/post_tag',newTags)
+        return res.data.data
     } catch (err) {
         error.value = err.response.data.message
     } finally{

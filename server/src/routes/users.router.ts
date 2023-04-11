@@ -9,10 +9,12 @@ import { IdDto } from '../dtos/objecId.dto';
 import { permissionUser } from '../middlewares/permission.middlerwares';
 import NotificationController from '../controllers/notification.controller';
 import Follow_TagController from '../controllers/follow_tag.controller';
+import Follow_UsersController from '../controllers/follow_user.controller';
 
 const usersController = new UsersController;
 const notificationController = new NotificationController;
 const follow_TagController = new Follow_TagController
+const follow_UserController = new Follow_UsersController
 // router.get('/', getAllUsers)
 router.get('/', usersController.findAndSortUser)
 
@@ -38,7 +40,9 @@ router.delete('/:id', validationMiddleware(IdDto, "params"), verify, permissionU
 //patch /users/me
 router.patch('/me', verify, validationMiddleware(changeProfileDto, "body"), uploadAvatar.single('avatar'),
     usersController.changeProfile)
-
+//GET /users/me/tagsFollowing
 router.get('/me/tagsFollowing',verify,follow_TagController.findFollowTagOfUser)
+//GET /users/me/usersFollowing
+router.get('/me/usersFollowing',verify,follow_UserController.findFollowUserOfUser)
 
 export default router;

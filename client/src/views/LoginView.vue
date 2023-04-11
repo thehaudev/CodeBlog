@@ -1,3 +1,31 @@
+<script setup>
+import { computed, ref } from "vue";
+import { useStore } from "vuex";
+import { useLogin } from "../composables/auth";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const store = useStore();
+const routeBeforeLogin = computed(
+  () => store.getters["route/getRouteBeforeLogin"]
+);
+const { error, isPending, login } = useLogin();
+error.value = null;
+const email = ref("");
+const password = ref("");
+async function sign() {
+  try {
+    const { user, auth } = await login(email.value, password.value);
+    if (!error.value) {
+      store.dispatch("auth/setUserToken", { user: user });
+      localStorage.setItem("accessToken", JSON.stringify(auth));
+      if (routeBeforeLogin.value) router.push({ name: routeBeforeLogin.value });
+      else router.push({ name: "home", params: {} });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+</script>
 <template>
   <div class="body">
     <main>
@@ -40,29 +68,6 @@
     </main>
   </div>
 </template>
-
-<script setup>
-import { computed, ref } from "vue";
-import { useStore } from "vuex";
-import { useLogin } from "../composables/auth";
-import { useRouter } from "vue-router";
-const router = useRouter();
-const store = useStore();
-const { error, isPending, login } = useLogin();
-error.value = null;
-const email = ref("");
-const password = ref("");
-async function sign() {
-  try {
-    const { user, auth } = await login(email.value, password.value);
-    if (!error.value) {
-      store.dispatch("auth/setUserToken", { user: user });
-      localStorage.setItem("accessToken", JSON.stringify(auth));
-      router.push({ name: "home", params: {} });
-    }
-  } catch (error) {}
-}
-</script>
 
 <style scoped>
 .body {

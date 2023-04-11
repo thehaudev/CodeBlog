@@ -14,29 +14,33 @@ export default class NotificationService {
     }
 
 
-    public async findNotificationsOfUser(data: any): Promise<{ notifications: Notification[], total: number }> {
+    public async findNotificationsOfUser(data: any): Promise<{ notifications: Notification[], total: number,totalNotRead:number }> {
         const notifications: Notification[] = await this.notificationRepository.findAndSort(data.filter, data.skip, data.take)
         const total: number = await this.notificationRepository.countNotification()
-        return { notifications, total }
+        const totalNotRead: number = await this.notificationRepository.countNotificationNotRead(data.filter)
+        return { notifications, total,totalNotRead }
     }
 
-    public async createNotification(data: any): Promise<Notification> {
+    public async createNotification(data: CreateNotificationDto): Promise<Notification|null> {
+
         if (isEmpty(data)) throw new HttpException(409, "notification data is empty")
+        console.log(data)
+        if(data.sender+""==data.recipient+"") return null
+        else{
+            const checkUser = await this.users.findById(data.recipient)
+            if (!checkUser) throw new HttpException(409, "recipient doesn't exist")
 
-        const checkUser = await this.users.findById(data.userId)
-        if (!checkUser) throw new HttpException(409, "user doesn't exist")
+            const checkSender = await this.users.findById(data.sender)
+            if (!checkSender) throw new HttpException(409, "sender doesn't exist")
 
-        const checkSender = await this.users.findById(data.sender)
-        if (!checkSender) throw new HttpException(409, "user doesn't exist")
+            const createNotification = await this.notificationRepository.create(data)
+            return createNotification
+        }
 
-        const createNotification = await this.notificationRepository.create(data)
-        return createNotification
     }
 
-    public async createNotificationsWithNewPost(data: CreateNotificationDto[]): Promise<Notification[]> {
+    public async createNotifications(data: CreateNotificationDto[]): Promise<Notification[]> {
         if (isEmpty(data)) throw new HttpException(409, "notification data is empty")
-
-
 
         const createNotification: Notification[] = await this.notificationRepository.createMany(data)
         return createNotification

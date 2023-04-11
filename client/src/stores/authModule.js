@@ -5,7 +5,8 @@ const auth = {
     state () {
       return {
         user: null,
-        tagsFollowing:null
+        tagsFollowing:null,
+        usersFollowing:null
       }
     },
     getters:{
@@ -14,6 +15,9 @@ const auth = {
       },
       getTagsFollowing(state){
         return state.tagsFollowing
+      },
+      getUsersFollowing(state){
+        return state.usersFollowing
       }
     },
     mutations: {
@@ -22,6 +26,9 @@ const auth = {
         },
         setTagsFollowing:(state,data)=>{
           state.tagsFollowing=data
+        },
+        setUserFollowing:(state,data) =>{
+          state.usersFollowing = data
         }
     },
     actions:{
@@ -33,7 +40,12 @@ const auth = {
         const res = await instance.get('/users/me/tagsFollowing')
         commit('setTagsFollowing',res.data.data)
       },
-      logout({ commit }) {
+      async setUsersFollowing({commit}){
+        const res = await instance.get('/users/me/usersFollowing')
+        commit('setUserFollowing',res.data.data)
+      },
+      async logout({ commit }) {
+        await instance.post('/auth/logout')
         commit('setUser', null);
         localStorage.removeItem('accessToken');
         localStorage.removeItem('user');
