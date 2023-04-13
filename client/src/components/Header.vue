@@ -1,12 +1,14 @@
 <script setup>
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants/index";
 import { useRouter } from "vue-router";
 import { getReadableDate, getTimeSincePost } from "../utils/time";
-
+import socket from "../plugins/socket";
 async function fetchData() {
-  await store.dispatch("notifications/setNotificationOfUser");
+  if (user.value) {
+    await store.dispatch("notifications/setNotificationOfUser");
+  }
 }
 const router = useRouter();
 
@@ -20,6 +22,28 @@ const totalNotRead = computed(
   () => store.getters["notifications/getTotalNotRead"]
 );
 onMounted(fetchData);
+onMounted(() => {
+  socket.on("new-notification", (notification) => {
+    store.dispatch("notifications/pushNotificationIO", {
+      notification: { ...notification, updatedAt: new Date() },
+    });
+  });
+  socket.on("new-comment", (notification) => {
+    store.dispatch("notifications/pushNotificationIO", {
+      notification: { ...notification, updatedAt: new Date() },
+    });
+  });
+  socket.on("vote-post", (notification) => {
+    store.dispatch("notifications/pushNotificationIO", {
+      notification: { ...notification, updatedAt: new Date() },
+    });
+  });
+});
+onUnmounted(() => {
+  socket.off("new-notification");
+  socket.off("new-comment");
+  socket.off("vote-post");
+});
 </script>
 <template>
   <header

@@ -1,3 +1,13 @@
+<script setup>
+import { ref } from "vue";
+import { useRecovery } from "../composables/auth";
+const { error, isPending, accountRecovery } = useRecovery();
+const email = ref("");
+async function recovery() {
+  const res = await accountRecovery(email.value);
+  error.value = res.msg;
+}
+</script>
 <template>
   <div class="body">
     <main>
@@ -21,18 +31,6 @@
     </main>
   </div>
 </template>
-
-<script setup>
-import { ref } from "vue";
-import { useRecovery } from "../composables/auth";
-const { error, isPending, accountRecovery } = useRecovery();
-const email = ref("");
-async function recovery() {
-  const res = await accountRecovery(email.value);
-  error.value = res.msg;
-}
-</script>
-
 <style scoped>
 .body {
   height: 100vh;

@@ -4,6 +4,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 import EditorMarkdown from "../components/EditorMarkdown.vue";
 import { usePost } from "../composables/post";
+import { limitString } from "../utils/string";
 const { error, isPending, createPost } = usePost();
 const router = useRouter();
 const search = ref("");
@@ -11,7 +12,7 @@ const store = useStore();
 const tags = ref([]);
 const title = ref("");
 const content = ref("");
-
+const user = computed(() => store.getters["auth/getUser"]);
 async function fetchData() {
   await store.dispatch("tags/filterTag", {
     search: search.value,
@@ -39,7 +40,12 @@ async function post() {
   await store.dispatch("notifications/createNewPostNotification", {
     postId: post._id,
     link: "/post/" + post._id,
-    content: `<p>Có một bài viết mới <span style="color:#709bd0;">${post.title}</span> mà có thể bạn quan tâm.</p>`,
+    content: `<p><span style="color:#709bd0;">${
+      user.value.display_name
+    }</span> đã thêm một bài viết mới <span style="color:#709bd0;">${limitString(
+      post.title,
+      30
+    )}</span> mà có thể bạn quan tâm.</p>`,
   });
   router.push({ name: "home", params: {} });
 }

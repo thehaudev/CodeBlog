@@ -8,7 +8,9 @@ import { useComment } from "../composables/comment";
 import { URL_AVATAR } from "../constants";
 const route = useRoute();
 const store = useStore();
-const postId = computed(() => route.params.id);
+const postId = computed(() => {
+  return route.params.id.split("?")[0];
+});
 const user = computed(() => store.getters["auth/getUser"]);
 
 const { createComment } = useComment();

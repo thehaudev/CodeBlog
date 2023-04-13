@@ -1,10 +1,14 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useLogin } from "../composables/auth";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
+import socket from "../plugins/socket";
 const router = useRouter();
+const route = useRoute();
 const store = useStore();
+const successForm = ref(route.query.successForm);
+
 const routeBeforeLogin = computed(
   () => store.getters["route/getRouteBeforeLogin"]
 );
@@ -12,12 +16,19 @@ const { error, isPending, login } = useLogin();
 error.value = null;
 const email = ref("");
 const password = ref("");
+
 async function sign() {
   try {
     const { user, auth } = await login(email.value, password.value);
     if (!error.value) {
-      store.dispatch("auth/setUserToken", { user: user });
-      localStorage.setItem("accessToken", JSON.stringify(auth));
+      user && store.dispatch("auth/setUserToken", { user: user });
+      auth && localStorage.setItem("accessToken", JSON.stringify(auth));
+      if (user) {
+        socket.auth = {
+          userId: user._id,
+        };
+        socket.connect();
+      }
       if (routeBeforeLogin.value) router.push({ name: routeBeforeLogin.value });
       else router.push({ name: "home", params: {} });
     }
@@ -29,6 +40,13 @@ async function sign() {
 <template>
   <div class="body">
     <main>
+      <div
+        v-if="successForm"
+        class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
+        role="alert"
+      >
+        <span class="font-medium">{{ successForm }}</span>
+      </div>
       <a href="#" class="favicon">
         <img src="../assets/favicon/ms-icon-70x70.png" alt="favicon" />
       </a>

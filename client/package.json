@@ -16,6 +16,7 @@
     "marked": "^4.3.0",
     "quill-blot-formatter": "^1.0.5",
     "quill-image-uploader": "^1.2.4",
+    "socket.io-client": "^4.6.1",
     "vue": "^3.2.47",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^4.1.6",

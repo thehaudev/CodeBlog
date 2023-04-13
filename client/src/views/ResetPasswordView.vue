@@ -1,21 +1,26 @@
 <script setup>
+import { useRoute, useRouter } from "vue-router";
+import { useResetPassword } from "../composables/auth";
 import { ref } from "vue";
-import { useSignUp } from "../composables/auth";
-import { useRouter } from "vue-router";
-const router = useRouter();
-const displayName = ref("");
-const email = ref("");
-const password = ref("");
 
-const { error, isPending, signUp } = useSignUp();
-error.value = null;
-async function sign() {
-  await signUp(email.value, password.value, displayName.value);
-  if (!error.value) {
+const route = useRoute();
+const router = useRouter();
+const newPassword = ref("");
+const confirmPassword = ref("");
+const { error, isPending, resetPassword } = useResetPassword();
+const token = ref(route.query.token);
+
+async function resetPasswordSubmit() {
+  const data = await resetPassword(
+    newPassword.value,
+    confirmPassword.value,
+    token.value
+  );
+  if (data.message) {
     router.push({
       name: "login",
       query: {
-        successForm: "Register success!",
+        successForm: "Password changed!",
       },
     });
   }
@@ -24,54 +29,40 @@ async function sign() {
 <template>
   <div class="body">
     <main>
-      <a href="#" class="favicon">
-        <img src="../assets/favicon/ms-icon-70x70.png" alt="" />
-      </a>
-      <a href="#" class="login-btn google">
-        <p><i class="fa-brands fa-google"></i> Sign up with Google</p>
-      </a>
-      <a href="#" class="login-btn github">
-        <p><i class="fa-brands fa-github"></i> Sign up with Github</p>
-      </a>
-      <a href="#" class="login-btn facebook">
-        <p>
-          <i class="fa-brands fa-square-facebook"></i> Sign up with Facebook
-        </p>
-      </a>
-      <form @submit.prevent="sign" class="formLogin">
+      <form @submit.prevent="resetPasswordSubmit()" class="formLogin">
         <div class="row">
-          <label for="displayName">Display name</label>
+          <p>Please enter a new password!</p>
+        </div>
+        <div class="row">
+          <label for="newPassword">Password</label>
           <input
             autofocus
-            v-model="displayName"
             required
-            type="text"
-            name="displayName"
+            type="password"
+            v-model="newPassword"
+            name="newPassword"
           />
         </div>
         <div class="row">
-          <label for="email">Email</label>
-          <input v-model="email" required type="email" name="email" />
+          <label for="confirmPassword">Confirm</label>
+          <input
+            autofocus
+            required
+            type="password"
+            v-model="confirmPassword"
+            name="confirmPassword"
+          />
         </div>
-        <div class="row">
-          <label for="password">Password</label>
-          <input v-model="password" required type="password" name="password" />
-          <p class="error" v-if="error">{{ error }}</p>
-        </div>
+        <p class="error" v-if="error">{{ error }}</p>
+
         <div class="row">
           <button v-if="isPending">...</button>
-
-          <button v-else type="submit">Sign up</button>
+          <button v-else type="submit">Reset password</button>
         </div>
       </form>
-      <p class="sign-up">
-        Already have an account?
-        <router-link to="/auth/login">Log in</router-link>
-      </p>
     </main>
   </div>
 </template>
-
 <style scoped>
 .body {
   height: 100vh;
@@ -86,8 +77,13 @@ main {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
+}
+p.error {
+  color: rgb(255, 69, 69);
+  margin: 5px;
+  font-size: 14px;
 }
 .favicon {
   height: 47px;
@@ -121,7 +117,7 @@ main {
 .formLogin {
   background-color: #fff;
   width: 100%;
-  height: 300px;
+  height: 230px;
   display: flex;
   justify-content: left;
   flex-direction: column;
@@ -135,11 +131,7 @@ main {
   flex-direction: column;
   justify-content: flex-start;
 }
-p.error {
-  color: rgb(255, 69, 69);
-  margin: 5px;
-  font-size: 14px;
-}
+
 .row label {
   font-weight: bold;
 }
@@ -162,5 +154,13 @@ p.error {
 }
 .sign-up a {
   color: #0a95ff;
+}
+.label-password {
+  display: flex;
+  justify-content: space-between;
+}
+.label-password a {
+  color: #21a7ef;
+  font-size: 14px;
 }
 </style>
