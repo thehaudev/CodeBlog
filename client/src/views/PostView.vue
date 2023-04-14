@@ -4,7 +4,10 @@ import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 import EditorMarkdown from "../components/EditorMarkdown.vue";
 import { usePost } from "../composables/post";
+import instance from "../configs/axios";
+import { URL_IMG } from "../constants";
 import { limitString } from "../utils/string";
+import UploadImage from "../components/UploadImage.vue";
 const { error, isPending, createPost } = usePost();
 const router = useRouter();
 const search = ref("");
@@ -13,6 +16,11 @@ const tags = ref([]);
 const title = ref("");
 const content = ref("");
 const user = computed(() => store.getters["auth/getUser"]);
+const imageCover = ref("");
+
+function handleImage(data) {
+  imageCover.value = data.image;
+}
 async function fetchData() {
   await store.dispatch("tags/filterTag", {
     search: search.value,
@@ -35,7 +43,12 @@ function addTag(tag) {
 }
 async function post() {
   const tagId = tags.value.map((e) => e._id);
-  const post = await createPost(title.value, content.value, tagId);
+  const post = await createPost(
+    title.value,
+    content.value,
+    tagId,
+    imageCover.value
+  );
   await store.dispatch("posts/fetchData");
   await store.dispatch("notifications/createNewPostNotification", {
     postId: post._id,
@@ -100,6 +113,10 @@ onMounted(fetchData);
     <div class="container content">
       <EditorMarkdown v-model:content="content"></EditorMarkdown>
     </div>
+    <div class="container upload">
+      <h2>Cover image</h2>
+      <UploadImage @sendImage="handleImage"></UploadImage>
+    </div>
     <div>
       {{ error }}
     </div>
@@ -112,12 +129,11 @@ onMounted(fetchData);
 <style scoped>
 main {
   width: 60%;
-  height: 100vh;
+  min-height: 100%;
   margin: 10px auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: auto;
 }
 .container {
   display: flex;
@@ -140,11 +156,6 @@ main {
   cursor: pointer;
 }
 
-.container.content {
-  padding: 0;
-  border: none;
-  flex: 5;
-}
 .container h2 {
   font-size: 24px;
 }
@@ -174,12 +185,18 @@ main {
   flex: 0.6;
 }
 .content {
+  padding: 0;
+  border: none;
   width: 90%;
-  flex: 5;
 }
 .tags {
   width: 90%;
   flex: 0.6;
+}
+.upload {
+  width: 90%;
+  padding: 10px 15px;
+  flex: 2;
 }
 .tags .input {
   position: relative;

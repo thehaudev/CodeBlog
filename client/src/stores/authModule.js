@@ -5,12 +5,17 @@ const auth = {
   namespaced: true,
   state() {
     return {
+      isLoggedIn: false,
       user: null,
       tagsFollowing: null,
       usersFollowing: null,
+      userImages: [],
     };
   },
   getters: {
+    isLoggedIn(state) {
+      return state.isLoggedIn;
+    },
     getUser(state) {
       return state.user;
     },
@@ -20,16 +25,23 @@ const auth = {
     getUsersFollowing(state) {
       return state.usersFollowing;
     },
+    getUserImages(state) {
+      return state.userImages;
+    },
   },
   mutations: {
     setUser: (state, user) => {
       state.user = user;
+      state.isLoggedIn = true;
     },
     setTagsFollowing: (state, data) => {
       state.tagsFollowing = data;
     },
     setUserFollowing: (state, data) => {
       state.usersFollowing = data;
+    },
+    setUserImages: (state, data) => {
+      state.userImages = data;
     },
   },
   actions: {
@@ -44,6 +56,10 @@ const auth = {
     async setUsersFollowing({ commit }) {
       const res = await instance.get("/users/me/usersFollowing");
       commit("setUserFollowing", res.data.data);
+    },
+    async setUserImages({ commit }) {
+      const res = await instance.get("/images/me");
+      commit("setUserImages", res.data.data);
     },
     async logout({ commit }) {
       await instance.post("/auth/logout");

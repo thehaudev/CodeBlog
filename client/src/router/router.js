@@ -1,6 +1,6 @@
-import { createRouter, createWebHistory, useRoute } from "vue-router";
-import { useStore } from "vuex";
-const store = useStore();
+import { computed } from "vue";
+import { createRouter, createWebHistory } from "vue-router";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -35,6 +35,9 @@ const router = createRouter({
     {
       path: "/auth/logout",
       name: "logout",
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/LogoutView.vue"),
     },
     {
@@ -56,6 +59,9 @@ const router = createRouter({
     {
       path: "/publish/post",
       name: "post",
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/PostView.vue"),
     },
     {
@@ -80,17 +86,17 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (!store.getters["auth/getUser"]) {
-      next({
-        path: "/auth/login",
-      });
+    if (!user) {
+      next({ path: "/auth/login" });
     } else {
       next();
     }
+  } else if (to.name === "login" && user) {
+    next({ path: "/" });
   } else {
     next();
   }
 });
-
 export default router;
