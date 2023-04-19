@@ -10,7 +10,7 @@ const router = createRouter({
       meta: {
         layout: "home",
       },
-      component: () => import("../views/HomeView.vue"),
+      component: () => import("../views/HomeView2.vue"),
     },
     {
       path: "/auth/login",

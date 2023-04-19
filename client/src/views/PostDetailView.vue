@@ -187,9 +187,9 @@ onMounted(() => {
   <!-- <PostsSlick :items="listPostsOfUser"></PostsSlick> -->
   <main v-if="post">
     <div class="post-active">
-      <div class="w-16">
+      <!-- <div class="w-16">
         <img :src="URL_AVATAR + post.user.avatar" alt="avatar" />
-      </div>
+      </div> -->
       <div class="vote">
         <i
           title="Upvote"
@@ -217,7 +217,45 @@ onMounted(() => {
       <div class="post">
         <div class="content-header">
           <div class="profile">
-            <div class="top">
+            <header class="mb-4 lg:mb-6 not-format">
+              <address class="flex items-center mb-6 not-italic">
+                <div
+                  class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white"
+                >
+                  <img
+                    class="mr-4 w-16 h-16 rounded-full"
+                    :src="URL_AVATAR + post.user.avatar"
+                    :alt="post.user.display_name"
+                  />
+                  <div>
+                    <a
+                      href="#"
+                      rel="author"
+                      class="text-xl font-bold text-gray-900 dark:text-white"
+                      >{{ post.user.display_name }}</a
+                    >
+                    <p
+                      class="text-base font-light text-gray-500 dark:text-gray-400"
+                    >
+                      @{{ post.user.email.split("@")[0] }}
+                    </p>
+                    <p
+                      class="text-base font-light text-gray-500 dark:text-gray-400"
+                    >
+                      <time pubdate :title="getReadableDate(post.updatedAt)">{{
+                        getReadableDate(post.updatedAt)
+                      }}</time>
+                    </p>
+                  </div>
+                </div>
+              </address>
+              <h1
+                class="mb-4 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl dark:text-white"
+              >
+                {{ post.title }}
+              </h1>
+            </header>
+            <!-- <div class="top">
               <div class="user item-center">
                 <p class="username">{{ post.user.display_name }}</p>
                 <p class="email ml-1 mr-1 text-gray-400">
@@ -232,7 +270,7 @@ onMounted(() => {
                 </button>
               </div>
               <span>{{ getReadableDate(post.updatedAt) }}</span>
-            </div>
+            </div> -->
             <div class="bottom">
               <p>
                 <i class="fa-solid fa-user-plus"></i>
@@ -255,9 +293,6 @@ onMounted(() => {
         </div>
 
         <div class="content">
-          <div class="title">
-            {{ post.title }}
-          </div>
           <ul class="tags">
             <li v-for="tag in post.tags" :key="tag._id">{{ tag.title }}</li>
           </ul>
@@ -265,7 +300,11 @@ onMounted(() => {
         </div>
       </div>
 
-      <span class="mt-3 text-2xl">Comments</span>
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">
+          Discussion (20)
+        </h2>
+      </div>
       <CommentEditor
         :inReplyToComment="null"
         :inReplyToUser="null"

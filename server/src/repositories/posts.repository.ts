@@ -188,9 +188,6 @@ export default class PostRepository extends BaseRepository<Post> {
           $and: [search ? search : {}, { status: true }],
         },
       },
-      { $sort: { updatedAt: -1 } },
-      { $skip: skip },
-      { $limit: take },
       {
         $lookup: {
           from: "bookmarks",
@@ -297,6 +294,10 @@ export default class PostRepository extends BaseRepository<Post> {
           updatedAt: 1,
         },
       },
+
+      { $sort: sort },
+      { $skip: skip },
+      { $limit: take },
     ]);
   }
 
@@ -566,7 +567,21 @@ export default class PostRepository extends BaseRepository<Post> {
     return this.model.find({ userId: id }).count().exec();
   }
 
-  async count(): Promise<Number> {
-    return this.model.count().exec();
+  async count(search: {}): Promise<Number> {
+    try {
+      const res = await this.model.aggregate([
+        {
+          $match: {
+            $and: [search ? search : {}, { status: true }],
+          },
+        },
+        {
+          $count: "count",
+        },
+      ]);
+      return res[0].count;
+    } catch (error) {
+      return 0;
+    }
   }
 }

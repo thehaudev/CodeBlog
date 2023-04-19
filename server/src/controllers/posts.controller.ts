@@ -130,8 +130,14 @@ export class PostsController {
       const { limit = 10, page = 1, search = null, sort = "" } = req.query;
       const id = req.params.id;
       let curr: {} = {};
-      if (sort == "newest") {
+      if (sort == "latest") {
         curr = { created_at: -1 };
+      } else if (sort == "views") {
+        curr = { views: -1 };
+      } else if (sort == "votes") {
+        curr = { votes: -1 };
+      } else if (sort == "comments") {
+        curr = { comments: -1 };
       }
 
       let pagination: any = {
@@ -156,14 +162,12 @@ export class PostsController {
         total_pages: +total_pages,
       };
 
-      res
-        .status(200)
-        .json({
-          count: count,
-          posts: posts,
-          pagination,
-          msg: "get posts by tag id",
-        });
+      res.status(200).json({
+        count: count,
+        posts: posts,
+        pagination,
+        msg: "get posts by tag id",
+      });
     } catch (error) {
       next(error);
     }
@@ -175,17 +179,34 @@ export class PostsController {
     next: NextFunction
   ) => {
     try {
-      const { limit = 10, page = 1, search = null, sort = "" } = req.query;
+      const {
+        limit = 10,
+        page = 1,
+        search = null,
+        sort = "latest",
+      } = req.query;
       //sort "","newest","trending"
       let curr: {} = {};
-      if (sort == "newest") {
+      if (sort == "latest") {
         curr = { created_at: -1 };
+      } else if (sort == "views") {
+        curr = { views: -1 };
+      } else if (sort == "votes") {
+        curr = { votes: -1 };
+      } else if (sort == "comments") {
+        curr = { comments: -1 };
       }
 
       let pagination: any = {
         skip: (+page - 1) * +limit,
         take: +limit,
-        search: search && { $text: { $search: `"${search}"` } },
+        // search: search && { $text: { $search: `"${search}"` } },
+        search: search && {
+          $or: [
+            { title: { $regex: `${search}`, $options: "i" } },
+            { content: { $regex: `${search}`, $options: "i" } },
+          ],
+        },
         sort: curr,
       };
       const { posts, total } = await this.postService.findAllPosts(pagination);

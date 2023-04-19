@@ -11,15 +11,14 @@ export default class TagRepository extends BaseRepository<Tag> {
   async findAndSortTags(
     skip: number,
     take: number,
+    sort?: {},
     search?: {}
   ): Promise<Tag[]> {
     return await this.model.aggregate([
       {
         $match: search ? search : {},
       },
-      { $sort: { updatedAt: -1 } },
-      { $skip: skip },
-      { $limit: take },
+
       {
         $lookup: {
           from: "post_tags",
@@ -46,6 +45,9 @@ export default class TagRepository extends BaseRepository<Tag> {
           updatedAt: 1,
         },
       },
+      { $sort: sort || { updatedAt: -1 } },
+      { $skip: skip },
+      { $limit: take },
     ]);
   }
   async count(search?: {}): Promise<Number> {

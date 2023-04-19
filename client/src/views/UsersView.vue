@@ -88,11 +88,10 @@ onMounted(fetchData);
             </p>
             <p>
               <i class="fa-solid fa-user-plus"></i>
-              <span>{{ user.followers.length }}</span>
+              <span>{{ user.followers }}</span>
             </p>
             <p>
-              <i class="fa-solid fa-pencil"></i
-              ><span>{{ user.posts.length }}</span>
+              <i class="fa-solid fa-pencil"></i><span>{{ user.posts }}</span>
             </p>
           </div>
           <button

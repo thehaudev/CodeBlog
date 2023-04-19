@@ -10,10 +10,8 @@ const appButton = ref();
 const userScroll = () => {
   if (window.scrollY > 0) {
     appButton.value.classList.add("showButton");
-    console.log("scrolled");
   } else {
     appButton.value.classList.remove("showButton");
-    console.log("top");
   }
 };
 const scrollToTop = () => {

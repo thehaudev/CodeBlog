@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, onMounted, onUnmounted, watch } from "vue";
 import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants/index";
 import { useRouter } from "vue-router";
@@ -13,6 +13,13 @@ async function fetchData() {
 const router = useRouter();
 
 const searchInput = ref("");
+watch(searchInput, () => {
+  store.dispatch("search/setSearchText", { text: searchInput.value });
+});
+
+function searchSubmit() {
+  router.push({ name: "home" });
+}
 const store = useStore();
 const user = computed(() => store.getters["auth/getUser"]);
 const notifications = computed(

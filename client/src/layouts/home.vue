@@ -6,19 +6,9 @@ import Footer from "../components/Footer.vue";
   <div class="flex flex-col min-h-screen">
     <Header></Header>
     <div style="height: 67px"></div>
-    <div class="flex flex-grow">
-      <nav>
-        <ul>
-          <li><router-link :to="{ name: 'home' }">Posts</router-link></li>
-          <li>Questions</li>
-          <li><router-link :to="{ name: 'tags' }">Tags</router-link></li>
-          <li><router-link :to="{ name: 'users' }">Users</router-link></li>
-        </ul>
-      </nav>
-      <main>
-        <slot></slot>
-      </main>
-    </div>
+    <main>
+      <slot></slot>
+    </main>
     <Footer></Footer>
   </div>
 </template>
@@ -29,6 +19,7 @@ nav {
   flex: 1;
 }
 main {
-  flex: 5;
+  width: 75%;
+  margin: 0 auto;
 }
 </style>
