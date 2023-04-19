@@ -1,20 +1,21 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const viewPostSchema = new mongoose.Schema({
+const viewPostSchema = new mongoose.Schema(
+  {
     postId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
     },
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
-    }
-}, {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+    },
+  },
+  {
     timestamps: {
-        createdAt: 'created_at', // Use `created_at` to store the created date
-    }
-});
+      createdAt: "created_at", // Use `created_at` to store the created date
+    },
+  }
+);
 
-const ViewPost = mongoose.model('view_post', viewPostSchema);
-
-module.exports = ViewPost;
+export const ViewPostModel = mongoose.model("view_post", viewPostSchema);

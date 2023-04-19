@@ -39,7 +39,9 @@ const listTags = computed(() => {
 });
 function addTag(tag) {
   search.value = "";
-  tags.value.push(tag);
+  if (tags.value.length < 5) {
+    tags.value.push(tag);
+  }
 }
 async function post() {
   const tagId = tags.value.map((e) => e._id);

@@ -1,10 +1,13 @@
-var express = require('express');
+import ViewsController from "../controllers/views.controller";
+import { ViewsPost } from "../dtos/views.dto";
+import { validationMiddleware } from "../middlewares/validation.middlewares";
+
+var express = require("express");
 var router = express.Router();
-import { DeleteVoteCommentDto, VoteCommentDto } from '../dtos/vote.dto';
-import { verify } from '../middlewares/auth.middlewares'
-import { validationMiddleware } from '../middlewares/validation.middlewares';
-
-
-
-export default router
-
+const viewsController = new ViewsController();
+router.post(
+  "/",
+  validationMiddleware(ViewsPost, "body"),
+  viewsController.createViews
+);
+export default router;

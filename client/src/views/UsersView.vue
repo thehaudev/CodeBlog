@@ -83,6 +83,10 @@ onMounted(fetchData);
           <p class="ml-3 text-gray-400">@{{ user.email.split("@")[0] }}</p>
           <div class="flex">
             <p>
+              <i class="fa-solid fa-star"></i>
+              <span>10</span>
+            </p>
+            <p>
               <i class="fa-solid fa-user-plus"></i>
               <span>{{ user.followers.length }}</span>
             </p>

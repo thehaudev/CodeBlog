@@ -62,11 +62,11 @@ const auth = {
       commit("setUserImages", res.data.data);
     },
     async logout({ commit }) {
-      await instance.post("/auth/logout");
       commit("setUser", null);
-      localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
       localStorage.removeItem("socketConnection");
+      await instance.post("/auth/logout");
+      localStorage.removeItem("accessToken");
     },
   },
 };

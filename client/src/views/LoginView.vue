@@ -78,7 +78,14 @@ async function sign() {
       <form @submit.prevent="sign" class="formLogin">
         <div class="row">
           <label for="email">Email</label>
-          <input autofocus v-model="email" required type="email" name="email" />
+          <input
+            autofocus
+            v-model="email"
+            required
+            type="email"
+            name="email"
+            placeholder="name@company.com"
+          />
         </div>
         <div class="row">
           <div class="label-password">
@@ -87,11 +94,20 @@ async function sign() {
               >Forgot password?</router-link
             >
           </div>
-          <input v-model="password" required type="password" name="password" />
+          <input
+            v-model="password"
+            required
+            placeholder="••••••••"
+            type="password"
+            name="password"
+          />
           <p class="error" v-if="error">{{ error }}</p>
         </div>
         <div class="row">
-          <button v-if="isPending">...</button>
+          <button v-if="isPending">
+            <svg class="animate-spin"></svg>
+            Processing...
+          </button>
           <button v-else type="submit">Log in</button>
         </div>
       </form>

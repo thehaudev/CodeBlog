@@ -1,50 +1,79 @@
-var router = require('express').Router()
-import { validationMiddleware } from "../middlewares/validation.middlewares"
-import { PostsController } from "../controllers/posts.controller"
-import { CreatePostDto, UpdatePostDto } from "../dtos/post.dto"
-import { CreateCommentDto } from "../dtos/comment.dto"
-import { verify } from "../middlewares/auth.middlewares"
-import { permissionPost } from "../middlewares/permission.middlerwares"
-import { IdDto } from "../dtos/objecId.dto"
+var router = require("express").Router();
+import { validationMiddleware } from "../middlewares/validation.middlewares";
+import { PostsController } from "../controllers/posts.controller";
+import { CreatePostDto, UpdatePostDto } from "../dtos/post.dto";
+import { CreateCommentDto } from "../dtos/comment.dto";
+import { verify } from "../middlewares/auth.middlewares";
+import { permissionPost } from "../middlewares/permission.middlerwares";
+import { IdDto } from "../dtos/objecId.dto";
 
-const postsController = new PostsController
+const postsController = new PostsController();
 
 //GET /api/v1/posts
-router.get('/', postsController.getAllPosts)
-
-//GET /api/v1/post/test
-router.get("/test", postsController.test)
+router.get("/", postsController.getAllPosts);
 
 //GET /api/v1/posts/:id
-router.get('/:id', validationMiddleware(IdDto, "params"), postsController.getPostById)
+router.get(
+  "/:id",
+  validationMiddleware(IdDto, "params"),
+  postsController.getPostById
+);
+
+//GET /api/v1/posts/:id/related
+router.get(
+  "/:id/related",
+  validationMiddleware(IdDto, "params"),
+  postsController.getRelatedPosts
+);
 
 //POST /api/v1/posts
-router.post('/', verify, validationMiddleware(CreatePostDto, "body"), postsController.createPost)
+router.post(
+  "/",
+  verify,
+  validationMiddleware(CreatePostDto, "body"),
+  postsController.createPost
+);
 
 //PUT /api/v1/posts/:id
-router.put('/:id', validationMiddleware(IdDto, "params"), verify, permissionPost
-    , validationMiddleware(UpdatePostDto, "body"), postsController.updatePost)
+router.put(
+  "/:id",
+  validationMiddleware(IdDto, "params"),
+  verify,
+  permissionPost,
+  validationMiddleware(UpdatePostDto, "body"),
+  postsController.updatePost
+);
 
 //DELETE /api/v1/posts:id
-router.delete('/:id', validationMiddleware(IdDto, "params"), verify, permissionPost, postsController.deletePost)
+router.delete(
+  "/:id",
+  validationMiddleware(IdDto, "params"),
+  verify,
+  permissionPost,
+  postsController.deletePost
+);
 
 //POST /api/v1/posts/:id/comments
-router.post('/:id/comments', validationMiddleware(IdDto, "params"), verify
-    , validationMiddleware(CreateCommentDto, "body"), postsController.comment)
+router.post(
+  "/:id/comments",
+  validationMiddleware(IdDto, "params"),
+  verify,
+  validationMiddleware(CreateCommentDto, "body"),
+  postsController.comment
+);
 
 //GET /api/v1/posts/:id/comments
-router.get('/:id/comments', validationMiddleware(IdDto, "params"), postsController.getCommentsOfPost)
+router.get(
+  "/:id/comments",
+  validationMiddleware(IdDto, "params"),
+  postsController.getCommentsOfPost
+);
 
 //GET /api/v1/posts/:id/bookmarks
-router.get('/:id/bookmarks', validationMiddleware(IdDto, "params"), postsController.getBookmarksOfPost)
+router.get(
+  "/:id/bookmarks",
+  validationMiddleware(IdDto, "params"),
+  postsController.getBookmarksOfPost
+);
 
-
-//tao mot thong bao khi nguoi minh theo doi tao mot bai viet moi
-//post /api/v1/post/:id/notification
-router.post("/:id/notification",)
-
-//tao mot thong bao khi co nguoi like bai viet cua chu tus
-//post /posts/:postId/likes/notifications
-router.post("/:id/likes/notification",)
-
-export default router
+export default router;

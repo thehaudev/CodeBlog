@@ -21,21 +21,26 @@ const notifications = computed(
 const totalNotRead = computed(
   () => store.getters["notifications/getTotalNotRead"]
 );
+async function readNotification(idNotification) {
+  await store.dispatch("notifications/readNotification", {
+    id: idNotification,
+  });
+}
 onMounted(fetchData);
 onMounted(() => {
-  socket.on("new-notification", (notification) => {
+  socket.on("new-post", (notification) => {
     store.dispatch("notifications/pushNotificationIO", {
-      notification: { ...notification, updatedAt: new Date() },
+      notification: notification,
     });
   });
   socket.on("new-comment", (notification) => {
     store.dispatch("notifications/pushNotificationIO", {
-      notification: { ...notification, updatedAt: new Date() },
+      notification: notification,
     });
   });
   socket.on("vote-post", (notification) => {
     store.dispatch("notifications/pushNotificationIO", {
-      notification: { ...notification, updatedAt: new Date() },
+      notification: notification,
     });
   });
 });
@@ -97,16 +102,21 @@ onUnmounted(() => {
               <i class="fa-regular fa-bell"></i>
             </div>
             <ul
-              class="absolute right-0 z-10 flex-col hidden py-5 origin-top-right bg-white rounded-sm shadow-xl sub-menu min-w-max"
+              class="absolute right-0 z-10 flex-col hidden origin-top-right bg-white rounded-sm shadow-xl sub-menu min-w-max"
             >
               <li
                 v-for="notification in notifications"
                 :key="notification._id"
-                class="hover:text-gray-700 hover:bg-gray-50"
+                :class="
+                  notification.isRead == false
+                    ? 'text-gray-700 bg-gray-200 px-5 py-1 mb-1'
+                    : 'hover:text-gray-700 hover:bg-gray-50 px-5 py-1 m-1'
+                "
+                @click="readNotification(notification._id)"
               >
                 <router-link :to="notification.link">
                   <div v-html="notification.content"></div>
-                  <span>{{ getTimeSincePost(notification.updatedAt) }}</span>
+                  <span>{{ getTimeSincePost(notification.createdAt) }}</span>
                 </router-link>
               </li>
             </ul>

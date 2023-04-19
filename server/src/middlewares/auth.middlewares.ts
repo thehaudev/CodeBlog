@@ -23,7 +23,6 @@ export const verify = async (
         next(new HttpException(401, "Wrong authentication token"));
       }
       req.user = data;
-      console.log(req.user);
       next();
     });
   } catch (err) {

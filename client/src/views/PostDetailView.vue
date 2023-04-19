@@ -1,29 +1,54 @@
 <script setup>
 import {
   computed,
-  reactive,
+  onUpdated,
+  watchEffect,
+  nextTick,
   ref,
   onMounted,
   watch,
-  watchEffect,
-  inject,
 } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants/index";
 import CommentEditor from "../components/CommentEditor.vue";
 import Comment from "../components/Comment.vue";
+import CarouselPosts from "../components/CarouselPosts.vue";
 import { useVotePost } from "../composables/votePost";
 import { useBookmark } from "../composables/bookmark";
 import { useFollow } from "../composables/followUser";
-
 import { getReadableDate, getTimeSincePost } from "../utils/time";
+import postDetail from "../stores/postModule";
+// import PostsSlick from "../components/PostsSlick.vue";
 const { follow } = useFollow();
 const { bookmark } = useBookmark();
 const { votePost } = useVotePost();
 const store = useStore();
 const route = useRoute();
 const router = useRouter();
+const limit = ref(5);
+
+//pagination comments
+watch(limit, async () => {
+  await store.dispatch("comments/setCurrent_page", {
+    current_page: 1,
+    limit: limit.value,
+    postId: postId.value,
+  });
+});
+window.addEventListener("scroll", (e) => {
+  const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+  if (
+    scrollHeight <= scrollTop + clientHeight &&
+    paginationOfComment.value.total > limit.value
+  ) {
+    if (paginationOfComment.value.total - limit.value < 5)
+      limit.value += paginationOfComment.value.total - limit.value;
+    else limit.value += 5;
+  }
+});
+
+//cuộn đến comment khi ta click vào thông báo
 const commentId = ref(route.query.commentId);
 if (commentId.value) {
   onMounted(() => {
@@ -33,33 +58,45 @@ if (commentId.value) {
     }
   });
 }
+
+//lấy dữ liệu
 const postId = ref(route.params.id);
-
 const post = computed(() => store.getters["postDetail/getPost"]);
-
 const user = computed(() => store.getters["auth/getUser"]);
-
 const listComments = computed(
   () => store.getters["comments/getCommentsInPost"]
 );
-
 const paginationOfComment = computed(
   () => store.getters["comments/getPaginationOfComments"]
 );
-async function setCommentPage(page) {
-  await store.dispatch("comments/setCurrent_page", {
-    current_page: page,
-    postId: postId.value,
-  });
-}
+const listPostsOfUser = computed(
+  () => store.getters["postDetail/getPostsOfUser"]
+);
+const listRelatedPosts = computed(
+  () => store.getters["postDetail/getRelatedPosts"]
+);
 const isVote = computed(() => store.getters["postDetail/isVote"]);
 const isBookmark = computed(() => store.getters["postDetail/isBookmark"]);
 const isFollow = computed(() => store.getters["postDetail/isFollow"]);
+
+//function event
+async function setCommentPage(page) {
+  await store.dispatch("comments/setCurrent_page", {
+    current_page: page,
+    limit: limit.value,
+    postId: postId.value,
+  });
+}
 async function followBtn(followingId) {
   if (user.value) {
     await follow(followingId);
     await store.dispatch("postDetail/fetchData", { postId: postId.value });
     await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+  } else {
+    await store.dispatch("route/setRouteBeforeLogin", {
+      route: route.name,
+    });
+    router.push({ name: "login", params: {} });
   }
 }
 async function vote(type) {
@@ -67,6 +104,11 @@ async function vote(type) {
     await votePost(postId.value, type);
     await store.dispatch("postDetail/fetchData", { postId: postId.value });
     await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+  } else {
+    await store.dispatch("route/setRouteBeforeLogin", {
+      route: route.name,
+    });
+    router.push({ name: "login", params: {} });
   }
 }
 async function bookmarkBtn() {
@@ -74,18 +116,75 @@ async function bookmarkBtn() {
     await bookmark(postId.value);
     await store.dispatch("postDetail/fetchData", { postId: postId.value });
     await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+  } else {
+    await store.dispatch("route/setRouteBeforeLogin", {
+      route: route.name,
+    });
+    router.push({ name: "login", params: {} });
   }
 }
+
+//Khởi tạo data lên store
 const fetchData = async () => {
   await store.dispatch("postDetail/fetchData", { postId: postId.value });
-  if (user.value)
-    await store.dispatch("postDetail/fetchActive", { postId: postId.value });
   await store.dispatch("comments/fetchData", { postId: postId.value });
+  if (user.value) {
+    await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+    await store.dispatch("postDetail/addViews", {
+      postId: postId.value,
+      userId: user.value._id,
+    });
+  } else {
+    await store.dispatch("postDetail/addViews", {
+      postId: postId.value,
+    });
+  }
 };
 onMounted(fetchData);
+
+const tableOfContent = ref(null);
+onMounted(() => {
+  const section = document.querySelector(".content section");
+  if (section) {
+    const headers = Array.from(section.querySelectorAll("h1, h2, h3")).map(
+      (header, index) => {
+        header.setAttribute("id", `newId${index}`);
+        return {
+          id: header.id,
+          tag: header.tagName.toLowerCase(),
+          text: header.textContent,
+        };
+      }
+    );
+    tableOfContent.value = headers;
+  }
+});
+//theo thõi trên trang tính
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    const id = entry.target.getAttribute("id");
+    if (entry.intersectionRatio > 0) {
+      document
+        .querySelector(`nav ol li a[href="#${id}"]`)
+        .parentElement.classList.add("active");
+    } else {
+      document
+        .querySelector(`nav ol li a[href="#${id}"]`)
+        .parentElement.classList.remove("active");
+    }
+  });
+});
+
+onMounted(() => {
+  document.querySelectorAll("h1[id],h2[id],h3[id]").forEach((section) => {
+    observer.observe(section);
+  });
+});
 </script>
 
 <template>
+  <!-- list posts of user  -->
+  <!-- <PostsSlick :items="listPostsOfUser"></PostsSlick> -->
   <main v-if="post">
     <div class="post-active">
       <div class="w-16">
@@ -162,9 +261,10 @@ onMounted(fetchData);
           <ul class="tags">
             <li v-for="tag in post.tags" :key="tag._id">{{ tag.title }}</li>
           </ul>
-          <section v-html="post.content"></section>
+          <section id="content" v-html="post.content"></section>
         </div>
       </div>
+
       <span class="mt-3 text-2xl">Comments</span>
       <CommentEditor
         :inReplyToComment="null"
@@ -196,6 +296,40 @@ onMounted(fetchData);
         <li href="#">&raquo;</li>
       </ul>
     </div>
+    <nav class="section-nav">
+      <!-- mục lục -->
+      <ol class="table">
+        <li v-for="li in tableOfContent" :key="li.id">
+          <a :href="'#' + li.id">{{ li.text }}</a>
+        </li>
+      </ol>
+
+      <!-- các bài viết liên quan -->
+      <h1 class="text-lg mt-3">Related posts</h1>
+
+      <ul class="mt-1">
+        <li v-for="post in listRelatedPosts" :key="post._id" class="">
+          <router-link :to="{ name: 'postDetail', params: { id: post._id } }"
+            ><span
+              >{{ post.votes
+              }}<i class="fa-solid fa-star" style="color: #e7e013"></i></span
+            >{{ post.title }}</router-link
+          >
+        </li>
+      </ul>
+      <!-- các bài viết cùng tác giả -->
+      <h1 class="text-lg mt-3">Posts of author</h1>
+      <ul class="mt-1">
+        <li v-for="post in listPostsOfUser" :key="post._id">
+          <router-link :to="{ name: 'postDetail', params: { id: post._id } }"
+            ><span
+              >{{ post.votes
+              }}<i class="fa-solid fa-star" style="color: #e7e013"></i></span
+            >{{ post.title }}</router-link
+          >
+        </li>
+      </ul>
+    </nav>
   </main>
 </template>
 <style scoped>
@@ -203,19 +337,50 @@ main {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin: 0 20%;
+  margin: 10px 15%;
 }
 main .post-active {
   width: 10%;
   right: 0px;
   display: flex;
   flex-direction: column;
-
   align-items: center;
 }
 main .post-active i {
   cursor: pointer;
 }
+
+main > nav {
+  position: sticky;
+  top: 5rem;
+  align-self: start;
+}
+
+/* 3. ScrollSpy active styles (see JS tab for activation) */
+.section-nav .table li.active > a {
+  color: #333;
+  font-weight: 500;
+}
+
+/* Sidebar Navigation */
+.section-nav {
+  padding-left: 10px;
+  border-left: 1px solid #efefef;
+}
+
+.section-nav .table a {
+  text-decoration: none;
+  display: block;
+  padding: 0.125rem 0;
+  color: #ccc;
+  transition: all 50ms ease-in-out; /* 💡 This small transition makes setting of the active state smooth */
+}
+
+.section-nav .table a:hover,
+.section-nav .table a:focus {
+  color: #666;
+}
+
 .post-active .bookmark {
   width: 50px;
   height: 50px;
@@ -258,6 +423,7 @@ main .post-active i {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding: 10px 10px 0 0;
 }
 
 .follow {
@@ -328,5 +494,8 @@ main .post-active i {
 .pagination li.active {
   background-color: #4caf50;
   color: white;
+}
+.mt-1 {
+  color: #2183d1;
 }
 </style>

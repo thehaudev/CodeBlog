@@ -15,7 +15,6 @@ async function votePost(postId, type) {
         postId: postId,
         type: type,
       });
-      console.log(res);
       await instance.post("/notifications/vote-post/" + res.data.data._id, {
         link: "/post/" + postId,
       });

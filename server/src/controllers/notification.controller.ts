@@ -281,10 +281,10 @@ export default class NotificationController {
       } else {
         const createNotifications =
           await this.notificationService.createNotifications(notification);
-        for (const e of notification) {
+        for (const e of createNotifications) {
           io.sockets.sockets.forEach((socket: any) => {
             if (socket.userId == e.recipient) {
-              socket.emit("new-notification", e);
+              socket.emit("new-post", e);
             }
           });
         }

@@ -48,6 +48,9 @@ const notifications = {
       const res = await instance.get("/users/notifications");
       commit("setNotificationOfUser", res.data);
     },
+    async readNotification({}, { id }) {
+      await instance.patch("/notifications/read/" + id);
+    },
     pushNotificationIO({ commit }, { notification }) {
       commit("pushNotificationIO", notification);
     },
