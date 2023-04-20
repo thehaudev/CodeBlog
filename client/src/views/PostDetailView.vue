@@ -143,7 +143,7 @@ const fetchData = async () => {
 onMounted(fetchData);
 
 const tableOfContent = ref(null);
-onMounted(() => {
+onUpdated(() => {
   const section = document.querySelector(".content section");
   if (section) {
     const headers = Array.from(section.querySelectorAll("h1, h2, h3")).map(
@@ -159,27 +159,33 @@ onMounted(() => {
     tableOfContent.value = headers;
   }
 });
-//theo thõi trên trang tính
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    const id = entry.target.getAttribute("id");
-    if (entry.intersectionRatio > 0) {
-      document
-        .querySelector(`nav ol li a[href="#${id}"]`)
-        .parentElement.classList.add("active");
-    } else {
-      document
-        .querySelector(`nav ol li a[href="#${id}"]`)
-        .parentElement.classList.remove("active");
-    }
-  });
-});
+// //theo thõi trên trang tính
+// const observer = new IntersectionObserver((entries) => {
+//   entries.forEach((entry) => {
+//     const id = entry.target.getAttribute("id");
+//     console.log(id);
+//     if (entry.intersectionRatio > 0) {
+//       document
+//         .querySelector(`nav ol li a[href="#${id}"]`)
+//         .parentElement.classList.add("active");
+//     } else {
+//       document
+//         .querySelector(`nav ol li a[href="#${id}"]`)
+//         .parentElement.classList.remove("active");
+//     }
+//   });
+// });
 
-onMounted(() => {
-  document.querySelectorAll("h1[id],h2[id],h3[id]").forEach((section) => {
-    observer.observe(section);
-  });
-});
+// onMounted(() => {
+//   document.querySelectorAll("h1[id] h2[id] h3[id]").forEach((section) => {
+//     observer.observe(section);
+//   });
+// });
+
+function scrollToElement(id) {
+  const element = document.getElementById(id);
+  element.scrollIntoView({ behavior: "smooth" });
+}
 </script>
 
 <template>
@@ -255,22 +261,6 @@ onMounted(() => {
                 {{ post.title }}
               </h1>
             </header>
-            <!-- <div class="top">
-              <div class="user item-center">
-                <p class="username">{{ post.user.display_name }}</p>
-                <p class="email ml-1 mr-1 text-gray-400">
-                  @{{ post.user.email.split("@")[0] }}
-                </p>
-                <button
-                  @click="followBtn(post.user._id)"
-                  class="follow"
-                  :class="{ active: isFollow }"
-                >
-                  {{ isFollow ? "Following" : "Follow" }}
-                </button>
-              </div>
-              <span>{{ getReadableDate(post.updatedAt) }}</span>
-            </div> -->
             <div class="bottom">
               <p>
                 <i class="fa-solid fa-user-plus"></i>
@@ -339,7 +329,7 @@ onMounted(() => {
       <!-- mục lục -->
       <ol class="table">
         <li v-for="li in tableOfContent" :key="li.id">
-          <a :href="'#' + li.id">{{ li.text }}</a>
+          <a @click.prevent="scrollToElement(li.id)">{{ li.text }}</a>
         </li>
       </ol>
 

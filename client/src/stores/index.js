@@ -8,8 +8,10 @@ import users from "./userModule";
 import route from "./routeModule";
 import notifications from "./notificationModule";
 import search from "./searchHeaderModule";
+import postsTagged from "./postsTaggedModule";
 const store = createStore({
   modules: {
+    postsTagged,
     search,
     notifications,
     route,

@@ -43,7 +43,10 @@ export default class PostsService {
       filter.sort,
       filter.search
     );
-    const total: Number = await this.tagRepository.countPostsByTagId(id);
+    const total: Number = await this.tagRepository.countPostsByTagId(
+      id,
+      filter.search
+    );
     return { posts, total: total };
   }
 

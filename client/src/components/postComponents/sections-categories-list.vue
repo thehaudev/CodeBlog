@@ -8,36 +8,45 @@ const page = ref(1);
 const store = useStore();
 const router = useRouter();
 async function fetchData() {
-  await store.dispatch("tags/filterTag", {
+  await store.dispatch("tags/filterTagsShowInHome", {
     current_page: page.value,
     search: search.value,
     sort: "posts",
   });
 }
-const listTags = computed(() => store.getters["tags/getAllTags"]);
-
+const listTags = computed(() => store.getters["tags/tagsShowInHome"]);
 onMounted(fetchData);
 </script>
 <template>
   <div
+    v-if="listTags"
     class="flex flex-wrap bg-white px-4 py-6 max-w-sm mx-auto rounded-lg shadow-md"
   >
-    <!-- <ul class="">
-      <li v-for="tag in listTags" :key="tag._id">
-        <a
-          class="text-gray-700 font-bold mx-1 hover:text-gray-600 hover:underline"
-          href="#"
-          >- {{ tag.title }}</a
-        >
-      </li>
-    </ul> -->
     <div
       v-for="tag in listTags"
       :key="tag._id"
       class="mr-2 mb-2 cursor-pointer text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full"
     >
-      {{ tag.title }}
-      #{{ tag.posts }}
+      <router-link
+        :to="{
+          name: 'postsTagged',
+          params: {
+            id: tag._id,
+          },
+        }"
+        >{{ tag.title }} #{{ tag.posts }}</router-link
+      >
+    </div>
+  </div>
+  <div
+    v-else
+    class="flex flex-col m-8 rounded shadow-md w-60 sm:w-80 animate-pulse h-96"
+  >
+    <div class="h-48 rounded-t bg-gray-300"></div>
+    <div class="flex-1 px-4 py-8 space-y-4 sm:p-8 bg-gray-50">
+      <div class="w-full h-6 rounded bg-gray-300"></div>
+      <div class="w-full h-6 rounded bg-gray-300"></div>
+      <div class="w-3/4 h-6 rounded bg-gray-300"></div>
     </div>
   </div>
 </template>

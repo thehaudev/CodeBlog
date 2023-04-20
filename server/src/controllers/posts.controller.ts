@@ -131,7 +131,7 @@ export class PostsController {
       const id = req.params.id;
       let curr: {} = {};
       if (sort == "latest") {
-        curr = { created_at: -1 };
+        curr = { updatedAt: -1 };
       } else if (sort == "views") {
         curr = { views: -1 };
       } else if (sort == "votes") {
@@ -143,7 +143,12 @@ export class PostsController {
       let pagination: any = {
         skip: (+page - 1) * +limit,
         take: +limit,
-        search: search && { $text: { $search: `"${search}"` } },
+        search: search && {
+          $or: [
+            { title: { $regex: `${search}`, $options: "i" } },
+            { content: { $regex: `${search}`, $options: "i" } },
+          ],
+        },
         sort: curr,
       };
       const { posts, total } = await this.postService.getPostsByTagId(
@@ -188,7 +193,7 @@ export class PostsController {
       //sort "","newest","trending"
       let curr: {} = {};
       if (sort == "latest") {
-        curr = { created_at: -1 };
+        curr = { updatedAt: -1 };
       } else if (sort == "views") {
         curr = { views: -1 };
       } else if (sort == "votes") {

@@ -37,11 +37,15 @@ const postDetail = {
     setData: (state, data) => {
       state.post = data.post;
     },
-    setActive: (state, data) => {
+    setVote: (state, data) => {
       if (data.voteType) state.isVote = data.voteType;
       else state.isVote = null;
+    },
+    setBookmark: (state, data) => {
       if (data.isBookmark) state.isBookmark = true;
       else state.isBookmark = false;
+    },
+    setFollow: (state, data) => {
       if (data.isFollow) state.isFollow = true;
       else state.isFollow = false;
     },
@@ -63,18 +67,30 @@ const postDetail = {
       commit("setPostsOfUser", postsOfUser.data.posts);
       commit("setRelatedPosts", relatedPosts.data.posts);
     },
-    async fetchActive({ commit, state }, { postId }) {
+    async fetchVote({ commit, state }, { postId }) {
       if (localStorage.getItem("accessToken")) {
         const isVote = await instance.get("/vote_post/" + postId);
+        commit("setVote", {
+          voteType: isVote.data.data?.type,
+        });
+      }
+    },
+    async fetchBookmark({ commit, state }, { postId }) {
+      if (localStorage.getItem("accessToken")) {
         const isBookmark = await instance.get("/bookmarks/" + postId);
+        commit("setBookmark", {
+          isBookmark: isBookmark.data.data,
+        });
+      }
+    },
+    async fetchFollow({ commit, state }, { postId }) {
+      if (localStorage.getItem("accessToken")) {
         const isFollow = await instance.get("/follow_user/", {
           params: {
             userId: state.post.user._id,
           },
         });
-        commit("setActive", {
-          voteType: isVote.data.data?.type,
-          isBookmark: isBookmark.data.data,
+        commit("setFollow", {
           isFollow: isFollow.data.data,
         });
       }

@@ -5,6 +5,8 @@ const tags = {
   state() {
     return {
       listTags: [],
+      tagInPostTagged: null,
+      tagsShowInHome: null,
       pagination: null,
     };
   },
@@ -15,11 +17,23 @@ const tags = {
     getPagination(state) {
       return state.pagination;
     },
+    tagsShowInHome(state) {
+      return state.tagsShowInHome;
+    },
+    tagInPostTagged(state) {
+      return state.tagInPostTagged;
+    },
   },
   mutations: {
     setData: (state, listTags) => {
       state.listTags = listTags.data;
       state.pagination = listTags.pagination;
+    },
+    setTagsShowInHome: (state, listTags) => {
+      state.tagsShowInHome = listTags.data;
+    },
+    setTagInPostTagged: (state, tag) => {
+      state.tagInPostTagged = tag.data;
     },
   },
   actions: {
@@ -32,6 +46,20 @@ const tags = {
         },
       });
       commit("setData", response.data);
+    },
+    async filterTagsShowInHome({ commit }, { current_page, search, sort }) {
+      const response = await instance.get("/tags", {
+        params: {
+          sort: sort,
+          page: current_page,
+          search: search,
+        },
+      });
+      commit("setTagsShowInHome", response.data);
+    },
+    async setTagInPostTagged({ commit }, { tagId }) {
+      const response = await instance.get("/tags/" + tagId);
+      commit("setTagInPostTagged", response.data);
     },
     async follow({ commit }, { tagId }) {
       const res = await instance.get("/follow_tag", {

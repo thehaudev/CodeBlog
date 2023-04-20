@@ -6,6 +6,12 @@ const router = createRouter({
   routes: [
     {
       path: "/",
+      name: "hero",
+
+      component: () => import("../views/HeroView.vue"),
+    },
+    {
+      path: "/home",
       name: "home",
       meta: {
         layout: "home",
@@ -46,7 +52,15 @@ const router = createRouter({
       meta: {
         layout: "home",
       },
-      component: () => import("../views/TagView.vue"),
+      component: () => import("../views/TagsView.vue"),
+    },
+    {
+      path: "/posts/tagged/:id",
+      name: "postsTagged",
+      meta: {
+        layout: "home",
+      },
+      component: () => import("../views/PostsTagged.vue"),
     },
     {
       path: "/users",
@@ -65,9 +79,14 @@ const router = createRouter({
       component: () => import("../views/PostView.vue"),
     },
     {
+      path: "/post2/:id",
+      name: "postDetail2",
+      component: () => import("../views/PostDetailView.vue"),
+    },
+    {
       path: "/post/:id",
       name: "postDetail",
-      component: () => import("../views/PostDetailView.vue"),
+      component: () => import("../views/PostDetailView2.vue"),
     },
     {
       path: "/me/profile",

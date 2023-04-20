@@ -58,8 +58,12 @@ onMounted(fetchData);
 </script>
 
 <template>
-  <main>
-    <h1>User</h1>
+  <div class="w-full lg:w-8/12" v-if="listUsers && paginationOfUsers">
+    <div class="flex items-center justify-between">
+      <h1 class="text-xl font-bold text-gray-700 md:text-2xl">
+        User({{ paginationOfUsers.total }})
+      </h1>
+    </div>
     <input
       v-model="search"
       type="search"
@@ -105,20 +109,53 @@ onMounted(fetchData);
         </div>
       </div>
     </section>
-    <ul v-if="paginationOfUsers" class="pagination">
-      <li href="#">&laquo;</li>
-      <li
-        v-for="n in paginationOfUsers.total_pages || 1"
-        @click="setUserPage(n)"
-        :key="n"
-        :class="{ active: paginationOfUsers.current_page == n }"
-        href="#"
-      >
-        {{ n }}
-      </li>
-      <li href="#">&raquo;</li>
-    </ul>
-  </main>
+    <!-- pagination -->
+    <div class="mt-8" v-if="paginationOfUsers.total_pages != 0">
+      <ul class="flex">
+        <li
+          @click="
+            paginationOfUsers.current_page != 1 &&
+              setUserPage(paginationOfUsers.current_page - 1)
+          "
+          :class="{
+            hover_pagi: paginationOfUsers.current_page != 1,
+          }"
+          class="mx-1 px-3 py-2 bg-gray-200 text-gray-500 rounded-lg cursor-pointer"
+        >
+          <span class="flex items-center font-bold">previous</span>
+        </li>
+        <li
+          v-for="n in paginationOfUsers.total_pages"
+          @click="setUserPage(n)"
+          :key="n"
+          :class="{ active: paginationOfUsers.current_page == n }"
+          class="mx-1 px-3 py-2 bg-gray-200 text-gray-700 hover:bg-gray-700 hover:text-gray-200 rounded-lg cursor-pointer"
+        >
+          <span class="font-bold">{{ n }}</span>
+        </li>
+        <li
+          @click="
+            paginationOfUsers.current_page != paginationOfUsers.total_pages &&
+              setUserPage(paginationOfUsers.current_page + 1)
+          "
+          :class="{
+            hover_pagi:
+              paginationOfUsers.current_page != paginationOfUsers.total_pages,
+          }"
+          class="mx-1 px-3 py-2 bg-gray-200 text-gray-500 rounded-lg cursor-pointer"
+        >
+          <span class="flex items-center font-bold">Next</span>
+        </li>
+      </ul>
+    </div>
+    <div v-else class="flex flex-col items-center mt-10">
+      <i class="fa-solid fa-magnifying-glass fa-2xl"></i>
+      <p class="mt-4">
+        We couldn't find anything for
+        <span class="font-medium">{{ search }}</span>
+      </p>
+    </div>
+  </div>
 </template>
 <style scoped>
 .tag-layout {
@@ -155,16 +192,18 @@ onMounted(fetchData);
   background-color: #5488c7;
   color: #fff;
 }
-.pagination li {
-  color: black;
-  float: left;
-  padding: 8px 16px;
-  text-decoration: none;
-  cursor: pointer;
-}
 
-.pagination li.active {
-  background-color: #4caf50;
-  color: white;
+.active {
+  background-color: rgb(55 65 81 / 1);
+  color: rgb(229 231 235 / 1);
+}
+.hover_pagi {
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity));
+}
+.hover_pagi:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+  color: rgb(229 231 235 / var(--tw-bg-opacity));
 }
 </style>

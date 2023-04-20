@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mt-6 w-full bg-blue-800 text-white pt-6 pb-10 px-6 border-solid border-t-4 border-blue-600"
+    class="w-full bg-blue-800 text-white pt-6 pb-10 px-6 border-solid border-t-4 border-blue-600"
   >
     <div class="container flex justify-around mx-auto">
       <div class="w-3/12 flex flex-col items-center p-3">
@@ -73,4 +73,7 @@ const phone = ref("+84 848 484 8484");
 </script>
 <style scoped>
 @import url("https://fonts.googleapis.com/css?family=Open+Sans");
+.bg-blue {
+  background-color: rgb(2, 132, 199);
+}
 </style>

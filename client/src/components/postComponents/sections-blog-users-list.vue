@@ -8,11 +8,11 @@ const route = useRoute();
 const store = useStore();
 const search = ref("");
 const page = ref(1);
-const user = computed(() => store.getters["auth/getUser"]);
-const listUsers = computed(() => store.getters["users/getAllUsers"]);
+// const user = computed(() => store.getters["auth/getUser"]);
+const listUsers = computed(() => store.getters["users/getUsersShowInHome"]);
 async function fetchData() {
-  if (user.value) await store.dispatch("auth/setUsersFollowing");
-  await store.dispatch("users/filterUser", {
+  // if (user.value) await store.dispatch("auth/setUsersFollowing");
+  await store.dispatch("users/filterUsersShowInHome", {
     limit: 6,
     sort: "follower",
     current_page: page.value,
@@ -24,6 +24,7 @@ onMounted(fetchData);
 
 <template>
   <div
+    v-if="listUsers"
     class="flex flex-col bg-white max-w-sm px-6 py-4 mx-auto rounded-lg shadow-md"
   >
     <ul class="-mx-4">
@@ -48,20 +49,17 @@ onMounted(fetchData);
           >
         </p>
       </li>
-
-      <!-- <li class="flex items-center mt-6">
-        <img
-          class="w-10 h-10 object-cover rounded-full mx-4"
-          src="https://images.unsplash.com/photo-1464863979621-258859e62245?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=333&q=80"
-          alt="avatar"
-        />
-        <p>
-          <a class="text-gray-700 font-bold mx-1 hover:underline" href="#"
-            >Jane Doe</a
-          >
-          <span class="text-gray-700 text-sm font-light">Created 52 Posts</span>
-        </p>
-      </li> -->
     </ul>
+  </div>
+  <div
+    v-else
+    class="flex flex-col m-8 rounded shadow-md w-60 sm:w-80 animate-pulse h-96"
+  >
+    <div class="h-48 rounded-t bg-gray-300"></div>
+    <div class="flex-1 px-4 py-8 space-y-4 sm:p-8 bg-gray-50">
+      <div class="w-full h-6 rounded bg-gray-300"></div>
+      <div class="w-full h-6 rounded bg-gray-300"></div>
+      <div class="w-3/4 h-6 rounded bg-gray-300"></div>
+    </div>
   </div>
 </template>

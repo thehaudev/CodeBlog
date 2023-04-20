@@ -43,6 +43,14 @@ export default class PostRepository extends BaseRepository<Post> {
             },
             {
               $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "_id",
+                as: "user",
+              },
+            },
+            {
+              $lookup: {
                 from: "post_tags",
                 localField: "_id",
                 foreignField: "postId",
@@ -81,6 +89,7 @@ export default class PostRepository extends BaseRepository<Post> {
                 content: 1,
                 status: 1,
                 tags: 1,
+                user: 1,
                 views: { $size: "$views" },
                 votes: {
                   $reduce: {

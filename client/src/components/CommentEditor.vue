@@ -45,7 +45,7 @@ var toolbarOptions = [
 ];
 </script>
 <template>
-  <form v-if="user" class="mb-6">
+  <form @submit.prevent="postComment()" v-if="user" class="mb-6">
     <div
       class="py-2 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700"
     >
@@ -57,26 +57,12 @@ var toolbarOptions = [
       ></EditorMarkdown>
     </div>
     <button
-      @click="postComment()"
+      type="submit"
       class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-600 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
     >
       Post comment
     </button>
   </form>
-  <!-- <div v-if="user" class="comments mt-3 p-4">
-    <div class="postComment">
-      <div class="avatar mr-2">
-        <img :src="URL_AVATAR + user.avatar" alt="avatar" />
-      </div>
-      <div class="content">
-        <EditorMarkdown
-          v-model:content="content"
-          :toolbar="toolbarOptions"
-        ></EditorMarkdown>
-      </div>
-    </div>
-    <button class="comment-btn" @click="postComment()">Comment</button>
-  </div> -->
 </template>
 <style scoped>
 .comments {

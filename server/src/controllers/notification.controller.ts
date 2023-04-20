@@ -263,7 +263,7 @@ export default class NotificationController {
         .filter(
           (value, index, self) =>
             self.findIndex((v) => v.toHexString() === value.toHexString()) ===
-              index && value.toHexString() !== user._id
+              index && value.toHexString() === user._id
         );
 
       const notification: CreateNotificationDto[] = listFollowerId.map((e) => {

@@ -1,8 +1,9 @@
 <template>
   <div>
     <Header></Header>
-    <div style="height: 67px"></div>
-    <slot></slot>
+    <main>
+      <slot></slot>
+    </main>
     <Footer></Footer>
   </div>
 </template>
@@ -11,4 +12,8 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 </script>
 
-<style scoped></style>
+<style scoped>
+main {
+  padding-top: 67px;
+}
+</style>

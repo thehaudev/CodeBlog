@@ -106,6 +106,7 @@ onMounted(fetchData);
           @change="handleFileInputChange"
         />
       </label>
+
       <button class="close-btn" @click="isDisplay = false">
         <i class="fa-solid fa-xmark"></i>
       </button>

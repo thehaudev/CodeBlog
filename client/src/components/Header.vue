@@ -59,7 +59,7 @@ onUnmounted(() => {
 </script>
 <template>
   <header
-    class="fixed top-0 w-full py-3 border-t-4 border-blue-800 border-solid shadow-md bg-gray-50"
+    class="fixed top-0 w-full py-3 border-t-4 border-blue-800 border-solid shadow-md bg-gray-50 z-30"
   >
     <div class="container flex items-center justify-around mx-auto">
       <router-link to="/" class="flex items-end">

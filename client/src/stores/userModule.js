@@ -6,6 +6,7 @@ const users = {
     return {
       listUsers: [],
       pagination: null,
+      usersShowInHome: null,
     };
   },
   getters: {
@@ -15,11 +16,17 @@ const users = {
     getPagination(state) {
       return state.pagination;
     },
+    getUsersShowInHome(state) {
+      return state.usersShowInHome;
+    },
   },
   mutations: {
     setData: (state, listUsers) => {
       state.listUsers = listUsers.data;
       state.pagination = listUsers.pagination;
+    },
+    setUsersShowInHome: (state, listUsers) => {
+      state.usersShowInHome = listUsers.data;
     },
   },
   actions: {
@@ -33,6 +40,20 @@ const users = {
         },
       });
       commit("setData", response.data);
+    },
+    async filterUsersShowInHome(
+      { commit },
+      { current_page, sort, search, limit = 9 }
+    ) {
+      const response = await instance.get("/users", {
+        params: {
+          limit: limit,
+          sort: sort,
+          page: current_page,
+          search: search,
+        },
+      });
+      commit("setUsersShowInHome", response.data);
     },
     async follow({ commit }, { userId }) {
       const res = await instance.get("/follow_user/", {
