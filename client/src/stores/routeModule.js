@@ -1,26 +1,26 @@
-import instance from "../configs/axios"
+import instance from "../configs/axios";
 
 const route = {
-    namespaced:true,
-    state () {
-      return {
-        beforeLogin:null
-      }
+  namespaced: true,
+  state() {
+    return {
+      beforeLogin: null,
+    };
+  },
+  getters: {
+    getRouteBeforeLogin(state) {
+      return state.beforeLogin;
     },
-    getters:{
-        getRouteBeforeLogin(state){
-            return state.beforeLogin
-        }
+  },
+  mutations: {
+    setRouteBeforeLogin: (state, data) => {
+      state.beforeLogin = data;
     },
-    mutations: {
-        setRouteBeforeLogin:(state,data)=>{
-            state.beforeLogin = data
-        }
+  },
+  actions: {
+    setRouteBeforeLogin({ commit }, { route, path }) {
+      commit("setRouteBeforeLogin", path);
     },
-    actions:{
-        setRouteBeforeLogin({commit},{route}){
-            commit('setRouteBeforeLogin',route)
-        }
-    }
-  }
-  export default route
+  },
+};
+export default route;

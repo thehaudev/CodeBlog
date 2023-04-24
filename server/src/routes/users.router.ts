@@ -31,7 +31,7 @@ router.get(
   notificationController.getNotificationsOfUser
 );
 
-//get /api/v1/users/posts
+//get /api/v1/users/:id/posts
 router.get("/:id/posts", postsController.getPostsOfUser);
 
 //GET /users/:id

@@ -32,6 +32,7 @@ async function readNotification(idNotification) {
   await store.dispatch("notifications/readNotification", {
     id: idNotification,
   });
+  fetchData();
 }
 onMounted(fetchData);
 onMounted(() => {
@@ -174,7 +175,9 @@ onUnmounted(() => {
                 </div>
               </div>
               <div class="hover:text-gray-700 hover:bg-gray-50">
-                <router-link class="block px-4 py-1" to="#!"
+                <router-link
+                  class="block px-4 py-1"
+                  :to="{ name: 'profile', params: { id: user._id } }"
                   ><i class="mr-2 fa-solid fa-user"></i>Profile</router-link
                 >
               </div>

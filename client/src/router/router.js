@@ -4,19 +4,19 @@ import { createRouter, createWebHistory } from "vue-router";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    // {
+    //   path: "/",
+    //   name: "hero",
+
+    //   component: () => import("../views/HeroView.vue"),
+    // },
     {
       path: "/",
-      name: "hero",
-
-      component: () => import("../views/HeroView.vue"),
-    },
-    {
-      path: "/home",
       name: "home",
       meta: {
         layout: "home",
       },
-      component: () => import("../views/HomeView2.vue"),
+      component: () => import("../views/HomeView.vue"),
     },
     {
       path: "/auth/login",
@@ -79,22 +79,15 @@ const router = createRouter({
       component: () => import("../views/PostView.vue"),
     },
     {
-      path: "/post2/:id",
-      name: "postDetail2",
+      path: "/post/:id",
+      name: "postDetail",
       component: () => import("../views/PostDetailView.vue"),
     },
     {
-      path: "/post/:id",
-      name: "postDetail",
-      component: () => import("../views/PostDetailView2.vue"),
-    },
-    {
-      path: "/me/profile",
+      path: "/users/:id",
       name: "profile",
-      meta: {
-        requiresAuth: true,
-      },
-      component: () => import("../views/ProfileView.vue"),
+
+      component: () => import("../views/Profile.vue"),
     },
     {
       path: "/:pathMatch(.*)*",

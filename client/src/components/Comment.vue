@@ -88,13 +88,6 @@ function commented() {
           </div>
         </div>
         <div v-html="commentReply.content"></div>
-        <!-- <span
-          @click="
-            (selectedReplyComment = commentReply._id), (selectedComment = null)
-          "
-          class="text-blue-500 cursor-pointer"
-          >Reply</span
-        > -->
         <button
           @click="
             (selectedReplyComment = commentReply._id), (selectedComment = null)
@@ -131,7 +124,7 @@ function commented() {
         class="flex justify-center text-blue-500 cursor-pointer"
         @click="maxReplies = comment.commentsReply.length"
       >
-        Show all {{ comment.commentsReply.length }} replies
+        Show {{ comment.commentsReply.length }} replies
       </span>
       <span
         v-if="

@@ -11,7 +11,6 @@ export default class ViewsController {
   ) => {
     try {
       const { postId, userId } = req.body;
-      console.log(req.body);
       const createView = this.viewsService.createView({
         postId: postId,
         userId: userId,

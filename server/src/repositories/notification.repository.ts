@@ -10,7 +10,7 @@ export default class NotificationRepository extends BaseRepository<Notification>
   public async findAndSort(filter: {}, skip: number, take: number) {
     return await this.model
       .find(filter)
-      .sort({ updatedAt: -1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(take)
       .exec();

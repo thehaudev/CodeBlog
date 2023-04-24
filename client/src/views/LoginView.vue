@@ -28,8 +28,9 @@ async function sign() {
           userId: user._id,
         };
         socket.connect();
+        localStorage.setItem("socketConnection", JSON.stringify(socket.auth));
       }
-      if (routeBeforeLogin.value) router.push({ name: routeBeforeLogin.value });
+      if (routeBeforeLogin.value) router.push({ path: routeBeforeLogin.value });
       else router.push({ name: "home", params: {} });
     }
   } catch (error) {

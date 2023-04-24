@@ -39,7 +39,6 @@ const notifications = {
       });
     },
     async createNewCommentNotification({ commit }, { commentId, link }) {
-      console.log(commentId, link);
       instance.post("/notifications/new-comment/" + commentId, {
         link: link,
       });

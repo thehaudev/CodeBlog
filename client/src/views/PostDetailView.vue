@@ -1,33 +1,19 @@
 <script setup>
-import {
-  computed,
-  onUpdated,
-  watchEffect,
-  nextTick,
-  ref,
-  onMounted,
-  watch,
-} from "vue";
+import RelatedPost from "../components/postDetailComponents/RelatedPost.vue";
+import CommentEditor from "../components/CommentEditor.vue";
+import SkeletonLoader from "../components/skeletonLoader.vue";
+import Comment from "../components/Comment.vue";
+import PostAcive from "../components/PostAcive.vue";
+
+import { computed, onUpdated, ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { URL_AVATAR } from "../constants/index";
-import CommentEditor from "../components/CommentEditor.vue";
-import Comment from "../components/Comment.vue";
-import CarouselPosts from "../components/CarouselPosts.vue";
-import { useVotePost } from "../composables/votePost";
-import { useBookmark } from "../composables/bookmark";
-import { useFollow } from "../composables/followUser";
+import { URL_AVATAR, URL_IMG } from "../constants/index";
 import { getReadableDate, getTimeSincePost } from "../utils/time";
-import postDetail from "../stores/postModule";
-// import PostsSlick from "../components/PostsSlick.vue";
-const { follow } = useFollow();
-const { bookmark } = useBookmark();
-const { votePost } = useVotePost();
+
 const store = useStore();
 const route = useRoute();
-const router = useRouter();
 const limit = ref(5);
-
 //pagination comments
 watch(limit, async () => {
   await store.dispatch("comments/setCurrent_page", {
@@ -36,6 +22,7 @@ watch(limit, async () => {
     postId: postId.value,
   });
 });
+
 window.addEventListener("scroll", (e) => {
   const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
   if (
@@ -63,6 +50,7 @@ if (commentId.value) {
 const postId = ref(route.params.id);
 const post = computed(() => store.getters["postDetail/getPost"]);
 const user = computed(() => store.getters["auth/getUser"]);
+
 const listComments = computed(
   () => store.getters["comments/getCommentsInPost"]
 );
@@ -75,61 +63,15 @@ const listPostsOfUser = computed(
 const listRelatedPosts = computed(
   () => store.getters["postDetail/getRelatedPosts"]
 );
-const isVote = computed(() => store.getters["postDetail/isVote"]);
-const isBookmark = computed(() => store.getters["postDetail/isBookmark"]);
-const isFollow = computed(() => store.getters["postDetail/isFollow"]);
-
-//function event
-async function setCommentPage(page) {
-  await store.dispatch("comments/setCurrent_page", {
-    current_page: page,
-    limit: limit.value,
-    postId: postId.value,
-  });
-}
-async function followBtn(followingId) {
-  if (user.value) {
-    await follow(followingId);
-    await store.dispatch("postDetail/fetchData", { postId: postId.value });
-    await store.dispatch("postDetail/fetchActive", { postId: postId.value });
-  } else {
-    await store.dispatch("route/setRouteBeforeLogin", {
-      route: route.name,
-    });
-    router.push({ name: "login", params: {} });
-  }
-}
-async function vote(type) {
-  if (user.value) {
-    await votePost(postId.value, type);
-    await store.dispatch("postDetail/fetchData", { postId: postId.value });
-    await store.dispatch("postDetail/fetchActive", { postId: postId.value });
-  } else {
-    await store.dispatch("route/setRouteBeforeLogin", {
-      route: route.name,
-    });
-    router.push({ name: "login", params: {} });
-  }
-}
-async function bookmarkBtn() {
-  if (user.value) {
-    await bookmark(postId.value);
-    await store.dispatch("postDetail/fetchData", { postId: postId.value });
-    await store.dispatch("postDetail/fetchActive", { postId: postId.value });
-  } else {
-    await store.dispatch("route/setRouteBeforeLogin", {
-      route: route.name,
-    });
-    router.push({ name: "login", params: {} });
-  }
-}
 
 //Khởi tạo data lên store
 const fetchData = async () => {
   await store.dispatch("postDetail/fetchData", { postId: postId.value });
   await store.dispatch("comments/fetchData", { postId: postId.value });
   if (user.value) {
-    await store.dispatch("postDetail/fetchActive", { postId: postId.value });
+    await store.dispatch("postDetail/fetchVote", { postId: postId.value });
+    await store.dispatch("postDetail/fetchBookmark", { postId: postId.value });
+    await store.dispatch("postDetail/fetchFollow", { postId: postId.value });
     await store.dispatch("postDetail/addViews", {
       postId: postId.value,
       userId: user.value._id,
@@ -139,12 +81,15 @@ const fetchData = async () => {
       postId: postId.value,
     });
   }
+  if (!commentId.value) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 };
 onMounted(fetchData);
 
 const tableOfContent = ref(null);
 onUpdated(() => {
-  const section = document.querySelector(".content section");
+  const section = document.querySelector(".postContent");
   if (section) {
     const headers = Array.from(section.querySelectorAll("h1, h2, h3")).map(
       (header, index) => {
@@ -159,372 +104,197 @@ onUpdated(() => {
     tableOfContent.value = headers;
   }
 });
-// //theo thõi trên trang tính
-// const observer = new IntersectionObserver((entries) => {
-//   entries.forEach((entry) => {
-//     const id = entry.target.getAttribute("id");
-//     console.log(id);
-//     if (entry.intersectionRatio > 0) {
-//       document
-//         .querySelector(`nav ol li a[href="#${id}"]`)
-//         .parentElement.classList.add("active");
-//     } else {
-//       document
-//         .querySelector(`nav ol li a[href="#${id}"]`)
-//         .parentElement.classList.remove("active");
-//     }
-//   });
-// });
-
-// onMounted(() => {
-//   document.querySelectorAll("h1[id] h2[id] h3[id]").forEach((section) => {
-//     observer.observe(section);
-//   });
-// });
-
 function scrollToElement(id) {
   const element = document.getElementById(id);
   element.scrollIntoView({ behavior: "smooth" });
+  setTimeout(() => {
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - 67;
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  }, 10);
 }
 </script>
-
 <template>
-  <!-- list posts of user  -->
-  <!-- <PostsSlick :items="listPostsOfUser"></PostsSlick> -->
   <main v-if="post">
-    <div class="post-active">
-      <!-- <div class="w-16">
-        <img :src="URL_AVATAR + post.user.avatar" alt="avatar" />
-      </div> -->
-      <div class="vote">
-        <i
-          title="Upvote"
-          class="fa-solid fa-caret-up"
-          :class="{ active: isVote == 'Upvote' }"
-          @click="vote('Upvote')"
-        ></i>
-        <span>{{ post.votes }}</span>
-        <i
-          title="Downvote"
-          class="fa-solid fa-caret-down"
-          :class="{ active: isVote == 'Downvote' }"
-          @click="vote('Downvote')"
-        ></i>
-      </div>
-      <div @click="bookmarkBtn()" title="Bookmarks this post" class="bookmark">
-        <i v-if="isBookmark" class="fa-solid fa-bookmark"></i
-        ><i v-else class="fa-regular fa-bookmark"></i>
-      </div>
-      <div title="Share a link to post on facebook" class="share mt-3">
-        <i class="fa-brands fa-facebook-f"></i>
-      </div>
-    </div>
-    <div class="container">
-      <div class="post">
-        <div class="content-header">
-          <div class="profile">
-            <header class="mb-4 lg:mb-6 not-format">
-              <address class="flex items-center mb-6 not-italic">
-                <div
-                  class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white"
-                >
-                  <img
-                    class="mr-4 w-16 h-16 rounded-full"
-                    :src="URL_AVATAR + post.user.avatar"
-                    :alt="post.user.display_name"
-                  />
-                  <div>
-                    <a
-                      href="#"
-                      rel="author"
-                      class="text-xl font-bold text-gray-900 dark:text-white"
-                      >{{ post.user.display_name }}</a
-                    >
-                    <p
-                      class="text-base font-light text-gray-500 dark:text-gray-400"
-                    >
-                      @{{ post.user.email.split("@")[0] }}
-                    </p>
-                    <p
-                      class="text-base font-light text-gray-500 dark:text-gray-400"
-                    >
-                      <time pubdate :title="getReadableDate(post.updatedAt)">{{
-                        getReadableDate(post.updatedAt)
-                      }}</time>
-                    </p>
-                  </div>
-                </div>
-              </address>
-              <h1
-                class="mb-4 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl dark:text-white"
-              >
-                {{ post.title }}
-              </h1>
-            </header>
-            <div class="bottom">
-              <p>
-                <i class="fa-solid fa-user-plus"></i>
-                <span>{{ post.followers }}</span>
+    <PostAcive :votes="post.votes"></PostAcive>
+    <div class="w-7/12 mx-auto">
+      <main class="mt-10">
+        <div class="mb-4 md:mb-0 w-full mx-auto relative">
+          <div class="space-y-6">
+            <h1 class="text-4xl font-bold md:tracking-tight md:text-5xl">
+              {{ post.title }}
+            </h1>
+            <div
+              class="flex flex-col items-start justify-between w-full md:flex-row md:items-center text-gray-600"
+            >
+              <div class="flex items-center md:space-x-2">
+                <img
+                  :src="URL_AVATAR + post.user.avatar"
+                  alt=""
+                  class="w-4 h-4 border rounded-full bg-gray-500 border-gray-300"
+                />
+                <p class="text-sm">
+                  <a
+                    rel="noopener noreferrer"
+                    href="#"
+                    target="_blank"
+                    class="underline text-sky-600 mr-1"
+                  >
+                    <span itemprop="name">{{
+                      post.user.display_name
+                    }}</span> </a
+                  >• {{ getReadableDate(post.createdAt) }}
+                </p>
+              </div>
+              <p class="flex-shrink-0 mt-3 text-sm md:mt-0">
+                4 min read • {{ post.views }} views
               </p>
-              <p>
-                <i class="fa-solid fa-pencil"></i><span>{{ post.posts }}</span>
-              </p>
+            </div>
+          </div>
 
-              <p>
-                <i class="fa-regular fa-eye"></i><span>{{ post.views }}</span>
-              </p>
-              <p>
-                <i class="fa-regular fa-comments"></i
-                ><span>{{ post.comments }}</span>
-              </p>
-              <p><i class="fa-solid fa-bookmark"></i>{{ post.bookmarks }}</p>
+          <img
+            v-if="post.coverImageUrl"
+            :src="URL_IMG + post.coverImageUrl"
+            class="w-full object-cover lg:rounded"
+            style="height: 28em"
+          />
+        </div>
+
+        <div class="flex flex-col lg:flex-row lg:space-x-12">
+          <div
+            class="px-4 lg:px-0 mt-12 text-gray-700 text-lg leading-relaxed w-full lg:w-3/4"
+          >
+            <div class="postContent" v-html="post.content"></div>
+            <div>
+              <div
+                class="flex flex-wrap py-6 space-x-2 border-t border-dashed border-gray-600"
+              >
+                <router-link
+                  :to="{ name: 'postsTagged', params: { id: tag._id } }"
+                  v-for="tag in post.tags"
+                  :key="tag._id"
+                  rel="noopener noreferrer"
+                  href="#"
+                  class="px-3 py-1 rounded-sm hover:underline bg-sky-600 text-gray-50"
+                  >#{{ tag.title }}</router-link
+                >
+              </div>
+              <div class="space-y-2">
+                <h4 class="text-lg font-semibold">
+                  More from {{ post.user.display_name }}
+                </h4>
+                <ul class="ml-4 space-y-1 list-disc">
+                  <li
+                    v-for="postOfUser in listPostsOfUser"
+                    :key="postOfUser._id"
+                  >
+                    <router-link
+                      :to="{
+                        name: 'postDetail',
+                        params: { id: postOfUser._id },
+                      }"
+                      rel="noopener noreferrer"
+                      class="hover:underline"
+                      >{{ postOfUser.title }}</router-link
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div
+              v-if="listComments"
+              class="flex justify-between items-center mb-6 mt-6"
+            >
+              <h2
+                class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white"
+                id="Discussion"
+              >
+                Discussion ({{ listComments.length }})
+              </h2>
+            </div>
+            <CommentEditor
+              :inReplyToComment="null"
+              :inReplyToUser="null"
+            ></CommentEditor>
+            <div v-if="listComments">
+              <Comment
+                v-for="comment in listComments"
+                :key="comment._id"
+                :comment="comment"
+                :id="comment._id"
+              ></Comment>
+            </div>
+          </div>
+
+          <div
+            class="w-full lg:w-1/4 m-auto mt-12 max-w-screen-sm sticky top-20 self-start"
+          >
+            <div class="space-y-2">
+              <h2
+                class="text-sm font-semibold tracking-widest uppercase text-gray-600"
+              >
+                Table of content
+              </h2>
+              <div class="flex flex-col space-y-1 section-nav">
+                <span
+                  v-for="table in tableOfContent"
+                  :key="table.id"
+                  @click="scrollToElement(table.id)"
+                  :class="'cursor-pointer ' + table.id"
+                  >{{ table.text }}</span
+                >
+              </div>
+            </div>
+            <div class="space-y-2 mt-5">
+              <h2
+                class="text-sm font-semibold tracking-widest uppercase text-gray-600"
+              >
+                Related post
+              </h2>
+              <div class="max-h-screen overflow-auto style1" id="style-1">
+                <RelatedPost
+                  class="mb-5"
+                  v-for="relatedPost in listRelatedPosts"
+                  :key="relatedPost._id"
+                  :post="relatedPost"
+                ></RelatedPost>
+              </div>
             </div>
           </div>
         </div>
-
-        <div class="content">
-          <ul class="tags">
-            <li v-for="tag in post.tags" :key="tag._id">{{ tag.title }}</li>
-          </ul>
-          <section id="content" v-html="post.content"></section>
-        </div>
-      </div>
-
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">
-          Discussion (20)
-        </h2>
-      </div>
-      <CommentEditor
-        :inReplyToComment="null"
-        :inReplyToUser="null"
-      ></CommentEditor>
-      <div v-if="listComments">
-        <Comment
-          v-for="comment in listComments"
-          :key="comment._id"
-          :comment="comment"
-          :id="comment._id"
-        ></Comment>
-      </div>
-
-      <ul
-        v-if="paginationOfComment && listComments && listComments.length"
-        class="pagination"
-      >
-        <li href="#">&laquo;</li>
-        <li
-          v-for="n in paginationOfComment.total_pages"
-          @click="setCommentPage(n)"
-          :key="n"
-          :class="{ active: paginationOfComment.current_page == n }"
-          href="#"
-        >
-          {{ n }}
-        </li>
-        <li href="#">&raquo;</li>
-      </ul>
+      </main>
+      <!-- main ends here -->
     </div>
-    <nav class="section-nav">
-      <!-- mục lục -->
-      <ol class="table">
-        <li v-for="li in tableOfContent" :key="li.id">
-          <a @click.prevent="scrollToElement(li.id)">{{ li.text }}</a>
-        </li>
-      </ol>
-
-      <!-- các bài viết liên quan -->
-      <h1 class="text-lg mt-3">Related posts</h1>
-
-      <ul class="mt-1">
-        <li v-for="post in listRelatedPosts" :key="post._id" class="">
-          <router-link :to="{ name: 'postDetail', params: { id: post._id } }"
-            ><span
-              >{{ post.votes
-              }}<i class="fa-solid fa-star" style="color: #e7e013"></i></span
-            >{{ post.title }}</router-link
-          >
-        </li>
-      </ul>
-      <!-- các bài viết cùng tác giả -->
-      <h1 class="text-lg mt-3">Posts of author</h1>
-      <ul class="mt-1">
-        <li v-for="post in listPostsOfUser" :key="post._id">
-          <router-link :to="{ name: 'postDetail', params: { id: post._id } }"
-            ><span
-              >{{ post.votes
-              }}<i class="fa-solid fa-star" style="color: #e7e013"></i></span
-            >{{ post.title }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
   </main>
+  <SkeletonLoader v-else></SkeletonLoader>
 </template>
 <style scoped>
-main {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin: 10px 15%;
+.style1::-webkit-scrollbar {
+  display: none;
 }
-main .post-active {
-  width: 10%;
-  right: 0px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-main .post-active i {
-  cursor: pointer;
-}
-
-main > nav {
-  position: sticky;
-  top: 5rem;
-  align-self: start;
-}
-
-/* 3. ScrollSpy active styles (see JS tab for activation) */
-.section-nav .table li.active > a {
+/* .section-nav .active > span {
   color: #333;
   font-weight: 500;
 }
 
-/* Sidebar Navigation */
 .section-nav {
   padding-left: 10px;
   border-left: 1px solid #efefef;
 }
 
-.section-nav .table a {
+.section-nav span {
   text-decoration: none;
   display: block;
   padding: 0.125rem 0;
   color: #ccc;
-  transition: all 50ms ease-in-out; /* 💡 This small transition makes setting of the active state smooth */
+  transition: all 50ms ease-in-out; 💡
 }
 
-.section-nav .table a:hover,
-.section-nav .table a:focus {
+.section-nav span:hover,
+.section-nav span:focus {
   color: #666;
-}
-
-.post-active .bookmark {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: 1px solid rgb(14, 93, 197);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: rgb(14, 93, 197);
-  font-size: 24px;
-}
-.post-active .vote {
-  border: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-size: 3rem;
-  color: gray;
-}
-
-.post-active .share {
-  border: 0.5px solid grey;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50px;
-  width: 30px;
-  height: 30px;
-}
-
-.post-active .vote i:hover {
-  color: black;
-}
-.post-active .vote span {
-  color: black;
-  font-size: 2rem;
-}
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 10px 10px 0 0;
-}
-
-.follow {
-  border: 1px solid #0e5dc5;
-  padding: 3px 10px;
-  border-radius: 5px;
-}
-.follow:hover {
-  background-color: #0e5dc5;
-}
-
-.post .title {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.profile {
-  display: flex;
-  flex-direction: column;
-}
-.profile .top {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.profile .top .user {
-  display: flex;
-  flex-direction: row;
-  align-items: space-around;
-}
-.profile .bottom {
-  display: flex;
-}
-.tags {
-  display: flex;
-  justify-content: flex-start;
-}
-.tags > li {
-  padding: 3px 10px;
-  border: 1px solid gray;
-  border-radius: 5px;
-  margin: 0 2px;
-}
-.action {
-  display: flex;
-  justify-content: flex-start;
-}
-.profile .active {
-  background-color: #0e5dc5;
-}
-.vote .active {
-  color: black;
-}
-
-.pagination {
-  margin: 10px auto;
-  display: inline-block;
-}
-
-.pagination li {
-  color: black;
-  float: left;
-  padding: 8px 16px;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.pagination li.active {
-  background-color: #4caf50;
-  color: white;
-}
-.mt-1 {
-  color: #2183d1;
-}
+} */
 </style>

@@ -7,6 +7,10 @@ const posts = {
       count: 0,
       pagination: null,
       allPosts: [],
+      postsOfUser: [],
+      bookmarkPostsOfUser: [],
+      paginationPostsOfUser: null,
+      paginationBookmarkPostsOfUser: null,
     };
   },
   getters: {
@@ -16,12 +20,32 @@ const posts = {
     getPaginationPost(state) {
       return state.pagination;
     },
+    paginationPostsOfUser(state) {
+      return state.paginationPostsOfUser;
+    },
+    getPostsOfUser(state) {
+      return state.postsOfUser;
+    },
+    paginationBookmarkPostsOfUser(state) {
+      return state.paginationBookmarkPostsOfUser;
+    },
+    getBookmarkPostsOfUser(state) {
+      return state.bookmarkPostsOfUser;
+    },
   },
   mutations: {
     setData: (state, listPosts) => {
       state.allPosts = listPosts.posts;
       state.count = listPosts.count;
       state.pagination = listPosts.pagination;
+    },
+    setPostsOfUser: (state, data) => {
+      state.paginationPostsOfUser = data.pagination;
+      state.postsOfUser = data.posts;
+    },
+    setBookmarkPostsOfUser: (state, data) => {
+      state.paginationBookmarkPostsOfUser = data.pagination;
+      state.bookmarkPostsOfUser = data.posts;
     },
   },
   actions: {
@@ -46,6 +70,34 @@ const posts = {
         },
       });
       commit("setData", response.data);
+    },
+    async setPostsOfUser(
+      { commit },
+      { id, search, limit, current_page, sort }
+    ) {
+      const postsOfUser = await instance.get("/users/" + id + "/posts", {
+        params: {
+          search: search,
+          limit: limit,
+          page: current_page,
+          sort: sort,
+        },
+      });
+      commit("setPostsOfUser", postsOfUser.data);
+    },
+    async setBookmarkPostsOfUser(
+      { commit },
+      { id, search, limit, current_page, sort }
+    ) {
+      const postsOfUser = await instance.get("/posts/bookmarks/" + id, {
+        params: {
+          search: search,
+          limit: limit,
+          page: current_page,
+          sort: sort,
+        },
+      });
+      commit("setBookmarkPostsOfUser", postsOfUser.data);
     },
   },
 };

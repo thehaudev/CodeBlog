@@ -48,7 +48,7 @@ async function followTag(tagId) {
     });
   } else {
     await store.dispatch("route/setRouteBeforeLogin", {
-      route: route.name,
+      path: route.path,
     });
     router.push({ name: "login", params: {} });
   }

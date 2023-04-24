@@ -60,7 +60,12 @@ const postDetail = {
     async fetchData({ commit }, { postId }) {
       const response = await instance.get("/posts/" + postId);
       const postsOfUser = await instance.get(
-        "/users/" + response.data.post.user._id + "/posts"
+        "/users/" + response.data.post.user._id + "/posts",
+        {
+          params: {
+            sort: "latest",
+          },
+        }
       );
       const relatedPosts = await instance.get("/posts/" + postId + "/related");
       commit("setData", response.data);

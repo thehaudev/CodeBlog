@@ -1,19 +1,18 @@
 <script setup>
 import { computed, ref, onMounted, watch } from "vue";
 import { useStore } from "vuex";
-import { URL_AVATAR } from "../constants";
-import { useRoute, useRouter } from "vue-router";
-const router = useRouter();
-const route = useRoute();
+import Author from "../components/card/author.vue";
 const store = useStore();
 const search = ref("");
 const page = ref(1);
 const user = computed(() => store.getters["auth/getUser"]);
+
 const listUsers = computed(() => store.getters["users/getAllUsers"]);
 const paginationOfUsers = computed(() => store.getters["users/getPagination"]);
 async function fetchData() {
   if (user.value) await store.dispatch("auth/setUsersFollowing");
   await store.dispatch("users/filterUser", {
+    sort: "follower",
     current_page: page.value,
     search: search.value,
   });
@@ -21,6 +20,8 @@ async function fetchData() {
 async function setUserPage(pageTag) {
   page.value = pageTag;
   await store.dispatch("users/filterUser", {
+    sort: "follower",
+
     current_page: page.value,
     search: search.value,
   });
@@ -28,32 +29,13 @@ async function setUserPage(pageTag) {
 watch(search, async () => {
   page.value = 1;
   await store.dispatch("users/filterUser", {
+    sort: "follower",
+
     current_page: page.value,
     search: search.value,
   });
 });
-const usersFollowing = computed(
-  () => (user.value && store.getters["auth/getUsersFollowing"]) || []
-);
-function checkFollowUser(id) {
-  return usersFollowing.value.some((e) => e.userId == id);
-}
 
-async function followUser(userId) {
-  if (user.value) {
-    await store.dispatch("users/follow", { userId: userId });
-    await store.dispatch("auth/setUsersFollowing");
-    await store.dispatch("users/filterUser", {
-      current_page: page.value,
-      search: search.value,
-    });
-  } else {
-    await store.dispatch("route/setRouteBeforeLogin", {
-      route: route.name,
-    });
-    router.push({ name: "login", params: {} });
-  }
-}
 onMounted(fetchData);
 </script>
 
@@ -71,7 +53,8 @@ onMounted(fetchData);
       class="py-2 px-4"
     />
     <section class="tag-layout">
-      <div v-for="user in listUsers" :key="user._id" class="item">
+      <Author v-for="user in listUsers" :key="user._id" :author="user"></Author>
+      <!-- <div v-for="user in listUsers" :key="user._id" class="item">
         <div class="">
           <img
             :src="URL_AVATAR + user.avatar"
@@ -107,7 +90,7 @@ onMounted(fetchData);
           </button>
           <button v-else @click="followUser(user._id)">+ Follow</button>
         </div>
-      </div>
+      </div> -->
     </section>
     <!-- pagination -->
     <div class="mt-8" v-if="paginationOfUsers.total_pages != 0">
@@ -164,6 +147,7 @@ onMounted(fetchData);
 
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   margin-left: calc(-1 * var(--spacing));
   padding: 32px 0;
   background-color: #fff;

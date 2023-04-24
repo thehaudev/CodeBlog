@@ -60,7 +60,7 @@ class AuthService {
   }> {
     if (isEmpty(userData)) throw new HttpException(400, "userData is empty");
 
-    const user: User | null = await this.userRepository.findUser(
+    const user: User | null = await this.userRepository.findWithEmail(
       userData.email
     );
     if (!user) throw new HttpException(409, "Email or Password is not correct");
@@ -69,8 +69,10 @@ class AuthService {
       userData.password,
       user.password
     );
+
     if (!checkPassword)
       throw new HttpException(409, "Email or Password is not correct");
+
     const { accessToken, expiresIn } = createAccessToken(user);
     const refreshCookie = createRefreshTokenCookie(user);
     return { user, refreshCookie, expiresIn, accessToken };

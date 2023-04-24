@@ -60,18 +60,10 @@ class UsersController {
     try {
       const id: string = req.params.id;
       const findUserByIdData: User = await this.userService.findUserById(id);
-      const data = {
-        id: findUserByIdData._id,
-        email: findUserByIdData.email,
-        display_name: findUserByIdData.display_name,
-        avatar: findUserByIdData.avatar,
-        bio: findUserByIdData.bio,
-        location: findUserByIdData.location,
-        about: findUserByIdData.about,
-        created_at: findUserByIdData.created_at,
-        updated_at: findUserByIdData.updated_at,
-      };
-      res.status(200).json({ data: data, message: "find user by id" });
+
+      res
+        .status(200)
+        .json({ data: findUserByIdData, message: "find user by id" });
     } catch (error) {
       next(error);
     }

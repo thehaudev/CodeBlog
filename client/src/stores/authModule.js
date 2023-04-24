@@ -9,6 +9,7 @@ const auth = {
       user: null,
       tagsFollowing: null,
       usersFollowing: null,
+
       userImages: [],
     };
   },
@@ -49,6 +50,7 @@ const auth = {
       commit("setUser", user);
       localStorage.setItem("user", JSON.stringify(user));
     },
+
     async setTagsFollowing({ commit }) {
       const res = await instance.get("/users/me/tagsFollowing");
       commit("setTagsFollowing", res.data.data);

@@ -14,7 +14,11 @@ const post = computed(() => props.post);
   >
     <article>
       <h2 class="text-xl font-bold paragraph">
-        {{ post.title }}
+        <router-link
+          :to="{ name: 'postDetail', params: { id: post._id } }"
+          @click="scroll"
+          >{{ post.title }}</router-link
+        >
       </h2>
       <div
         class="mt-4 text-gray-600 paragraph content"
@@ -27,9 +31,12 @@ const post = computed(() => props.post);
           class="w-10 h-10 rounded-full bg-gray-500"
         />
         <div>
-          <h3 class="text-sm font-medium">
-            {{ post.user[0].display_name }}
-          </h3>
+          <router-link
+            :to="{ name: 'profile', params: { id: post.user[0]._id } }"
+            ><h3 class="text-sm font-medium">
+              {{ post.user[0].display_name }}
+            </h3></router-link
+          >
           <time datetime="2021-02-18" class="text-sm text-gray-600">{{
             getReadableDate(post.createdAt)
           }}</time>

@@ -41,9 +41,16 @@ onMounted(fetchData);
           :alt="user.display_name"
         />
         <p>
-          <a class="text-gray-700 font-bold mx-1 hover:underline" href="#">{{
-            user.display_name
-          }}</a>
+          <router-link
+            class="text-gray-700 font-bold mx-1 hover:underline"
+            :to="{
+              name: 'profile',
+              params: {
+                id: user._id,
+              },
+            }"
+            >{{ user.display_name }}</router-link
+          >
           <span class="text-gray-700 text-sm font-light"
             >Created {{ user.posts }} Posts</span
           >

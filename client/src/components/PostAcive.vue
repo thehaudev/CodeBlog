@@ -30,7 +30,7 @@ async function followBtn(followingId) {
     await store.dispatch("postDetail/fetFollow", { postId: postId.value });
   } else {
     await store.dispatch("route/setRouteBeforeLogin", {
-      route: route.name,
+      path: route.path,
     });
     router.push({ name: "login", params: {} });
   }
@@ -42,7 +42,7 @@ async function vote(type) {
     await store.dispatch("postDetail/fetchData", { postId: postId.value });
   } else {
     await store.dispatch("route/setRouteBeforeLogin", {
-      route: route.name,
+      path: route.path,
     });
     router.push({ name: "login", params: {} });
   }
@@ -53,7 +53,7 @@ async function bookmarkBtn() {
     await store.dispatch("postDetail/fetchBookmark", { postId: postId.value });
   } else {
     await store.dispatch("route/setRouteBeforeLogin", {
-      route: route.name,
+      path: route.path,
     });
     router.push({ name: "login", params: {} });
   }

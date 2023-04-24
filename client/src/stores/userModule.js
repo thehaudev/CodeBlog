@@ -7,6 +7,7 @@ const users = {
       listUsers: [],
       pagination: null,
       usersShowInHome: null,
+      user: null,
     };
   },
   getters: {
@@ -19,6 +20,9 @@ const users = {
     getUsersShowInHome(state) {
       return state.usersShowInHome;
     },
+    getUser(state) {
+      return state.user;
+    },
   },
   mutations: {
     setData: (state, listUsers) => {
@@ -27,6 +31,9 @@ const users = {
     },
     setUsersShowInHome: (state, listUsers) => {
       state.usersShowInHome = listUsers.data;
+    },
+    setUser: (state, data) => {
+      state.user = data.data;
     },
   },
   actions: {
@@ -72,6 +79,10 @@ const users = {
           userId: userId,
         });
       }
+    },
+    async setUser({ commit }, { userId }) {
+      const res = await instance.get("/users/" + userId);
+      commit("setUser", res.data);
     },
   },
 };

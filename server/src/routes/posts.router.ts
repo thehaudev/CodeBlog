@@ -12,6 +12,13 @@ const postsController = new PostsController();
 //GET /api/v1/posts
 router.get("/", postsController.getAllPosts);
 
+//GET /api/v1/posts/bookmarks/:userId
+router.get(
+  "/bookmarks/:id",
+  validationMiddleware(IdDto, "params"),
+  postsController.getBookmarkPostsOfUser
+);
+
 //GET /api/v1/posts/:id
 router.get(
   "/:id",
@@ -67,13 +74,6 @@ router.get(
   "/:id/comments",
   validationMiddleware(IdDto, "params"),
   postsController.getCommentsOfPost
-);
-
-//GET /api/v1/posts/:id/bookmarks
-router.get(
-  "/:id/bookmarks",
-  validationMiddleware(IdDto, "params"),
-  postsController.getBookmarksOfPost
 );
 
 export default router;

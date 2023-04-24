@@ -10,6 +10,7 @@ import {
   UpdateUserDto,
 } from "../dtos/user.dto";
 import { deleteFile } from "../utils/delete.util";
+import { Post } from "../interfaces/posts.interface";
 
 class UsersService {
   private readonly users = UserModel;
@@ -36,9 +37,13 @@ class UsersService {
   public async findUserById(userId: string): Promise<User> {
     if (isEmpty(userId)) throw new HttpException(400, "UserId is empty");
 
-    const findUser: User = await this.users.findOne({ _id: userId, role: 0 });
+    const findUser: User | null = await this.userRepository.findOne({
+      _id: userId,
+      role: 0,
+    });
     if (!findUser) throw new HttpException(409, "User doesn't exist");
-    return findUser;
+    const user = await this.userRepository.findUser(findUser.email);
+    return user;
   }
 
   public async findUserByEmail(filter: any): Promise<User> {

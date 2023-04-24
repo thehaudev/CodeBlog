@@ -61,7 +61,10 @@ export default class PostsService {
       filter.sort,
       filter.search
     );
-    const total: Number = await this.postRepository.countPostsOfUser(id);
+    const total: Number = await this.postRepository.countPostsOfUser(
+      id,
+      filter.search
+    );
     return { posts, total };
   }
   public async findAllPosts(

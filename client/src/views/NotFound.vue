@@ -1,5 +1,5 @@
 <template>
-  <section class="flex items-center h-full p-16 bg-gray-50 text-gray-800">
+  <section class="flex items-center h-screen p-16 bg-gray-50 text-gray-800">
     <div
       class="container flex flex-col items-center justify-center px-5 mx-auto my-8"
     >
@@ -15,8 +15,7 @@
         </p>
         <router-link
           :to="{ name: 'home' }"
-          rel="noopener noreferrer"
-          class="px-8 py-3 font-semibold rounded bg-rose-600 text-gray-50"
+          class="px-8 py-3 font-semibold rounded bg-sky-600 text-gray-50"
           >Back to homepage</router-link
         >
       </div>

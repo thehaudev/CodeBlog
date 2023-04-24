@@ -317,15 +317,13 @@ export default class PostRepository extends BaseRepository<Post> {
     sort: {},
     search?: {}
   ): Promise<Post[]> {
-    return await this.model.aggregate([
+    const res = await this.model.aggregate([
       {
         $match: {
           $and: [{ userId: new ObjectId(id) }, search ? search : {}],
         },
       },
-      { $sort: { updatedAt: -1 } },
-      { $skip: skip },
-      { $limit: take },
+
       {
         $lookup: {
           from: "bookmarks",
@@ -432,7 +430,11 @@ export default class PostRepository extends BaseRepository<Post> {
           updatedAt: 1,
         },
       },
+      { $sort: sort },
+      { $skip: skip },
+      { $limit: take },
     ]);
+    return res;
   }
 
   async findPostById(id: string): Promise<Post | null> {
@@ -572,8 +574,22 @@ export default class PostRepository extends BaseRepository<Post> {
     return post[0];
   }
 
-  async countPostsOfUser(id: string): Promise<Number> {
-    return this.model.find({ userId: id }).count().exec();
+  async countPostsOfUser(id: string, search: {}): Promise<Number> {
+    try {
+      const res = await this.model.aggregate([
+        {
+          $match: {
+            $and: [{ userId: new ObjectId(id) }, search ? search : {}],
+          },
+        },
+        {
+          $count: "count",
+        },
+      ]);
+      return res[0].count;
+    } catch (error) {
+      return 0;
+    }
   }
 
   async count(search: {}): Promise<Number> {
@@ -581,7 +597,7 @@ export default class PostRepository extends BaseRepository<Post> {
       const res = await this.model.aggregate([
         {
           $match: {
-            $and: [search ? search : {}, { status: true }],
+            $and: [search ? search : {}],
           },
         },
         {
