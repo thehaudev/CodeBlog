@@ -33,16 +33,16 @@ watch(search, async () => {
     limit: 7,
   });
 });
-async function emitSelectSort(select) {
-  sort.value = select;
-  page.value = 1;
-  await store.dispatch("posts/setBookmarkPostsOfUser", {
-    id: userId,
-    sort: sort.value,
-    search: search.value,
-    limit: limit.value,
-  });
-}
+// async function emitSelectSort(select) {
+//   sort.value = select;
+//   page.value = 1;
+//   await store.dispatch("posts/setBookmarkPostsOfUser", {
+//     id: userId,
+//     sort: sort.value,
+//     search: search.value,
+//     limit: limit.value,
+//   });
+// }
 watch(search, async () => {
   page.value = 1;
   await store.dispatch("posts/setBookmarkPostsOfUser", {
@@ -74,14 +74,6 @@ window.addEventListener("scroll", (e) => {
 });
 
 async function fetchData() {
-  await store.dispatch("posts/setBookmarkPostsOfUser", {
-    id: userId,
-    limit: 7,
-    sort: sort.value,
-    search: search.value,
-
-    current_page: 1,
-  });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 onMounted(fetchData);
@@ -118,9 +110,9 @@ onMounted(fetchData);
           />
         </div>
       </fieldset>
-      <div class="flex justify-end w-1/2 h-9">
+      <!-- <div class="flex justify-end w-1/2 h-9">
         <PostFilter @selectSort="emitSelectSort" class="h-9"></PostFilter>
-      </div>
+      </div> -->
     </div>
     <div v-if="paginationOfPosts.total != 0">
       <Post

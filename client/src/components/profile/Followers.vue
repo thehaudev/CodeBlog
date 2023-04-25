@@ -4,15 +4,22 @@ import { URL_AVATAR } from "../../constants";
 
 const props = defineProps(["followers", "userName"]);
 const emit = defineEmits(["closeModal"]);
-function closeModal() {
-  emit("closeModal");
+function closeModal(e) {
+  if (!event.target.closest(".modal") || e == "btn") {
+    emit("closeModal");
+  }
 }
 </script>
 <template>
-  <div class="fixed mx-auto my-auto w-1/4 h-2/3 z-50 p-4 md:inset-1">
-    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+  <div
+    @click="closeModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-700 bg-opacity-30"
+  >
+    <div
+      class="modal relative bg-white rounded-lg shadow dark:bg-gray-700 w-1/4"
+    >
       <button
-        @click="closeModal"
+        @click="closeModal('btn')"
         class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
       >
         <svg
@@ -47,28 +54,30 @@ function closeModal() {
           <li
             v-for="follower in followers"
             :key="follower.user._id"
-            class="flex py-4 first:pt-0 last:pb-0"
+            class="flex justify-between py-4 first:pt-0 last:pb-0"
           >
-            <img
-              class="h-10 w-10 rounded-full"
-              :src="URL_AVATAR + follower.user.avatar"
-              :alt="follower.user.display_name"
-            />
-            <div class="ml-3 overflow-hidden">
-              <router-link
-                :to="{ name: 'profile', params: { id: follower.user._id } }"
-              >
-                <p class="text-sm font-medium text-slate-900">
-                  {{ follower.user.display_name }}
-                </p>
-                <p class="text-sm text-slate-500 truncate">
-                  {{ follower.user.email }}
-                </p>
-              </router-link>
+            <div class="flex first:pt-0 last:pb-0">
+              <img
+                class="h-10 w-10 rounded-full"
+                :src="URL_AVATAR + follower.user.avatar"
+                :alt="follower.user.display_name"
+              />
+              <div class="ml-3 overflow-hidden">
+                <router-link
+                  :to="{ name: 'profile', params: { id: follower.user._id } }"
+                >
+                  <p class="text-sm font-medium text-slate-900">
+                    {{ follower.user.display_name }}
+                  </p>
+                  <p class="text-sm text-slate-500 truncate">
+                    {{ follower.user.email }}
+                  </p>
+                </router-link>
+              </div>
             </div>
 
             <FollowBtn
-              class="absolute right-3"
+              class="right-6"
               :followUserId="follower.user._id"
             ></FollowBtn>
           </li>

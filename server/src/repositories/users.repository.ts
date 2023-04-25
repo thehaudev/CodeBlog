@@ -134,7 +134,21 @@ export default class UserRepository extends BaseRepository<User> {
                 as: "tag",
               },
             },
+            {
+              $lookup: {
+                from: "post_tags",
+                localField: "tagId",
+                foreignField: "tagId",
+                as: "posts",
+              },
+            },
             { $unwind: "$tag" },
+            {
+              $project: {
+                posts: { $size: "$posts" },
+                tag: 1,
+              },
+            },
           ],
           as: "followingTag",
         },

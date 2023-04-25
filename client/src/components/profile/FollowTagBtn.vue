@@ -1,9 +1,6 @@
 <script setup>
 import { useStore } from "vuex";
 import { computed, onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
-const route = useRoute();
-const router = useRouter();
 const store = useStore();
 
 const props = defineProps(["followTagId"]);
@@ -25,10 +22,9 @@ async function followTag(tagId) {
     await store.dispatch("auth/setTagsFollowing");
     emit("followTagSubmit");
   } else {
-    await store.dispatch("route/setRouteBeforeLogin", {
-      path: route.path,
+    await store.dispatch("route/setShowModalLogin", {
+      isShow: true,
     });
-    router.push({ name: "login", params: {} });
   }
 }
 
@@ -36,7 +32,7 @@ onMounted(fetchData);
 </script>
 
 <template>
-  <div v-if="followTagId != user._id">
+  <div v-if="!user || followTagId != user._id">
     <button
       v-if="checkFollowTag(followTagId)"
       @click="followTag(followTagId)"

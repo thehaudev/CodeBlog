@@ -51,7 +51,7 @@ onMounted(fetchData);
               :followUserId="user._id"
             ></FollowBtn>
             <a
-              v-if="userId == me._id"
+              v-if="me && userId == me._id"
               class="cursor-pointer ml-2 p-1 border-transparent text-gray-700 rounded-full hover:text-blue-600 focus:outline-none focus:text-gray-600"
               aria-label="Notifications"
             >

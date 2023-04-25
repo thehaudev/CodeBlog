@@ -15,6 +15,7 @@ const userId = route.params.id;
 
 const page = ref(1);
 const posts = computed(() => store.getters["posts/getPostsOfUser"]);
+const user = computed(() => store.getters["auth/getUser"]);
 
 const paginationOfPosts = computed(
   () => store.getters["posts/paginationPostsOfUser"]
@@ -82,6 +83,15 @@ async function fetchData() {
     current_page: 1,
   });
   window.scrollTo({ top: 0, behavior: "smooth" });
+
+  await store.dispatch("posts/setBookmarkPostsOfUser", {
+    id: userId,
+    limit: 7,
+    sort: sort.value,
+    search: search.value,
+
+    current_page: 1,
+  });
 }
 onMounted(fetchData);
 </script>
@@ -119,7 +129,7 @@ onMounted(fetchData);
       </fieldset>
       <div class="flex justify-end w-1/2 h-9">
         <PostFilter @selectSort="emitSelectSort" class="h-9"></PostFilter>
-        <NewPostBtn class="h-9"></NewPostBtn>
+        <NewPostBtn v-if="user && user._id == userId" class="h-9"></NewPostBtn>
       </div>
     </div>
     <div v-if="paginationOfPosts.total != 0">

@@ -1,9 +1,7 @@
 <script setup>
 import { useStore } from "vuex";
 import { computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
 
-const route = useRoute();
 const store = useStore();
 const props = defineProps(["followUserId"]);
 const emit = defineEmits(["followSubmit"]);
@@ -23,10 +21,9 @@ async function followUser(userId) {
     await store.dispatch("auth/setUsersFollowing");
     emit("followSubmit");
   } else {
-    await store.dispatch("route/setRouteBeforeLogin", {
-      path: route.path,
+    await store.dispatch("route/setShowModalLogin", {
+      isShow: true,
     });
-    router.push({ name: "login", params: {} });
   }
 }
 onMounted(async () => {
@@ -35,7 +32,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="followUserId != user._id">
+  <div v-if="!user || followUserId != user._id">
     <button
       v-if="checkFollowUser(followUserId)"
       @click="followUser(followUserId)"

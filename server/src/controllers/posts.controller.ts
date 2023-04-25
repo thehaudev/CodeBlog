@@ -97,7 +97,7 @@ export class PostsController {
       const { limit = 10, page = 1, search = null, sort = "" } = req.query;
 
       const id: string = req.params.id;
-      let curr: {} = { createdAt: -1 };
+      let curr: {} = {};
       if (sort == "latest") {
         curr = { updatedAt: -1 };
       } else if (sort == "views") {

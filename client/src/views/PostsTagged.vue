@@ -1,6 +1,7 @@
 <script setup>
 import PostFilter from "../components/postComponents/elements-select-option.vue";
 import Post from "../components/postComponents/elements-blog-post-article-review.vue";
+import FollowTagBtn from "../components/profile/FollowTagBtn.vue";
 
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
@@ -65,9 +66,12 @@ onMounted(fetchData);
 <template>
   <div class="w-full lg:w-8/12" v-if="posts && paginationOfPosts && tagDetail">
     <div class="flex items-center justify-between">
-      <h1 class="text-xl font-bold text-gray-700 md:text-2xl">
-        Posts tagged [{{ tagDetail.title }}]({{ paginationOfPosts.total }})
-      </h1>
+      <div class="flex">
+        <h1 class="text-xl font-bold text-gray-700 md:text-2xl">
+          Posts tagged [{{ tagDetail.title }}]({{ paginationOfPosts.total }})
+        </h1>
+        <FollowTagBtn :followTagId="tagDetail._id"></FollowTagBtn>
+      </div>
       <PostFilter @selectSort="emitSelectSort"></PostFilter>
     </div>
     <div class="mt-6" v-for="post in posts" :key="post.id">

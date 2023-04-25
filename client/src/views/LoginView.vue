@@ -64,18 +64,22 @@ async function sign() {
           <span class="font-medium">{{ successForm }}</span>
         </div>
       </div>
-      <a href="#" class="favicon">
-        <img src="../assets/favicon/ms-icon-70x70.png" alt="favicon" />
-      </a>
+      <div class="flex justify-center w-full mb-3">
+        <div class="w-24 h-24 bg-blue-600 rounded-full relative">
+          <div
+            class="absolute w-12 h-12 bg-white rounded-full right-2 bottom-2"
+          ></div>
+        </div>
+      </div>
       <a href="#" class="login-btn google">
         <p><i class="fa-brands fa-google"></i> Login with Google</p>
       </a>
-      <a href="#" class="login-btn github">
+      <!-- <a href="#" class="login-btn github">
         <p><i class="fa-brands fa-github"></i> Login with Github</p>
       </a>
       <a href="#" class="login-btn facebook">
         <p><i class="fa-brands fa-square-facebook"></i> Login with Facebook</p>
-      </a>
+      </a> -->
       <form @submit.prevent="sign" class="formLogin">
         <div class="row">
           <label for="email">Email</label>

@@ -133,19 +133,24 @@ function scrollToElement(id) {
               <div class="flex items-center md:space-x-2">
                 <img
                   :src="URL_AVATAR + post.user.avatar"
-                  alt=""
+                  :alt="post.user.display_name"
                   class="w-4 h-4 border rounded-full bg-gray-500 border-gray-300"
                 />
                 <p class="text-sm">
-                  <a
+                  <router-link
+                    :to="{
+                      name: 'profile',
+                      params: {
+                        id: post.user._id,
+                      },
+                    }"
                     rel="noopener noreferrer"
-                    href="#"
                     target="_blank"
                     class="underline text-sky-600 mr-1"
                   >
                     <span itemprop="name">{{
                       post.user.display_name
-                    }}</span> </a
+                    }}</span> </router-link
                   >• {{ getReadableDate(post.createdAt) }}
                 </p>
               </div>

@@ -47,10 +47,9 @@ async function followTag(tagId) {
       search: search.value,
     });
   } else {
-    await store.dispatch("route/setRouteBeforeLogin", {
-      path: route.path,
+    await store.dispatch("route/setShowModalLogin", {
+      isShow: true,
     });
-    router.push({ name: "login", params: {} });
   }
 }
 

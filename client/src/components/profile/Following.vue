@@ -5,15 +5,22 @@ import { ref } from "vue";
 const props = defineProps(["followingUser", "followingTag", "userName"]);
 const emit = defineEmits(["closeModal"]);
 const active = ref("people");
-function closeModal() {
-  emit("closeModal");
+function closeModal(e) {
+  if (!event.target.closest(".modal") || e == "btn") {
+    emit("closeModal");
+  }
 }
 </script>
 <template>
-  <div class="fixed mx-auto my-auto w-1/4 h-2/3 z-50 p-4 md:inset-1">
-    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+  <div
+    @click="closeModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-700 bg-opacity-30"
+  >
+    <div
+      class="modal relative bg-white rounded-lg shadow dark:bg-gray-700 w-1/4"
+    >
       <button
-        @click="closeModal"
+        @click="closeModal('btn')"
         class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
       >
         <svg
@@ -51,7 +58,11 @@ function closeModal() {
           }"
           class="mx-auto cursor-pointer"
         >
-          People
+          People<span
+            class="bg-gray-300 text-xs p-1 ml-1 rounded-xl"
+            v-if="followingUser"
+            >{{ followingUser.length }}</span
+          >
         </div>
         <div
           @click="active = 'tags'"
@@ -62,6 +73,11 @@ function closeModal() {
           class="mx-auto cursor-pointer"
         >
           Tags
+          <span
+            class="bg-gray-300 text-xs p-1 ml-1 rounded-xl"
+            v-if="followingTag"
+            >{{ followingTag.length }}</span
+          >
         </div>
       </div>
       <FollowingUser

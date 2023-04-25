@@ -14,7 +14,7 @@ const props = defineProps(["followingTag", "userName"]);
       <li
         v-for="follow in followingTag"
         :key="follow.tag._id"
-        class="flex py-4 first:pt-0 last:pb-0"
+        class="flex justify-between py-4 first:pt-0 last:pb-0"
       >
         <!-- <img
           class="h-10 w-10 rounded-full"
@@ -29,10 +29,13 @@ const props = defineProps(["followingTag", "userName"]);
               #{{ follow.tag.title }}
             </p>
           </router-link>
+          <p class="text-sm text-slate-500 truncate">
+            {{ follow.posts }} posts
+          </p>
         </div>
 
         <FollowTagBtn
-          class="absolute right-3"
+          class="right-6"
           :followTagId="follow.tag._id"
         ></FollowTagBtn>
       </li>

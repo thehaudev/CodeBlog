@@ -14,30 +14,29 @@ const props = defineProps(["followingUser", "userName"]);
       <li
         v-for="author in followingUser"
         :key="author.user._id"
-        class="flex py-4 first:pt-0 last:pb-0"
+        class="flex justify-between py-4 first:pt-0 last:pb-0"
       >
-        <img
-          class="h-10 w-10 rounded-full"
-          :src="URL_AVATAR + author.user.avatar"
-          :alt="author.user.display_name"
-        />
-        <div class="ml-3 overflow-hidden">
-          <router-link
-            :to="{ name: 'profile', params: { id: author.user._id } }"
-          >
-            <p class="text-sm font-medium text-slate-900">
-              {{ author.user.display_name }}
-            </p>
-            <p class="text-sm text-slate-500 truncate">
-              {{ author.user.email }}
-            </p>
-          </router-link>
+        <div class="flex">
+          <img
+            class="h-10 w-10 rounded-full"
+            :src="URL_AVATAR + author.user.avatar"
+            :alt="author.user.display_name"
+          />
+          <div class="ml-3 overflow-hidden">
+            <router-link
+              :to="{ name: 'profile', params: { id: author.user._id } }"
+            >
+              <p class="text-sm font-medium text-slate-900">
+                {{ author.user.display_name }}
+              </p>
+              <p class="text-sm text-slate-500 truncate">
+                {{ author.user.email }}
+              </p>
+            </router-link>
+          </div>
         </div>
 
-        <FollowBtn
-          class="absolute right-3"
-          :followUserId="author.user._id"
-        ></FollowBtn>
+        <FollowBtn :followUserId="author.user._id"></FollowBtn>
       </li>
     </ul>
     <div v-else class="flex flex-col items-center p-4">

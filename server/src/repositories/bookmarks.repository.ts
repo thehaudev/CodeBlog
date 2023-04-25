@@ -44,7 +44,7 @@ export default class BookMarkRepository extends BaseRepository<Bookmark> {
     id: string,
     skip: number,
     take: number,
-    sort: {},
+    sort?: {},
     search?: {}
   ): Promise<Post[]> {
     const res = await this.model.aggregate([
@@ -160,7 +160,6 @@ export default class BookMarkRepository extends BaseRepository<Bookmark> {
                   },
                 },
                 user: { $arrayElemAt: ["$user", 0] },
-                // tags: "$tags.title"
                 tags: {
                   _id: 1,
                   title: 1,
@@ -169,7 +168,7 @@ export default class BookMarkRepository extends BaseRepository<Bookmark> {
                 updatedAt: 1,
               },
             },
-            { $sort: sort },
+            { $sort: sort || { created_at: -1 } },
             { $skip: skip },
             { $limit: take },
           ],
