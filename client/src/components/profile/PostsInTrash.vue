@@ -13,10 +13,10 @@ const route = useRoute();
 const userId = route.params.id;
 
 const page = ref(1);
-const posts = computed(() => store.getters["posts/getBookmarkPostsOfUser"]);
+const posts = computed(() => store.getters["posts/getPostsInTrashOfUser"]);
 
 const paginationOfPosts = computed(
-  () => store.getters["posts/paginationBookmarkPostsOfUser"]
+  () => store.getters["posts/paginationPostsInTrashOfUser"]
 );
 const sort = ref("latest");
 const limit = ref(7);
@@ -24,7 +24,7 @@ const search = ref("");
 
 watch(search, async () => {
   page.value = 1;
-  await store.dispatch("posts/setBookmarkPostsOfUser", {
+  await store.dispatch("posts/setPostsInTrashOfUser", {
     id: userId,
     search: search.value,
     current_page: page.value,
@@ -32,9 +32,10 @@ watch(search, async () => {
     limit: 7,
   });
 });
+
 watch(search, async () => {
   page.value = 1;
-  await store.dispatch("posts/setBookmarkPostsOfUser", {
+  await store.dispatch("posts/setPostsInTrashOfUser", {
     id: userId,
     sort: sort.value,
     search: search.value,
@@ -42,7 +43,7 @@ watch(search, async () => {
   });
 });
 watch(limit, async () => {
-  await store.dispatch("posts/setBookmarkPostsOfUser", {
+  await store.dispatch("posts/setPostsInTrashOfUser", {
     id: userId,
     sort: sort.value,
     search: search.value,
@@ -106,7 +107,7 @@ onMounted(fetchData);
         v-for="post in posts"
         :key="post._id"
         :post="post"
-        :typePost="{ type: 'bookmarkPost' }"
+        :typePost="{ type: 'trash' }"
       ></Post>
     </div>
 

@@ -26,17 +26,16 @@ export class CreatePostDto {
 }
 
 export class UpdatePostDto {
-  // @IsOptional()
   // @IsString()
   // @Length(6, 255)
   // public userId: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Length(15)
   public title: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Length(15)
   public content: string;
@@ -47,8 +46,4 @@ export class UpdatePostDto {
   @IsOptional()
   @IsString()
   public coverImageUrl: string;
-  // @IsOptional()
-  // @IsNumber()
-  // public views: number;
-  // public votes: number;
 }

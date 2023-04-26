@@ -76,8 +76,10 @@ onMounted(fetchData);
     <section class="tag-layout">
       <div v-for="tag in listTags" :key="tag._id" class="item">
         <p>
-          <i class="fa-solid fa-square-rss mr-2" style="color: #fe9e40"></i
-          >{{ tag.title }}
+          <router-link :to="{ name: 'postsTagged', params: { id: tag._id } }"
+            ><i class="fa-solid fa-square-rss mr-2" style="color: #fe9e40"></i
+            >{{ tag.title }}</router-link
+          >
         </p>
         <ul>
           <li>{{ tag.posts }} posts</li>

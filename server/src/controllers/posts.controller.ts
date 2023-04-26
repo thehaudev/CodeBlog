@@ -97,9 +97,9 @@ export class PostsController {
       const { limit = 10, page = 1, search = null, sort = "" } = req.query;
 
       const id: string = req.params.id;
-      let curr: {} = {};
+      let curr: any = null;
       if (sort == "latest") {
-        curr = { updatedAt: -1 };
+        curr = { createdAt: -1 };
       } else if (sort == "views") {
         curr = { views: -1 };
       } else if (sort == "votes") {
@@ -120,6 +120,64 @@ export class PostsController {
       };
       const { posts, total } =
         await this.bookmarkService.findBookmarkPostsOfUser(pagination, id);
+
+      const count = posts.length;
+      const total_pages = Math.floor(
+        +total % +limit == 0 ? +total / +limit : +total / +limit + 1
+      );
+      pagination = {
+        count: +count,
+        total: +total,
+        per_page: +limit,
+        current_page: +page,
+        total_pages: +total_pages,
+      };
+
+      res.status(200).json({
+        count: count,
+        posts: posts,
+        pagination,
+        msg: "get bookmark posts of user",
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getPostsInTrashOfUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { limit = 10, page = 1, search = null, sort = "" } = req.query;
+
+      const id: string = req.params.id;
+      let curr: any = null;
+      if (sort == "latest") {
+        curr = { createdAt: -1 };
+      } else if (sort == "views") {
+        curr = { views: -1 };
+      } else if (sort == "votes") {
+        curr = { votes: -1 };
+      } else if (sort == "comments") {
+        curr = { comments: -1 };
+      }
+      let pagination: any = {
+        skip: (+page - 1) * +limit,
+        take: +limit,
+        search: search && {
+          $or: [
+            { title: { $regex: `${search}`, $options: "i" } },
+            { content: { $regex: `${search}`, $options: "i" } },
+          ],
+        },
+        sort: curr,
+      };
+      const { posts, total } = await this.postService.findPostsInTrashOfUser(
+        pagination,
+        id
+      );
 
       const count = posts.length;
       const total_pages = Math.floor(
@@ -166,7 +224,7 @@ export class PostsController {
       const id = req.params.id;
       let curr: {} = {};
       if (sort == "latest") {
-        curr = { updatedAt: -1 };
+        curr = { createdAt: -1 };
       } else if (sort == "views") {
         curr = { views: -1 };
       } else if (sort == "votes") {
@@ -228,7 +286,7 @@ export class PostsController {
       //sort "","newest","trending"
       let curr: {} = {};
       if (sort == "latest") {
-        curr = { updatedAt: -1 };
+        curr = { createdAt: -1 };
       } else if (sort == "views") {
         curr = { views: -1 };
       } else if (sort == "votes") {
@@ -279,7 +337,7 @@ export class PostsController {
       //sort "","newest","trending"
       let curr: {} = {};
       if (sort == "latest") {
-        curr = { updatedAt: -1 };
+        curr = { createdAt: -1 };
       } else if (sort == "views") {
         curr = { views: -1 };
       } else if (sort == "votes") {

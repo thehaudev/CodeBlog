@@ -4,12 +4,14 @@ import Posts from "../components/profile/Posts.vue";
 import Followers from "../components/profile/Followers.vue";
 import Following from "../components/profile/Following.vue";
 
+import PostsInTrash from "../components/profile/PostsInTrash.vue";
 import BookmarkPosts from "../components/profile/BookmarkPosts.vue";
 import FollowBtn from "../components/profile/FollowBtn.vue";
 import skeletonLoader from "../components/skeletonLoader.vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import { ref, computed, onMounted } from "vue";
+import UserLoader from "../components/UserLoader.vue";
 
 const store = useStore();
 const route = useRoute();
@@ -110,13 +112,14 @@ onMounted(fetchData);
           </div>
         </div>
       </div>
-      <skeletonLoader v-else></skeletonLoader>
+      <UserLoader v-else></UserLoader>
     </div>
 
     <div class="w-2/3 p-1 md:px-12] lg:24 h-full antialiased">
       <tabs @selectTab="emitTab"></tabs>
       <Posts v-if="selectTab == 'posts'"> </Posts>
       <BookmarkPosts v-if="selectTab == 'bookmarks'"></BookmarkPosts>
+      <PostsInTrash v-if="selectTab == 'trash'"></PostsInTrash>
     </div>
   </div>
 

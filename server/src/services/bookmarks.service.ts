@@ -25,6 +25,14 @@ export default class BookmarkService {
     return checkBookmark;
   }
 
+  public async getBookmarksOfUser(data: any): Promise<Bookmark[] | null> {
+    if (isEmpty(data)) throw new HttpException(409, "bookmark data is empty");
+    const bookmarks: Bookmark[] | null = await this.bookmarkRepository.find(
+      data
+    );
+    return bookmarks;
+  }
+
   public async bookmark(data: BookmarkDto): Promise<Bookmark> {
     if (isEmpty(data)) throw new HttpException(409, "bookmark data is empty");
 

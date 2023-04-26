@@ -67,6 +67,24 @@ export default class PostsService {
     );
     return { posts, total };
   }
+  public async findPostsInTrashOfUser(
+    filter: any,
+    id: string
+  ): Promise<{ posts: Post[]; total: Number }> {
+    const posts: Post[] = await this.postRepository.findPostsInTrashOfUser(
+      id,
+      filter.skip,
+      filter.take,
+      filter.sort,
+      filter.search
+    );
+    const total: Number = await this.postRepository.countPostsInTrashOfUser(
+      id,
+      filter.search
+    );
+    return { posts, total };
+  }
+
   public async findAllPosts(
     filter?: any
   ): Promise<{ posts: Post[]; total: Number }> {

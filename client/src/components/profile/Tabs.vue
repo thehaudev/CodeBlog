@@ -1,15 +1,23 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
-
+import { useRoute } from "vue-router";
 const store = useStore();
 const active = ref("posts");
+const route = useRoute();
+
+const userId = route.params.id;
+const userLogin = computed(() => store.getters["auth/getUser"]);
+
 const emit = defineEmits(["selectTab"]);
 const paginationOfPosts = computed(
   () => store.getters["posts/paginationPostsOfUser"]
 );
 const paginationOfBookmarkPosts = computed(
   () => store.getters["posts/paginationBookmarkPostsOfUser"]
+);
+const paginationPostsInTrash = computed(
+  () => store.getters["posts/paginationPostsInTrashOfUser"]
 );
 function selectTab(type) {
   active.value = type;
@@ -18,7 +26,7 @@ function selectTab(type) {
 </script>
 <template>
   <div
-    class="flex items-center -mx-4 overflow-x-auto overflow-y-hidden sm:justify-center border-solid flex-nowrap text-gray-800"
+    class="flex items-center mb-2 -mx-4 overflow-x-auto overflow-y-hidden sm:justify-center border-solid flex-nowrap text-gray-800"
   >
     <span
       :class="{
@@ -52,6 +60,7 @@ function selectTab(type) {
       >
     </span>
     <span
+      v-if="userLogin && userId == userLogin._id"
       :class="{
         'text-gray-900': active == 'bookmarks',
         'border-sky-600': active == 'bookmarks',
@@ -81,49 +90,25 @@ function selectTab(type) {
         ></span
       >
     </span>
-
-    <!-- <a
+    <span
+      v-if="userLogin && userId == userLogin._id"
+      :class="{
+        'text-gray-900': active == 'trash',
+        'border-sky-600': active == 'trash',
+      }"
       rel="noopener noreferrer"
-      href="#"
-      class="flex items-center flex-shrink-0 px-5 py-3 space-x-2 border-b border-gray-600 text-gray-600"
+      class="flex items-center mx-1 flex-shrink-0 px-5 py-3 space-x-2 border-b-4 border-solid border-gray-300 text-gray-600"
+      @click="selectTab('trash')"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="w-4 h-4"
+      <i class="fa-solid fa-trash-can"></i>
+      <span
+        >Trash
+        <span
+          v-if="paginationPostsInTrash"
+          class="bg-gray-300 text-xs p-1 ml-1 rounded-xl"
+          >{{ paginationPostsInTrash.total }}</span
+        ></span
       >
-        <polygon
-          points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-        ></polygon>
-      </svg>
-      <span>Excepturi</span>
-    </a>
-    <a
-      rel="noopener noreferrer"
-      href="#"
-      class="flex items-center flex-shrink-0 px-5 py-3 space-x-2 border-b border-gray-600 text-gray-600"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="w-4 h-4"
-      >
-        <circle cx="12" cy="12" r="10"></circle>
-        <polygon
-          points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"
-        ></polygon>
-      </svg>
-      <span>Consectetur</span>
-    </a> -->
+    </span>
   </div>
 </template>

@@ -217,7 +217,7 @@ export default class UserRepository extends BaseRepository<User> {
           location: 1,
           about: 1,
           posts: { $size: "$posts" },
-          bookmarks: { $size: "$bookmarks" },
+          bookmarks: 1,
           followingUser: 1,
           followingTag: 1,
           followers: 1,

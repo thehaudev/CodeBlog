@@ -84,14 +84,17 @@ async function fetchData() {
   });
   window.scrollTo({ top: 0, behavior: "smooth" });
 
-  await store.dispatch("posts/setBookmarkPostsOfUser", {
-    id: userId,
-    limit: 7,
-    sort: sort.value,
-    search: search.value,
+  if (user.value._id == userId) {
+    await store.dispatch("posts/setBookmarkPostsOfUser", {
+      id: userId,
+      limit: 7,
+    });
 
-    current_page: 1,
-  });
+    await store.dispatch("posts/setPostsInTrashOfUser", {
+      id: userId,
+      limit: limit.value,
+    });
+  }
 }
 onMounted(fetchData);
 </script>
@@ -138,6 +141,7 @@ onMounted(fetchData);
         v-for="post in posts"
         :key="post._id"
         :post="post"
+        :typePost="{ type: 'postOfUser' }"
       ></Post>
     </div>
 

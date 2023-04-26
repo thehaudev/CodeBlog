@@ -19,6 +19,12 @@ router.get(
   postsController.getBookmarkPostsOfUser
 );
 
+//GET /api/v1/posts/trash/:userId
+router.get(
+  "/trash/:id",
+  validationMiddleware(IdDto, "params"),
+  postsController.getPostsInTrashOfUser
+);
 //GET /api/v1/posts/:id
 router.get(
   "/:id",
@@ -50,7 +56,15 @@ router.put(
   validationMiddleware(UpdatePostDto, "body"),
   postsController.updatePost
 );
-
+//PATCH /api/v1/posts/:id
+router.patch(
+  "/:id",
+  validationMiddleware(IdDto, "params"),
+  verify,
+  permissionPost,
+  validationMiddleware(UpdatePostDto, "body"),
+  postsController.updatePost
+);
 //DELETE /api/v1/posts:id
 router.delete(
   "/:id",

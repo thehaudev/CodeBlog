@@ -9,7 +9,7 @@ const auth = {
       user: null,
       tagsFollowing: null,
       usersFollowing: null,
-
+      userBookmarks: null,
       userImages: [],
     };
   },
@@ -29,6 +29,9 @@ const auth = {
     getUserImages(state) {
       return state.userImages;
     },
+    getUserBookmarks(state) {
+      return state.userBookmarks;
+    },
   },
   mutations: {
     setUser: (state, user) => {
@@ -44,6 +47,9 @@ const auth = {
     setUserImages: (state, data) => {
       state.userImages = data;
     },
+    setUserBookmarks: (state, data) => {
+      state.userBookmarks = data;
+    },
   },
   actions: {
     setUserToken({ commit }, { user }) {
@@ -58,6 +64,10 @@ const auth = {
     async setUsersFollowing({ commit }) {
       const res = await instance.get("/users/me/usersFollowing");
       commit("setUserFollowing", res.data.data);
+    },
+    async setUserBookmarks({ commit }) {
+      const res = await instance.get("/users/me/bookmarks");
+      commit("setUserBookmarks", res.data.data);
     },
     async setUserImages({ commit }) {
       const res = await instance.get("/images/me");

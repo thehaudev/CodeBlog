@@ -4,12 +4,12 @@ import { URL_AVATAR } from "../../constants/index";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { ref, computed, onMounted } from "vue";
+import OpenOptionBtn from "./OpenOptionBtn.vue";
 
 const store = useStore();
 const router = useRouter();
-const props = defineProps(["post"]);
+const props = defineProps(["post", "typePost"]);
 const readMore = ref(false);
-
 async function getPostDetail(postId) {
   await store.dispatch("postDetail/fetchData", { postId: postId });
   router.push({ name: "postDetail", params: { id: postId } });
@@ -35,12 +35,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-w-5xl px-10 py-6 bg-white rounded-lg shadow-md">
+  <div class="max-w-5xl px-10 py-6 bg-white rounded-lg shadow-md relative">
     <div class="flex justify-between items-center">
       <span class="font-light text-gray-600">
         {{ getReadableDate(post.createdAt) }}</span
       >
-      <div>
+      <div class="flex justify-between items-center">
         <router-link
           v-for="tag in post.tags"
           :key="tag.id"
@@ -57,7 +57,7 @@ onMounted(() => {
     </div>
     <div class="mt-2">
       <span
-        @click="getPostDetail(post._id)"
+        @click="typePost.type != 'trash' && getPostDetail(post._id)"
         :id="post._id"
         class="text-2xl text-gray-700 font-bold hover:underline cursor-pointer"
         >{{ post.title }}</span
@@ -84,10 +84,17 @@ onMounted(() => {
     </div>
     <div class="flex justify-between items-center">
       <div class="flex mt-2">
-        <div class="py-1 pl-1 pr-2 text-gray-600 text-sm rounded">
-          {{ post.votes }}<span class="hidden md:inline">&nbsp;votes</span>
+        <div
+          v-if="typePost.type != 'trash'"
+          class="py-1 pl-1 pr-2 text-gray-600 text-sm rounded cursor-pointer hover:bg-gray-100 hover:text-black"
+        >
+          <router-link :to="{ name: 'postDetail', params: { id: post._id } }"
+            >{{ post.votes
+            }}<span class="hidden md:inline">&nbsp;votes</span></router-link
+          >
         </div>
         <div
+          v-if="typePost.type != 'trash'"
           class="py-1 pl-1 pr-2 text-gray-600 text-sm rounded cursor-pointer hover:bg-gray-100 hover:text-black"
         >
           <router-link
@@ -115,7 +122,6 @@ onMounted(() => {
             },
           }"
           class="flex items-center"
-          href="#"
         >
           <img
             class="mx-4 w-10 h-10 object-cover rounded-full hidden sm:block"
@@ -128,6 +134,7 @@ onMounted(() => {
         </router-link>
       </div>
     </div>
+    <OpenOptionBtn :type="typePost" :postId="post._id"></OpenOptionBtn>
   </div>
 </template>
 <style scoped>

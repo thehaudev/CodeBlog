@@ -5,6 +5,7 @@ import { useStore } from "vuex";
 
 import { useVotePost } from "../composables/votePost";
 import { useBookmark } from "../composables/bookmark";
+
 import { useFollow } from "../composables/followUser";
 
 const store = useStore();
@@ -16,7 +17,6 @@ const { bookmark } = useBookmark();
 const { votePost } = useVotePost();
 const isVote = computed(() => store.getters["postDetail/isVote"]);
 const isBookmark = computed(() => store.getters["postDetail/isBookmark"]);
-const isFollow = computed(() => store.getters["postDetail/isFollow"]);
 const user = computed(() => store.getters["auth/getUser"]);
 const postId = ref(route.params.id);
 
@@ -24,17 +24,6 @@ const props = defineProps(["votes"]);
 
 const votes = computed(() => props.votes);
 
-async function followBtn(followingId) {
-  if (user.value) {
-    await follow(followingId);
-    await store.dispatch("postDetail/fetFollow", { postId: postId.value });
-  } else {
-    await store.dispatch("route/setRouteBeforeLogin", {
-      path: route.path,
-    });
-    router.push({ name: "login", params: {} });
-  }
-}
 async function vote(type) {
   if (user.value) {
     await votePost(postId.value, type);

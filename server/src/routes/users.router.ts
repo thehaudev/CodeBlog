@@ -15,7 +15,9 @@ import NotificationController from "../controllers/notification.controller";
 import Follow_TagController from "../controllers/follow_tag.controller";
 import Follow_UsersController from "../controllers/follow_user.controller";
 import { PostsController } from "../controllers/posts.controller";
+import BookmarkController from "../controllers/bookmarks.controller";
 
+const bookmarksController = new BookmarkController();
 const usersController = new UsersController();
 const postsController = new PostsController();
 const notificationController = new NotificationController();
@@ -91,5 +93,7 @@ router.get(
   verify,
   follow_UserController.findFollowUserOfUser
 );
+//GET /users/me/usersFollowing
+router.get("/me/bookmarks", verify, bookmarksController.getBookmarksOfUser);
 
 export default router;
