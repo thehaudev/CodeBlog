@@ -3,7 +3,7 @@ import { URL_IMG } from "../constants/index";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import ImageUploader from "quill-image-uploader";
-import instance from "../configs/axios";
+import { instance, instanceWithAccess } from "../configs/axios";
 const modules = {
   name: "imageUploader",
   module: ImageUploader,
@@ -13,7 +13,7 @@ const modules = {
         const formData = new FormData();
         formData.append("image", file);
 
-        instance
+        instanceWithAccess
           .post("/images/uploads", formData)
           .then((res) => {
             resolve(URL_IMG + res.data.data.name);

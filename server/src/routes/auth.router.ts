@@ -34,7 +34,7 @@ router.post(
   authController.generateAccessToken
 );
 
-//PATCH /auth/change-pass
+//PATCH /auth/change-password
 router.patch(
   "/change-password",
   verify,

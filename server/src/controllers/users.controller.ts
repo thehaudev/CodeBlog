@@ -145,7 +145,6 @@ class UsersController {
           return res.send(req.fileValidationError);
         }
         avatar = req.file.filename;
-        console.log(avatar);
       } else {
         avatar = userData.oldAvatar;
       }

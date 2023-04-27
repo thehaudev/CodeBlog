@@ -23,7 +23,7 @@ async function recovery() {
           <input autofocus v-model="email" required type="email" name="email" />
         </div>
         <p class="error" v-if="error">{{ error }}</p>
-        <div class="row">
+        <div class="row mt-3">
           <button v-if="isPending">...</button>
           <button v-else type="submit">Send recovery email</button>
         </div>

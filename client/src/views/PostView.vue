@@ -4,7 +4,6 @@ import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 import EditorMarkdown from "../components/EditorMarkdown.vue";
 import { usePost } from "../composables/post";
-import instance from "../configs/axios";
 import { URL_IMG } from "../constants";
 import { limitString } from "../utils/string";
 import UploadImage from "../components/UploadImage.vue";

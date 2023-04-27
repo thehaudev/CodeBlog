@@ -66,15 +66,12 @@ async function restorePost() {
         class="py-2 text-sm text-gray-700 dark:text-gray-200"
         aria-labelledby="dropdownMenuIconHorizontalButton"
       >
-        <li>
-          <span
-            v-if="type.type == 'bookmarkPost'"
-            @click="bookmarkBtn"
-            class="block cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >Unbookmark</span
-          >
-        </li>
-        <BookmarkLi :postId="postId" v-if="type.type == 'postOfUser'">
+        <BookmarkLi
+          :postId="postId"
+          v-if="type.type == 'postOfUser' || type.type == 'postHome'"
+        >
+        </BookmarkLi>
+        <BookmarkLi :postId="postId" v-if="type.type == 'bookmarkPost'">
         </BookmarkLi>
         <li>
           <span

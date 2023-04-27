@@ -4,6 +4,7 @@ const route = {
     return {
       beforeLogin: null,
       showModalLogin: false,
+      showModalRefresh: false,
     };
   },
   getters: {
@@ -13,6 +14,9 @@ const route = {
     getShowModalLogin(state) {
       return state.showModalLogin;
     },
+    getShowModalRefresh(state) {
+      return state.showModalRefresh;
+    },
   },
   mutations: {
     setRouteBeforeLogin: (state, data) => {
@@ -21,6 +25,9 @@ const route = {
     setShowModalLogin: (state, data) => {
       state.showModalLogin = data;
     },
+    setShowModalRefresh: (state, data) => {
+      state.showModalRefresh = data;
+    },
   },
   actions: {
     setRouteBeforeLogin({ commit }, { route, path }) {
@@ -28,6 +35,9 @@ const route = {
     },
     setShowModalLogin({ commit }, { isShow }) {
       commit("setShowModalLogin", isShow);
+    },
+    setShowModalRefresh({ commit }, { isShow }) {
+      commit("setShowModalRefresh", isShow);
     },
   },
 };

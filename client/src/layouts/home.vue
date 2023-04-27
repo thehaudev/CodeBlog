@@ -26,10 +26,10 @@ import RecentPost from "../components/postComponents/sections-recent-article.vue
               </h1>
               <Categories></Categories>
             </div>
-            <div class="mt-10 px-8">
+            <!-- <div class="mt-10 px-8">
               <h1 class="mb-4 text-xl font-bold text-gray-700">Recent Post</h1>
               <RecentPost></RecentPost>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -49,6 +49,7 @@ main {
   width: 75%;
   margin: 0 auto;
   padding-top: 67px;
+  min-height: 100vh;
 }
 ::-webkit-scrollbar {
   width: 5px;

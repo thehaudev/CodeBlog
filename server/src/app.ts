@@ -44,12 +44,15 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:3001");
   res.header(
     "Access-Control-Allow-Headers",
-    "Content-Type,Content-Length, Authorization, Accept,X-Requested-With"
+    "Content-Type,Content-Length, Authorization,set-cookie, Accept,X-Requested-With"
   );
   res.header(
     "Access-Control-Allow-Methods",
     "PUT,POST,GET,DELETE,OPTIONS,PATCH"
   );
+
+  // res.header("Access-Control-Expose-Headers", "set-cookie");
+  res.header("Access-Control-Expose-Headers", "*");
   next();
 });
 

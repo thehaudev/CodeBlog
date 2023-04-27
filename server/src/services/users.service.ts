@@ -98,7 +98,8 @@ class UsersService {
     );
     if (!updateUserById) throw new HttpException(409, "User doesn't exist");
 
-    deleteFile(oldAvatar);
+    if (oldAvatar != "default/default.png" && userData.avatar != oldAvatar)
+      deleteFile(oldAvatar);
 
     return updateUserById;
   }
@@ -120,11 +121,12 @@ class UsersService {
       userData
     );
     if (!updateUserById) throw new HttpException(409, "User doesn't exist");
-
-    //xoa anh cu
-    deleteFile(oldAvatar);
-
-    return updateUserById;
+    if (oldAvatar != "default/default.png" && userData.avatar != oldAvatar)
+      deleteFile(oldAvatar);
+    const user: User | null = await this.userRepository.findUser(
+      updateUserById.email
+    );
+    return user;
   }
 
   public async deleteUser(userId: string): Promise<User> {

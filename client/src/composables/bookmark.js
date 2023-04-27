@@ -1,18 +1,17 @@
-import instance from '../configs/axios'
+import { instanceWithAccess } from "../configs/axios";
 
-
-async function bookmark(id){
-   try {
-    const res =await instance.get('/bookmarks/'+id)
-    if(res.data.data){
-        await instance.delete('/bookmarks/'+id)
-    }else{
-        await instance.post('/bookmarks/'+id)
+async function bookmark(id) {
+  try {
+    const res = await instanceWithAccess.get("/bookmarks/" + id);
+    if (res.data.data) {
+      await instanceWithAccess.delete("/bookmarks/" + id);
+    } else {
+      await instanceWithAccess.post("/bookmarks/" + id);
     }
-   } catch (error) {
-        console.log(error)
-    }
+  } catch (error) {
+    console.log(error);
+  }
 }
-export function useBookmark(){
-    return {bookmark}
+export function useBookmark() {
+  return { bookmark };
 }

@@ -1,4 +1,4 @@
-import instance from "../configs/axios";
+import { instance, instanceWithAccess } from "../configs/axios";
 
 const posts = {
   namespaced: true,
@@ -126,7 +126,7 @@ const posts = {
       commit("setPostsInTrashOfUser", postsOfUser.data);
     },
     async editStatusOfPost({}, { postId, status }) {
-      await instance.patch("/posts/" + postId, {
+      await instanceWithAccess.patch("/posts/" + postId, {
         status: status,
       });
     },

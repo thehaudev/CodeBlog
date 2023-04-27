@@ -12,6 +12,8 @@ import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import { ref, computed, onMounted } from "vue";
 import UserLoader from "../components/UserLoader.vue";
+import Information from "../components/profile/Information.vue";
+import { URL_AVATAR } from "../constants";
 
 const store = useStore();
 const route = useRoute();
@@ -35,16 +37,16 @@ onMounted(fetchData);
 </script>
 <template>
   <div class="w-full flex flex-row flex-wrap lg:w-8/12 mt-5 mx-auto">
-    <div class="w-1/3 p-5 h-0 md:h-screen bg-white">
+    <div class="w-1/3 p-10 h-0 md:h-screen bg-white">
       <div class="flex flex-col justify-center pb-10" v-if="user">
         <img
-          src="https://images.pexels.com/photos/3278968/pexels-photo-3278968.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260"
+          :src="URL_AVATAR + user.avatar"
           class="h-60 w-60 rounded-full object-cover mx-auto"
-          alt="username"
+          :alt="user.display_name"
         />
 
         <div class="ml-10">
-          <div class="flex items-center">
+          <div class="flex items-center justify-between mb-3">
             <h2 class="block leading-relaxed font-light text-gray-700 text-3xl">
               {{ user.display_name }}
             </h2>
@@ -52,7 +54,8 @@ onMounted(fetchData);
               @followSubmit="fetchData"
               :followUserId="user._id"
             ></FollowBtn>
-            <a
+            <router-link
+              :to="{ name: 'settings' }"
               v-if="me && userId == me._id"
               class="cursor-pointer ml-2 p-1 border-transparent text-gray-700 rounded-full hover:text-blue-600 focus:outline-none focus:text-gray-600"
               aria-label="Notifications"
@@ -71,11 +74,11 @@ onMounted(fetchData);
                 />
                 <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-            </a>
+            </router-link>
           </div>
-          <h2 class="block leading-relaxed font-light text-gray-700 text-3xl">
+          <!-- <h2 class="block leading-relaxed font-light text-gray-700 text-3xl">
             @{{ user.email.split("@")[0] }}
-          </h2>
+          </h2> -->
           <ul class="flex justify-content-around items-center">
             <li>
               <span class="block text-base flex"
@@ -100,18 +103,10 @@ onMounted(fetchData);
               >
             </li>
           </ul>
-          <br />
-          <div class="">
-            <h1 class="text-base font-bold font-light">Darcy</h1>
-            <span class="text-base"
-              >I am Darcy, I like music, and record videos</span
-            >
-            <a class="block text-base text-blue-500 mt-2" target="_blank"
-              >https://tailwindcomponents.com/</a
-            >
-          </div>
+          <Information :user="user"></Information>
         </div>
       </div>
+
       <UserLoader v-else></UserLoader>
     </div>
 

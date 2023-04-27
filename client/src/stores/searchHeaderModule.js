@@ -1,5 +1,3 @@
-import instance from "../configs/axios";
-
 const search = {
   namespaced: true,
   state() {

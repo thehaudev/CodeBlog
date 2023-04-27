@@ -26,6 +26,12 @@ export const verify = async (
       next();
     });
   } catch (err) {
+    if (err instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({
+        isExpires: true,
+        msg: "Authentication token expired",
+      });
+    }
     return res.status(400).json({ msg: "Invalid Token" });
   }
 };
@@ -35,7 +41,7 @@ export const verifyRefreshToken = async (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.cookies.RefreshToken;
+  const token = req.body.refreshToken;
   if (!token) return res.status(401).json("Please login");
   const secretKey: string = process.env.REFRESH_TOKEN_SECRET || "";
 

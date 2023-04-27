@@ -16,6 +16,7 @@
     "cheerio": "^1.0.0-rc.12",
     "jquery": "^3.6.4",
     "marked": "^4.3.0",
+    "mitt": "^3.0.0",
     "quill-blot-formatter": "^1.0.5",
     "quill-image-uploader": "^1.2.4",
     "slick-carousel": "^1.8.1",
@@ -23,6 +24,7 @@
     "vue": "^3.2.47",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^4.1.6",
+    "vue3-cookies": "^1.0.6",
     "vue3-quill": "^0.3.0",
     "vuex": "^4.0.2"
   },

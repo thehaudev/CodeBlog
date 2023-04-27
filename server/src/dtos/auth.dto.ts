@@ -8,7 +8,7 @@ export class RegisterDto {
   @IsString()
   @Length(6, 25)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: "Password too weak",
+    message: "At least one capital letter",
   })
   public password: string;
 
@@ -28,18 +28,16 @@ export class LoginDto {
 
 export class ChangePasswordDto {
   @IsString()
-  @Length(6, 25)
   public password: string;
 
   @IsString()
   @Length(6, 25)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: "Password too weak",
+    message: "At least one capital letter",
   })
   public newPassword: string;
 
   @IsString()
-  @Length(6, 25)
   public confirmPassword: string;
 }
 
@@ -47,7 +45,7 @@ export class ResetPasswordDto {
   @IsString()
   @Length(6, 25)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: "Password too weak",
+    message: "At least one capital letter",
   })
   public newPassword: string;
 

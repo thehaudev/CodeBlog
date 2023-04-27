@@ -1,4 +1,4 @@
-import instance from "../configs/axios";
+import { instance, instanceWithAccess } from "../configs/axios";
 import { ref } from "vue";
 const error = ref(null);
 const isPending = ref(false);
@@ -7,7 +7,7 @@ async function createPost(title, content, tags, coverImageUrl) {
   isPending.value = true;
   error.value = null;
   try {
-    const res = await instance.post("/posts", {
+    const res = await instanceWithAccess.post("/posts", {
       title: title,
       content: content,
       coverImageUrl: coverImageUrl,
@@ -20,7 +20,7 @@ async function createPost(title, content, tags, coverImageUrl) {
       };
       return obj;
     });
-    await instance.post("/post_tag", newTags);
+    await instanceWithAccess.post("/post_tag", newTags);
     return res.data.data;
   } catch (err) {
     error.value = err.response.data.message;

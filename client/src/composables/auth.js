@@ -1,4 +1,5 @@
 import axios from "axios";
+import { instance, instanceWithAccess } from "../configs/axios";
 import { ref } from "vue";
 const error = ref(null);
 const isPending = ref(false);
@@ -11,15 +12,48 @@ async function login(email, password) {
       email: email,
       password: password,
     });
-    const { user, auth } = res.data;
-    return { user, auth };
+
+    const { user, auth, refreshCookie, expiresIn } = res.data;
+    return { user, auth, refreshCookie, expiresIn };
+  } catch (err) {
+    error.value = err.response.data.message;
+    console.log(err);
+  } finally {
+    isPending.value = false;
+  }
+}
+
+async function changeProfile(formData) {
+  isPending.value = true;
+  error.value = null;
+  try {
+    const res = await instanceWithAccess.patch("/users/me", formData);
+    const data = res.data.data;
+    return data;
+  } catch (err) {
+    error.value = err.response?.data.message;
+  } finally {
+    isPending.value = false;
+  }
+}
+
+async function changePassword(password, newPassword, confirmPassword) {
+  isPending.value = true;
+  error.value = null;
+  try {
+    const res = await instanceWithAccess.patch("/auth/change-password", {
+      confirmPassword: confirmPassword,
+      newPassword: newPassword,
+      password: password,
+    });
+    const { message } = res.data;
+    return message;
   } catch (err) {
     error.value = err.response.data.message;
   } finally {
     isPending.value = false;
   }
 }
-
 async function signUp(email, password, displayName) {
   isPending.value = true;
   error.value = null;
@@ -87,4 +121,11 @@ export function useRecovery() {
 
 export function useResetPassword() {
   return { error, isPending, resetPassword };
+}
+export function useChangeProfile() {
+  return { error, isPending, changeProfile };
+}
+
+export function useChangePassword() {
+  return { error, isPending, changePassword };
 }

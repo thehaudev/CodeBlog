@@ -1,6 +1,6 @@
-import instance from "../configs/axios";
-import socket from "../plugins/socket";
-
+import { instance, instanceWithAccess } from "../configs/axios";
+import { useCookies } from "vue3-cookies";
+const { cookies } = useCookies();
 const auth = {
   namespaced: true,
   state() {
@@ -54,31 +54,34 @@ const auth = {
   actions: {
     setUserToken({ commit }, { user }) {
       commit("setUser", user);
+      localStorage.removeItem("user");
       localStorage.setItem("user", JSON.stringify(user));
     },
 
     async setTagsFollowing({ commit }) {
-      const res = await instance.get("/users/me/tagsFollowing");
+      const res = await instanceWithAccess.get("/users/me/tagsFollowing");
       commit("setTagsFollowing", res.data.data);
     },
     async setUsersFollowing({ commit }) {
-      const res = await instance.get("/users/me/usersFollowing");
+      const res = await instanceWithAccess.get("/users/me/usersFollowing");
       commit("setUserFollowing", res.data.data);
     },
     async setUserBookmarks({ commit }) {
-      const res = await instance.get("/users/me/bookmarks");
+      const res = await instanceWithAccess.get("/users/me/bookmarks");
       commit("setUserBookmarks", res.data.data);
     },
     async setUserImages({ commit }) {
-      const res = await instance.get("/images/me");
+      const res = await instanceWithAccess.get("/images/me");
       commit("setUserImages", res.data.data);
     },
     async logout({ commit }) {
       commit("setUser", null);
       localStorage.removeItem("user");
       localStorage.removeItem("socketConnection");
-      await instance.post("/auth/logout");
+      await instanceWithAccess.post("/auth/logout");
       localStorage.removeItem("accessToken");
+      localStorage.removeItem("accessTokenExpiration");
+      cookies.remove("RefreshToken");
     },
   },
 };

@@ -75,7 +75,7 @@ onMounted(fetchData);
       <PostFilter @selectSort="emitSelectSort"></PostFilter>
     </div>
     <div class="mt-6" v-for="post in posts" :key="post.id">
-      <Post :post="post" :typePost="'postHome'"></Post>
+      <Post :post="post" :typePost="{ type: 'postHome' }"></Post>
     </div>
     <!-- pagination -->
     <div class="mt-8" v-if="paginationOfPosts.total_pages != 0">

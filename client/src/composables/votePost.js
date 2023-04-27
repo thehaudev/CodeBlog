@@ -1,23 +1,25 @@
-import instance from "../configs/axios";
-import { ref } from "vue";
+import { instanceWithAccess } from "../configs/axios";
 
 async function votePost(postId, type) {
   try {
-    const res = await instance.get("/vote_post/" + postId);
+    const res = await instanceWithAccess.get("/vote_post/" + postId);
     if (res.data.data) {
-      await instance.delete("/vote_post", {
+      await instanceWithAccess.delete("/vote_post", {
         data: {
           postId: postId,
         },
       });
     } else {
-      const res = await instance.post("/vote_post", {
+      const res = await instanceWithAccess.post("/vote_post", {
         postId: postId,
         type: type,
       });
-      await instance.post("/notifications/vote-post/" + res.data.data._id, {
-        link: "/post/" + postId,
-      });
+      await instanceWithAccess.post(
+        "/notifications/vote-post/" + res.data.data._id,
+        {
+          link: "/post/" + postId,
+        }
+      );
     }
   } catch (error) {
     console.log(error);

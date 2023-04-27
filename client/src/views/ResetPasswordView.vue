@@ -54,7 +54,11 @@ async function resetPasswordSubmit() {
           />
         </div>
         <p class="error" v-if="error">{{ error }}</p>
-
+        <ul v-else class="text-gray-500 ml-3 text-sm mb-2">
+          <li>6-25 characters</li>
+          <li>At least one capital letter</li>
+          <li>No spaces</li>
+        </ul>
         <div class="row">
           <button v-if="isPending">...</button>
           <button v-else type="submit">Reset password</button>

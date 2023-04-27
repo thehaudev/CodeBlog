@@ -1,4 +1,5 @@
-import instance from "../configs/axios";
+import { instance, instanceWithAccess } from "../configs/axios";
+
 import { useStore } from "vuex";
 const store = useStore();
 const comments = {
@@ -7,11 +8,6 @@ const comments = {
     return {
       commentsInPost: null,
       paginationOfComments: {},
-      // countOfComments:0,
-      // totalComment:1,
-      // current_page:1,
-      // total_page:1,
-      // per_page:null,
     };
   },
   getters: {

@@ -1,4 +1,4 @@
-import instance from "../configs/axios";
+import { instance, instanceWithAccess } from "../configs/axios";
 
 const tags = {
   namespaced: true,
@@ -62,19 +62,19 @@ const tags = {
       commit("setTagInPostTagged", response.data);
     },
     async follow({ commit }, { tagId }) {
-      const res = await instance.get("/follow_tag", {
+      const res = await instanceWithAccess.get("/follow_tag", {
         params: {
           tagId: tagId,
         },
       });
       if (res.data.data) {
-        await instance.delete("/follow_tag", {
+        await instanceWithAccess.delete("/follow_tag", {
           data: {
             tagId: tagId,
           },
         });
       } else {
-        await instance.post("/follow_tag", {
+        await instanceWithAccess.post("/follow_tag", {
           tagId: tagId,
         });
       }

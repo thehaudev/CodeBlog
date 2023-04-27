@@ -7,7 +7,7 @@ export const createAccessToken = (
   userData: User
 ): { accessToken: string; expiresIn: number } => {
   const dataStoredInToken: DataInTokenData = { _id: userData._id };
-  const expiresIn: number = 60 * 60 * 24;
+  const expiresIn: number = 60 * 60 * 2;
   const secretKey: string | undefined = process.env.ACCESS_TOKEN_SECRET;
 
   const accessToken = jwt.sign(dataStoredInToken, secretKey, {
@@ -16,6 +16,18 @@ export const createAccessToken = (
   // const cookie = `Authorization=${token}; HttpOnly; Max-Age=${expiresIn};`
   return { accessToken, expiresIn };
 };
+
+export const createRefreshToken = (userData: User): string => {
+  const dataStoredInToken: DataInTokenData = { _id: userData._id };
+  const expiresIn: number = 60 * 60 * 24 * 7;
+  const secretKey: string | undefined = process.env.REFRESH_TOKEN_SECRET;
+
+  const token = jwt.sign(dataStoredInToken, secretKey, {
+    expiresIn: expiresIn,
+  });
+  return token;
+};
+
 export const createTokenResetPassword = (
   userData: User
 ): { accessToken: string; expiresIn: number } => {
@@ -28,19 +40,6 @@ export const createTokenResetPassword = (
   });
   // const cookie = `Authorization=${token}; HttpOnly; Max-Age=${expiresIn};`
   return { accessToken, expiresIn };
-};
-export const createRefreshTokenCookie = (userData: User): string => {
-  const dataStoredInToken: DataInTokenData = { _id: userData._id };
-  const expiresIn: number = 60 * 60 * 24 * 15;
-  const secretKey: string | undefined = process.env.REFRESH_TOKEN_SECRET;
-
-  const token = jwt.sign(dataStoredInToken, secretKey, {
-    expiresIn: expiresIn,
-  });
-  const refreshCookie = `RefreshToken=${token};path: "/api/refresh_token"; HttpOnly; Max-Age=${
-    expiresIn * 1000
-  };`;
-  return refreshCookie;
 };
 
 export const refreshToken = (refresh_token: string) => {

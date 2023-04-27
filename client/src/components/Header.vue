@@ -7,7 +7,7 @@ import { getReadableDate, getTimeSincePost } from "../utils/time";
 import socket from "../plugins/socket";
 async function fetchData() {
   if (user.value) {
-    await store.dispatch("notifications/setNotificationOfUser");
+    await store.dispatch("notifications/setNotificationOfUser", { limit: 20 });
   }
 }
 const router = useRouter();
@@ -110,7 +110,7 @@ onUnmounted(() => {
               <i class="fa-regular fa-bell"></i>
             </div>
             <ul
-              class="absolute right-0 z-10 flex-col hidden origin-top-right bg-white rounded-sm shadow-xl sub-menu min-w-max"
+              class="absolute right-0 z-10 flex-col hidden whitespace-nowrap overflow-auto scrollbar-hide h-96 origin-top-right bg-white rounded-sm shadow-xl sub-menu min-w-max"
             >
               <li
                 v-for="notification in notifications"
@@ -120,9 +120,11 @@ onUnmounted(() => {
                     ? 'text-gray-700 bg-gray-200 px-5 py-1 mb-1'
                     : 'hover:text-gray-700 hover:bg-gray-50 px-5 py-1 m-1'
                 "
-                @click="readNotification(notification._id)"
               >
-                <router-link :to="notification.link">
+                <router-link
+                  :to="notification.link"
+                  @click="readNotification(notification._id)"
+                >
                   <div v-html="notification.content"></div>
                   <span>{{ getTimeSincePost(notification.createdAt) }}</span>
                 </router-link>
@@ -157,17 +159,22 @@ onUnmounted(() => {
             </ul>
           </div>
           <div class="relative avatar">
-            <div class="w-10 h-10">
-              <img :src="URL_AVATAR + user.avatar" />
+            <div class="relative flex-shrink-0">
+              <span
+                class="absolute bottom-0 right-0 w-3 h-3 bg-green-600 border rounded-full text-gray-800 border-gray-50"
+              ></span>
+              <img
+                :src="URL_AVATAR + user.avatar"
+                class="w-10 h-10 border rounded-full bg-gray-500 border-gray-300"
+              />
             </div>
             <div
               class="absolute right-0 z-10 flex-col hidden py-5 origin-top-right bg-white rounded-sm shadow-xl sub-menu min-w-max"
             >
               <div class="flex items-center h-10 gap-3 px-4 mb-4">
                 <img
-                  class="h-14"
                   :src="URL_AVATAR + user.avatar"
-                  alt="avatar"
+                  class="w-14 h-14 border rounded-full bg-gray-500 border-gray-300"
                 />
                 <div class="">
                   <p class="display">{{ user.display_name }}</p>
@@ -182,8 +189,8 @@ onUnmounted(() => {
                 >
               </div>
               <div class="hover:text-gray-700 hover:bg-gray-50">
-                <router-link class="block px-4 py-1" to="#!"
-                  ><i class="mr-2 fa-solid fa-gear"></i>Preferences</router-link
+                <router-link class="block px-4 py-1" :to="{ name: 'settings' }"
+                  ><i class="mr-2 fa-solid fa-gear"></i>Settings</router-link
                 >
               </div>
               <div class="hover:text-gray-700 hover:bg-gray-50">

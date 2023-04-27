@@ -84,7 +84,7 @@ async function fetchData() {
   });
   window.scrollTo({ top: 0, behavior: "smooth" });
 
-  if (user.value._id == userId) {
+  if (user.value && user.value._id == userId) {
     await store.dispatch("posts/setBookmarkPostsOfUser", {
       id: userId,
       limit: 7,

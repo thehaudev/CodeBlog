@@ -38,7 +38,7 @@ async function sign() {
           <i class="fa-brands fa-square-facebook"></i> Sign up with Facebook
         </p>
       </a>
-      <form @submit.prevent="sign" class="formLogin">
+      <form @submit.prevent="sign" class="formLogin relative">
         <div class="row">
           <label for="displayName">Display name</label>
           <input
@@ -55,9 +55,16 @@ async function sign() {
         </div>
         <div class="row">
           <label for="password">Password</label>
+
           <input v-model="password" required type="password" name="password" />
-          <p class="error" v-if="error">{{ error }}</p>
         </div>
+        <p class="error" v-if="error">{{ error }}</p>
+
+        <ul v-else class="text-gray-500 ml-3 text-sm mb-2">
+          <li>6-25 characters</li>
+          <li>At least one capital letter</li>
+          <li>No spaces</li>
+        </ul>
         <div class="row">
           <button v-if="isPending">...</button>
 
@@ -121,7 +128,7 @@ main {
 .formLogin {
   background-color: #fff;
   width: 100%;
-  height: 300px;
+  height: 360px;
   display: flex;
   justify-content: left;
   flex-direction: column;

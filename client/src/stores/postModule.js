@@ -1,4 +1,5 @@
-import instance from "../configs/axios";
+import { instance, instanceWithAccess } from "../configs/axios";
+
 import { useStore } from "vuex";
 const store = useStore();
 const postDetail = {
@@ -74,7 +75,7 @@ const postDetail = {
     },
     async fetchVote({ commit, state }, { postId }) {
       if (localStorage.getItem("accessToken")) {
-        const isVote = await instance.get("/vote_post/" + postId);
+        const isVote = await instanceWithAccess.get("/vote_post/" + postId);
         commit("setVote", {
           voteType: isVote.data.data?.type,
         });
@@ -82,7 +83,7 @@ const postDetail = {
     },
     async fetchBookmark({ commit, state }, { postId }) {
       if (localStorage.getItem("accessToken")) {
-        const isBookmark = await instance.get("/bookmarks/" + postId);
+        const isBookmark = await instanceWithAccess.get("/bookmarks/" + postId);
         commit("setBookmark", {
           isBookmark: isBookmark.data.data,
         });
@@ -90,7 +91,7 @@ const postDetail = {
     },
     async fetchFollow({ commit, state }, { postId }) {
       if (localStorage.getItem("accessToken")) {
-        const isFollow = await instance.get("/follow_user/", {
+        const isFollow = await instanceWithAccess.get("/follow_user/", {
           params: {
             userId: state.post.user._id,
           },

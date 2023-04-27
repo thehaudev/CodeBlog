@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
-import instance from "../configs/axios";
+import { instance, instanceWithAccess } from "../configs/axios";
 import { URL_IMG } from "../constants";
 const emit = defineEmits(["sendImage"]);
 const store = useStore();
@@ -15,7 +15,7 @@ async function handleFileInputChange(e) {
   const formData = new FormData();
   formData.append("image", file);
 
-  await instance
+  await instanceWithAccess
     .post("/images/uploads", formData)
     .then((res) => {
       imageSrc.value = res.data.data.name;

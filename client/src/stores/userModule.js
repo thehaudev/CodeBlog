@@ -1,4 +1,4 @@
-import instance from "../configs/axios";
+import { instance, instanceWithAccess } from "../configs/axios";
 
 const users = {
   namespaced: true,
@@ -63,19 +63,19 @@ const users = {
       commit("setUsersShowInHome", response.data);
     },
     async follow({ commit }, { userId }) {
-      const res = await instance.get("/follow_user/", {
+      const res = await instanceWithAccess.get("/follow_user/", {
         params: {
           userId: userId,
         },
       });
       if (res.data.data) {
-        await instance.delete("/follow_user", {
+        await instanceWithAccess.delete("/follow_user", {
           data: {
             userId: userId,
           },
         });
       } else {
-        await instance.post("/follow_user", {
+        await instanceWithAccess.post("/follow_user", {
           userId: userId,
         });
       }

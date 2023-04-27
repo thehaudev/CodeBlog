@@ -1,8 +1,11 @@
 <script setup>
-import { ref, computed, reactive, watch } from "vue";
+import { ref, computed, watch } from "vue";
+import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants/index";
 import { getReadableDate, getTimeSincePost } from "../utils/time";
 import CommentEditor from "./CommentEditor.vue";
+
+const store = useStore();
 const props = defineProps({
   comment: {},
 });
@@ -12,6 +15,7 @@ watch(props, () => {
   maxReplies.value = comment.commentsReply.length;
 });
 
+const user = computed(() => store.getters["auth/getUser"]);
 const selectedComment = ref(null);
 const selectedReplyComment = ref(null);
 const maxReplies = ref(2);
@@ -19,30 +23,42 @@ function commented() {
   selectedComment.value = null;
   selectedReplyComment.value = null;
 }
+
+async function handleReplyComment(replyCommentId, commentId) {
+  selectedReplyComment.value = replyCommentId;
+  selectedComment.value = commentId;
+  if (!user.value) {
+    await store.dispatch("route/setShowModalLogin", {
+      isShow: true,
+    });
+  }
+}
 </script>
 
 <template>
   <section class="comment">
     <div class="border-solid border-blue-400">
-      <div class="flex">
-        <div class="w-14">
-          <img :src="URL_AVATAR + comment.user.avatar" alt="avatar" />
-        </div>
-        <div class="flex mt-3 ml-3">
+      <div class="flex w-full justify-between items-center">
+        <div class="flex items-center">
+          <img
+            class="w-14 h-14 border rounded-full bg-gray-500 border-gray-300"
+            :src="URL_AVATAR + comment.user.avatar"
+            alt="avatar"
+          />
           <p class="">{{ comment.user.display_name }}</p>
-          <span class="ml-14 text-slate-500">{{
-            getReadableDate(comment.updatedAt)
-          }}</span>
         </div>
+        <span class="text-slate-500 text-sm">{{
+          getReadableDate(comment.updatedAt)
+        }}</span>
       </div>
-      <div v-html="comment.content" class=""></div>
+      <div v-html="comment.content" class="mt-3"></div>
       <!-- <span
         @click="(selectedReplyComment = null), (selectedComment = comment._id)"
         class="text-blue-500 cursor-pointer"
         >Reply</span
       > -->
       <button
-        @click="(selectedReplyComment = null), (selectedComment = comment._id)"
+        @click="handleReplyComment(null, comment._id)"
         class="flex items-center text-base text-gray-500 hover:underline dark:text-gray-400"
       >
         <svg
@@ -76,22 +92,22 @@ function commented() {
         :id="commentReply._id"
         class="commentReply"
       >
-        <div class="flex">
-          <div class="w-14">
-            <img :src="URL_AVATAR + commentReply.user.avatar" alt="avatar" />
-          </div>
-          <div class="flex mt-3 ml-3">
+        <div class="flex w-full justify-between items-center">
+          <div class="flex items-center">
+            <img
+              class="w-14 h-14 border rounded-full bg-gray-500 border-gray-300"
+              :src="URL_AVATAR + commentReply.user.avatar"
+              alt="avatar"
+            />
             <p class="">{{ commentReply.user.display_name }}</p>
-            <span class="ml-14 text-slate-500">{{
-              getReadableDate(commentReply.updatedAt)
-            }}</span>
           </div>
+          <span class="text-slate-500 text-sm">{{
+            getReadableDate(commentReply.updatedAt)
+          }}</span>
         </div>
-        <div v-html="commentReply.content"></div>
+        <div v-html="commentReply.content" class="mt-2"></div>
         <button
-          @click="
-            (selectedReplyComment = commentReply._id), (selectedComment = null)
-          "
+          @click="handleReplyComment(commentReply._id, null)"
           class="flex items-center text-base text-gray-500 hover:underline dark:text-gray-400"
         >
           <svg

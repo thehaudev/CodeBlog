@@ -1,4 +1,4 @@
-import instance from "../configs/axios";
+import { instance, instanceWithAccess } from "../configs/axios";
 
 const postsTagged = {
   namespaced: true,

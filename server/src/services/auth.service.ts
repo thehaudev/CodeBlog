@@ -4,7 +4,7 @@ import { User, UserWithoutPassword } from "../interfaces/users.interface";
 import { UserModel } from "../models/users.model";
 import {
   createAccessToken,
-  createRefreshTokenCookie,
+  createRefreshToken,
   createTokenResetPassword,
 } from "../utils/jwt.util";
 import { isEmpty } from "../utils/validator.util";
@@ -54,7 +54,7 @@ class AuthService {
 
   public async login(userData: LoginDto): Promise<{
     user: User;
-    refreshCookie: string;
+    refreshToken: string;
     expiresIn: number;
     accessToken: string;
   }> {
@@ -74,8 +74,8 @@ class AuthService {
       throw new HttpException(409, "Email or Password is not correct");
 
     const { accessToken, expiresIn } = createAccessToken(user);
-    const refreshCookie = createRefreshTokenCookie(user);
-    return { user, refreshCookie, expiresIn, accessToken };
+    const refreshToken: string = createRefreshToken(user);
+    return { user, refreshToken, expiresIn, accessToken };
   }
 
   public async generateAccessToken(user: User) {

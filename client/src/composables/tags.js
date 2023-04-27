@@ -1,4 +1,4 @@
-import instance from "../configs/axios";
+import { instance, instanceWithAccess } from "../configs/axios";
 import { ref } from "vue";
 const error = ref(null);
 const isPending = ref(false);

@@ -1,4 +1,5 @@
 <script setup>
+import { useCookies } from "vue3-cookies";
 import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useLogin } from "../composables/auth";
@@ -7,6 +8,7 @@ import socket from "../plugins/socket";
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
+const { cookies } = useCookies();
 const successForm = ref(route.query.successForm);
 
 const routeBeforeLogin = computed(
@@ -19,10 +21,19 @@ const password = ref("");
 
 async function sign() {
   try {
-    const { user, auth } = await login(email.value, password.value);
+    const { user, auth, refreshCookie, expiresIn } = await login(
+      email.value,
+      password.value
+    );
     if (!error.value) {
       user && store.dispatch("auth/setUserToken", { user: user });
       auth && localStorage.setItem("accessToken", JSON.stringify(auth));
+      expiresIn &&
+        localStorage.setItem(
+          "accessTokenExpiration",
+          JSON.stringify(Date.now() + expiresIn * 1000)
+        );
+      refreshCookie && cookies.set("RefreshToken", refreshCookie, "15d");
       if (user) {
         socket.auth = {
           userId: user._id,
@@ -74,12 +85,7 @@ async function sign() {
       <a href="#" class="login-btn google">
         <p><i class="fa-brands fa-google"></i> Login with Google</p>
       </a>
-      <!-- <a href="#" class="login-btn github">
-        <p><i class="fa-brands fa-github"></i> Login with Github</p>
-      </a>
-      <a href="#" class="login-btn facebook">
-        <p><i class="fa-brands fa-square-facebook"></i> Login with Facebook</p>
-      </a> -->
+
       <form @submit.prevent="sign" class="formLogin">
         <div class="row">
           <label for="email">Email</label>
@@ -108,7 +114,7 @@ async function sign() {
           />
           <p class="error" v-if="error">{{ error }}</p>
         </div>
-        <div class="row">
+        <div class="row mt-3">
           <button v-if="isPending">
             <svg class="animate-spin"></svg>
             Processing...

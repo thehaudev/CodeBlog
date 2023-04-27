@@ -1,4 +1,4 @@
-import instance from "../configs/axios";
+import { instance, instanceWithAccess } from "../configs/axios";
 
 const notifications = {
   namespaced: true,
@@ -33,22 +33,26 @@ const notifications = {
   },
   actions: {
     async createNewPostNotification({ commit }, { postId, link, content }) {
-      instance.post("/notifications/new-post/" + postId, {
+      instanceWithAccess.post("/notifications/new-post/" + postId, {
         link: link,
         content: content,
       });
     },
     async createNewCommentNotification({ commit }, { commentId, link }) {
-      instance.post("/notifications/new-comment/" + commentId, {
+      instanceWithAccess.post("/notifications/new-comment/" + commentId, {
         link: link,
       });
     },
-    async setNotificationOfUser({ commit }) {
-      const res = await instance.get("/users/notifications");
+    async setNotificationOfUser({ commit }, { limit }) {
+      const res = await instanceWithAccess.get("/users/notifications", {
+        params: {
+          limit: limit,
+        },
+      });
       commit("setNotificationOfUser", res.data);
     },
     async readNotification({}, { id }) {
-      await instance.patch("/notifications/read/" + id);
+      await instanceWithAccess.patch("/notifications/read/" + id);
     },
     pushNotificationIO({ commit }, { notification }) {
       commit("pushNotificationIO", notification);

@@ -209,17 +209,16 @@ function scrollToElement(id) {
                 </ul>
               </div>
             </div>
-            <div
-              v-if="listComments"
-              class="flex justify-between items-center mb-6 mt-6"
-            >
+            <div class="flex justify-between items-center mb-6 mt-6">
               <h2
+                v-if="listComments"
                 class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white"
                 id="Discussion"
               >
                 Discussion ({{ listComments.length }})
               </h2>
             </div>
+            <p>Sign in to our platform</p>
             <CommentEditor
               :inReplyToComment="null"
               :inReplyToUser="null"
