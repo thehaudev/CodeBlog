@@ -2,11 +2,12 @@
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-
+import AuthorPostDetail from "../components/card/AuthorPostDetail.vue";
 import { useVotePost } from "../composables/votePost";
 import { useBookmark } from "../composables/bookmark";
 
 import { useFollow } from "../composables/followUser";
+import { URL_AVATAR } from "../constants";
 
 const store = useStore();
 const route = useRoute();
@@ -20,10 +21,10 @@ const isBookmark = computed(() => store.getters["postDetail/isBookmark"]);
 const user = computed(() => store.getters["auth/getUser"]);
 const postId = ref(route.params.id);
 
-const props = defineProps(["votes"]);
+const props = defineProps(["votes", "author"]);
 
 const votes = computed(() => props.votes);
-
+const showCard = ref(false);
 async function vote(type) {
   if (user.value) {
     await votePost(postId.value, type);
@@ -45,11 +46,32 @@ async function bookmarkBtn() {
     });
   }
 }
+function myScrollHandler(evt, el) {
+  if (window.scrollY >= el.offsetTop + 50) {
+    console.log("Scroll qua vị trí 500px");
+    return true;
+  }
+  return false;
+}
 </script>
 <template>
-  <main class="w-2/12 left-0 sticky top-9">
+  <main class="w-2/12 sticky top-9" @scroll="myScrollHandler">
     <div class="post-active">
-      <div class="vote">
+      <div
+        class="relative w-14 h-14 mb-2"
+        @mouseover="showCard = true"
+        @mouseleave="showCard = false"
+      >
+        <img
+          :src="URL_AVATAR + author.avatar"
+          class="w-14 h-14 border rounded-full bg-gray-500 border-gray-300"
+        />
+        <AuthorPostDetail
+          v-if="showCard"
+          :authorId="author._id"
+        ></AuthorPostDetail>
+      </div>
+      <div class="vote text-sm">
         <i
           title="Upvote"
           class="fa-solid fa-caret-up"
@@ -82,6 +104,7 @@ async function bookmarkBtn() {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   position: absolute;
 }
 .post-active i {

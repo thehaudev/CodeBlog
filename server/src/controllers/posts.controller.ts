@@ -150,12 +150,20 @@ export class PostsController {
     next: NextFunction
   ) => {
     try {
-      const { limit = 10, page = 1, search = null, sort = "" } = req.query;
+      const {
+        limit = 10,
+        page = 1,
+        search = null,
+        sort = "latest",
+      } = req.query;
 
       const id: string = req.params.id;
-      let curr: any = null;
+      let curr: {} = {};
       if (sort == "latest") {
         curr = { createdAt: -1 };
+      } else if (sort == "default") {
+        search && (curr = { score: { $meta: "textScore" } });
+        !search && (curr = { createdAt: -1 });
       } else if (sort == "views") {
         curr = { views: -1 };
       } else if (sort == "votes") {
@@ -163,6 +171,7 @@ export class PostsController {
       } else if (sort == "comments") {
         curr = { comments: -1 };
       }
+
       let pagination: any = {
         skip: (+page - 1) * +limit,
         take: +limit,
@@ -173,7 +182,7 @@ export class PostsController {
             $diacriticSensitive: false,
           },
         },
-        sort: search ? { score: { $meta: "textScore" }, ...curr } : curr,
+        sort: curr,
       };
       const { posts, total } = await this.postService.findPostsInTrashOfUser(
         pagination,
@@ -288,6 +297,9 @@ export class PostsController {
       let curr: {} = {};
       if (sort == "latest") {
         curr = { createdAt: -1 };
+      } else if (sort == "default") {
+        search && (curr = { score: { $meta: "textScore" } });
+        !search && (curr = { createdAt: -1 });
       } else if (sort == "views") {
         curr = { views: -1 };
       } else if (sort == "votes") {
@@ -306,7 +318,7 @@ export class PostsController {
             $diacriticSensitive: false,
           },
         },
-        sort: search ? { score: { $meta: "textScore" }, ...curr } : curr,
+        sort: curr,
       };
       const { posts, total } = await this.postService.findAllPosts(pagination);
       const count = posts.length;
@@ -333,12 +345,20 @@ export class PostsController {
     next: NextFunction
   ) => {
     try {
-      const { limit = 10, page = 1, search = null, sort = "" } = req.query;
+      const {
+        limit = 10,
+        page = 1,
+        search = null,
+        sort = "latest",
+      } = req.query;
       const id = req.params.id;
       //sort "","newest","trending"
       let curr: {} = {};
       if (sort == "latest") {
         curr = { createdAt: -1 };
+      } else if (sort == "default") {
+        search && (curr = { score: { $meta: "textScore" } });
+        !search && (curr = { createdAt: -1 });
       } else if (sort == "views") {
         curr = { views: -1 };
       } else if (sort == "votes") {
@@ -357,7 +377,7 @@ export class PostsController {
             $diacriticSensitive: false,
           },
         },
-        sort: search ? { score: { $meta: "textScore" }, ...curr } : curr,
+        sort: curr,
       };
       const { posts, total } = await this.postService.findPostsOfUser(
         pagination,

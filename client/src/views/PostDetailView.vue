@@ -119,10 +119,10 @@ function scrollToElement(id) {
 </script>
 <template>
   <main v-if="post">
-    <PostAcive :votes="post.votes"></PostAcive>
+    <PostAcive :votes="post.votes" :author="post.user"></PostAcive>
     <div class="w-7/12 mx-auto">
       <main class="mt-10">
-        <div class="mb-4 md:mb-0 w-full mx-auto relative">
+        <div class="mb-4 md:mb-0 w-full mx-auto">
           <div class="space-y-6">
             <h1 class="text-4xl font-bold md:tracking-tight md:text-5xl">
               {{ post.title }}
@@ -218,7 +218,6 @@ function scrollToElement(id) {
                 Discussion ({{ listComments.length }})
               </h2>
             </div>
-            <p></p>
             <CommentEditor
               :inReplyToComment="null"
               :inReplyToUser="null"

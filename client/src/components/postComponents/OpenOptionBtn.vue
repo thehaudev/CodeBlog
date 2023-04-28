@@ -40,9 +40,12 @@ async function restorePost() {
 }
 </script>
 <template>
-  <div class="absolute right-0 top-4">
+  <div
+    class="absolute right-0 top-4"
+    @mouseover="isShow = true"
+    @mouseleave="isShow = false"
+  >
     <button
-      @click="isShow = !isShow"
       class="absolute right-0 top-0 inline-flex p-2 text-sm font-medium text-center text-gray-300 bg-white rounded-lg hover:bg-gray-100 dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
     >
       <svg

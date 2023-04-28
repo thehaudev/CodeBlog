@@ -4,6 +4,8 @@
       v-model="sort"
       class="block bg-gray-300 text-gray-700 py-2 px-2 rounded-lg focus:outline-none md:py-3 cursor-pointer"
     >
+      <option value="default">Sort</option>
+
       <option value="latest">Newest</option>
       <option value="views">Views</option>
       <option value="votes">Votes</option>
@@ -14,7 +16,7 @@
 <script setup>
 import { ref, watch } from "vue";
 
-const sort = ref("latest");
+const sort = ref("default");
 const emit = defineEmits(["selectSort"]);
 
 watch(sort, () => {

@@ -52,6 +52,17 @@ onMounted(() => {
     });
   });
 });
+
+function handleScroll() {
+  const scrollable = this.$refs.scrollable;
+  if (
+    scrollable.scrollTop + scrollable.clientHeight >=
+    scrollable.scrollHeight
+  ) {
+    console.log("Scrolled to the bottom!");
+  }
+}
+
 onUnmounted(() => {
   socket.off("new-notification");
   socket.off("new-comment");
@@ -110,6 +121,7 @@ onUnmounted(() => {
               <i class="fa-regular fa-bell"></i>
             </div>
             <ul
+              v-scroll="handleScroll"
               class="absolute right-0 z-10 flex-col hidden whitespace-nowrap overflow-auto scrollbar-hide h-96 origin-top-right bg-white rounded-sm shadow-xl sub-menu min-w-max"
             >
               <li

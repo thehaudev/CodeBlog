@@ -20,21 +20,27 @@ const content = ref("  ");
 if (props.inReplyToUser)
   content.value = "@" + props.inReplyToUser.split("@")[0] + " ";
 async function postComment() {
-  const comment = await createComment(
-    props.inReplyToComment,
-    props.inReplyToUser,
-    postId.value,
-    content.value
-  );
-  if (comment) {
-    await store.dispatch("notifications/createNewCommentNotification", {
-      commentId: comment._id,
-      link: "/post/" + postId.value + "?commentId=" + comment._id,
+  if (!user.value) {
+    await store.dispatch("route/setShowModalLogin", {
+      isShow: true,
     });
+  } else {
+    const comment = await createComment(
+      props.inReplyToComment,
+      props.inReplyToUser,
+      postId.value,
+      content.value
+    );
+    if (comment) {
+      await store.dispatch("notifications/createNewCommentNotification", {
+        commentId: comment._id,
+        link: "/post/" + postId.value + "?commentId=" + comment._id,
+      });
+    }
+    content.value = " ";
+    emit("commented");
+    await store.dispatch("comments/fetchData", { postId: postId.value });
   }
-  content.value = " ";
-  emit("commented");
-  await store.dispatch("comments/fetchData", { postId: postId.value });
 }
 var toolbarOptions = [
   ["bold", "italic", "underline"],
@@ -45,7 +51,7 @@ var toolbarOptions = [
 ];
 </script>
 <template>
-  <form @submit.prevent="postComment()" v-if="user" class="mb-6">
+  <form @submit.prevent="postComment()" class="mb-6">
     <div
       class="py-2 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700"
     >
