@@ -218,7 +218,7 @@ function scrollToElement(id) {
                 Discussion ({{ listComments.length }})
               </h2>
             </div>
-            <p>Sign in to our platform</p>
+            <p></p>
             <CommentEditor
               :inReplyToComment="null"
               :inReplyToUser="null"

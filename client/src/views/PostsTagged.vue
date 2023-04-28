@@ -12,7 +12,6 @@ const router = useRouter();
 const route = useRoute();
 const page = ref(1);
 const tagId = computed(() => route.params.id);
-console.log(tagId.value);
 const tagDetail = computed(() => store.getters["tags/tagInPostTagged"]);
 const search = computed(() => store.getters["search/getSearchText"]);
 const posts = computed(() => store.getters["postsTagged/getAllPosts"]);

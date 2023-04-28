@@ -167,12 +167,13 @@ export class PostsController {
         skip: (+page - 1) * +limit,
         take: +limit,
         search: search && {
-          $or: [
-            { title: { $regex: `${search}`, $options: "i" } },
-            { content: { $regex: `${search}`, $options: "i" } },
-          ],
+          $text: {
+            $search: `${search}`,
+            $caseSensitive: false,
+            $diacriticSensitive: false,
+          },
         },
-        sort: curr,
+        sort: search ? { score: { $meta: "textScore" }, ...curr } : curr,
       };
       const { posts, total } = await this.postService.findPostsInTrashOfUser(
         pagination,
@@ -298,14 +299,14 @@ export class PostsController {
       let pagination: any = {
         skip: (+page - 1) * +limit,
         take: +limit,
-        // search: search && { $text: { $search: `"${search}"` } },
         search: search && {
-          $or: [
-            { title: { $regex: `${search}`, $options: "i" } },
-            { content: { $regex: `${search}`, $options: "i" } },
-          ],
+          $text: {
+            $search: `${search}`,
+            $caseSensitive: false,
+            $diacriticSensitive: false,
+          },
         },
-        sort: curr,
+        sort: search ? { score: { $meta: "textScore" }, ...curr } : curr,
       };
       const { posts, total } = await this.postService.findAllPosts(pagination);
       const count = posts.length;
@@ -350,12 +351,13 @@ export class PostsController {
         skip: (+page - 1) * +limit,
         take: +limit,
         search: search && {
-          $or: [
-            { title: { $regex: `${search}`, $options: "i" } },
-            { content: { $regex: `${search}`, $options: "i" } },
-          ],
+          $text: {
+            $search: `${search}`,
+            $caseSensitive: false,
+            $diacriticSensitive: false,
+          },
         },
-        sort: curr,
+        sort: search ? { score: { $meta: "textScore" }, ...curr } : curr,
       };
       const { posts, total } = await this.postService.findPostsOfUser(
         pagination,

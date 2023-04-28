@@ -13,13 +13,11 @@ const postSchema = new Schema(
     title: {
       type: String,
       required: true,
-      text: true,
       min: 15,
     },
     content: {
       type: String,
       required: true,
-      text: true,
       min: 15,
     },
     status: {
@@ -35,7 +33,7 @@ const postSchema = new Schema(
     timestamps: true,
   }
 );
-
+postSchema.index({ title: "text", contents: "text" });
 postSchema.set("toObject", { virtuals: true });
 postSchema.set("toJSON", { virtuals: true });
 postSchema.virtual("tags", {
