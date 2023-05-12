@@ -1,17 +1,30 @@
 <script setup>
+import OpenOptionBtn from "./notification/OpenOptionBtn.vue";
+
 import { computed, ref, onMounted, onUnmounted, watch } from "vue";
 import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants/index";
 import { useRouter } from "vue-router";
 import { getReadableDate, getTimeSincePost } from "../utils/time";
 import socket from "../plugins/socket";
+
+const limit = ref(10);
 async function fetchData() {
   if (user.value) {
-    await store.dispatch("notifications/setNotificationOfUser", { limit: 20 });
+    await store.dispatch("notifications/setNotificationOfUser", { limit: 10 });
   }
 }
-const router = useRouter();
 
+watch(limit, async () => {
+  if (user.value) {
+    await store.dispatch("notifications/setNotificationOfUser", {
+      limit: limit.value,
+    });
+  }
+});
+
+const router = useRouter();
+const moveNoti = ref(null);
 const searchInput = ref("");
 watch(searchInput, () => {
   store.dispatch("search/setSearchText", { text: searchInput.value });
@@ -25,12 +38,15 @@ const user = computed(() => store.getters["auth/getUser"]);
 const notifications = computed(
   () => store.getters["notifications/getNotifications"]
 );
+const pagination = computed(() => store.getters["notifications/getPagination"]);
 const totalNotRead = computed(
   () => store.getters["notifications/getTotalNotRead"]
 );
-async function readNotification(idNotification) {
+async function readNotification(idNotification, isRead, isStatus) {
   await store.dispatch("notifications/readNotification", {
     id: idNotification,
+    isRead: isRead,
+    isStatus: isStatus,
   });
   fetchData();
 }
@@ -53,18 +69,8 @@ onMounted(() => {
   });
 });
 
-function handleScroll() {
-  const scrollable = this.$refs.scrollable;
-  if (
-    scrollable.scrollTop + scrollable.clientHeight >=
-    scrollable.scrollHeight
-  ) {
-    console.log("Scrolled to the bottom!");
-  }
-}
-
 onUnmounted(() => {
-  socket.off("new-notification");
+  socket.off("new-post");
   socket.off("new-comment");
   socket.off("vote-post");
 });
@@ -121,29 +127,43 @@ onUnmounted(() => {
               <i class="fa-regular fa-bell"></i>
             </div>
             <ul
-              v-scroll="handleScroll"
               class="absolute right-0 z-10 flex-col hidden whitespace-nowrap overflow-auto scrollbar-hide h-96 origin-top-right bg-white rounded-sm shadow-xl sub-menu min-w-max"
             >
               <li
                 v-for="notification in notifications"
                 :key="notification._id"
+                class="relative"
                 :class="
                   notification.isRead == false
                     ? 'text-gray-700 bg-gray-200 px-5 py-1 mb-1'
                     : 'hover:text-gray-700 hover:bg-gray-50 px-5 py-1 m-1'
                 "
+                @mousemove="moveNoti = notification._id"
+                @mouseleave="moveNoti = null"
               >
                 <router-link
                   :to="notification.link"
-                  @click="readNotification(notification._id)"
+                  @click="readNotification(notification._id, true)"
                 >
                   <div v-html="notification.content"></div>
                   <span>{{ getTimeSincePost(notification.createdAt) }}</span>
                 </router-link>
+                <OpenOptionBtn
+                  v-if="moveNoti == notification._id"
+                  @updateNoti="readNotification"
+                  :notification="notification"
+                ></OpenOptionBtn>
+              </li>
+              <li
+                v-if="pagination && pagination.total > pagination.count"
+                class="text-center text-blue-300 cursor-pointer hover:bg-blue-100 hover:text-blue-500"
+                @click="limit += 5"
+              >
+                show more
               </li>
             </ul>
             <div
-              class="absolute flex items-center justify-center px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-full left-4 bottom-4"
+              class="absolute flex items-center justify-center px-1 py-0.5 text-xs font-semibold text-white bg-red-600 rounded-full left-4 bottom-4"
             >
               {{ totalNotRead }}
             </div>

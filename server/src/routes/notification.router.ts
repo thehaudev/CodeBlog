@@ -8,7 +8,10 @@ import {
   permissionRecipient,
   permissionVotePost,
 } from "../middlewares/permission.middlerwares";
-import { CreateNotificationDto } from "../dtos/notification.dto";
+import {
+  CreateNotificationDto,
+  UpdateNotificationDto,
+} from "../dtos/notification.dto";
 var router = require("express").Router();
 
 const notificationController = new NotificationController();
@@ -43,13 +46,14 @@ router.post(
   notificationController.createNotificationWhenVotePost
 );
 
-//patch api/v1/notifications/read/:Id
+//patch api/v1/notifications/:Id
 router.patch(
-  "/read/:id",
+  "/:id",
   validationMiddleware(IdDto, "params"),
+  validationMiddleware(UpdateNotificationDto, "body"),
   verify,
   permissionRecipient,
-  notificationController.readNotification
+  notificationController.updateNotification
 );
 
 export default router;

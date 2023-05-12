@@ -6,12 +6,25 @@ import { CreatePostDto, UpdatePostDto } from "../dtos/post.dto";
 import { UserModel } from "../models/users.model";
 import { ObjectId } from "mongodb";
 import TagRepository from "../repositories/tag.repository";
+import CommentRepository from "../repositories/comments.repository";
+import ViewsRepository from "../repositories/views.repository";
+import Post_tagRepository from "../repositories/post_tag.repository";
+import Vote_postRepository from "../repositories/vote_post.repository";
+import BookMarkRepository from "../repositories/bookmarks.repository";
 
 export default class PostsService {
   private readonly users = UserModel;
   private readonly postRepository: PostRepository;
   private readonly tagRepository: TagRepository = new TagRepository();
-
+  private readonly votePostRepository: Vote_postRepository =
+    new Vote_postRepository();
+  private readonly commentsRepository: CommentRepository =
+    new CommentRepository();
+  private readonly viewsRepository: ViewsRepository = new ViewsRepository();
+  private readonly post_tagRepository: Post_tagRepository =
+    new Post_tagRepository();
+  private readonly bookmarkRepository: BookMarkRepository =
+    new BookMarkRepository();
   constructor() {
     this.postRepository = new PostRepository();
   }
@@ -140,6 +153,11 @@ export default class PostsService {
 
   public async deletePost(postId: string): Promise<void> {
     if (isEmpty(postId)) throw new HttpException(409, "postId is empty");
+    await this.commentsRepository.deleteCommentsOfPost(postId);
+    await this.viewsRepository.deleteViewsOfPost(postId);
+    await this.post_tagRepository.deletePostTag(postId);
+    await this.votePostRepository.deleteVotePost(postId);
+    await this.bookmarkRepository.deleteBookmarksOfPost(postId);
     await this.postRepository.delete(postId);
   }
 }

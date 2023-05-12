@@ -58,7 +58,9 @@ async function sign() {
 
           <input v-model="password" required type="password" name="password" />
         </div>
-        <p class="error" v-if="error">{{ error }}</p>
+        <ul class="text-red-500 ml-3 text-sm mb-2" v-if="error">
+          <li v-for="er in error.split(',')" :key="er">{{ er }}</li>
+        </ul>
 
         <ul v-else class="text-gray-500 ml-3 text-sm mb-2">
           <li>6-25 characters</li>
@@ -142,11 +144,7 @@ main {
   flex-direction: column;
   justify-content: flex-start;
 }
-p.error {
-  color: rgb(255, 69, 69);
-  margin: 5px;
-  font-size: 14px;
-}
+
 .row label {
   font-weight: bold;
 }

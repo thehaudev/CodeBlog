@@ -1,15 +1,15 @@
 <script setup>
-import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
-
+import { ref } from "vue";
+import { usePost } from "../../composables/post";
+const { error, isPending, deletePost } = usePost();
 const store = useStore();
 const route = useRoute();
 
-const userId = route.params.id;
-const user = computed(() => store.getters["auth/getUser"]);
+const userId = ref(route.params.id);
 
-const props = defineProps(["type", "postId"]);
+const props = defineProps(["limit", "postId"]);
 const emit = defineEmits(["closeModal"]);
 function closeModal(e) {
   if (!event.target.closest(".modal") || e == "btn") {
@@ -17,37 +17,13 @@ function closeModal(e) {
   }
 }
 
-async function editStatusOfPost() {
-  await store.dispatch("posts/editStatusOfPost", {
-    postId: props.postId,
-    status: false,
+async function deleteGlobalPost() {
+  const msg = await deletePost(props.postId);
+  await store.dispatch("posts/setPostsInTrashOfUser", {
+    id: userId.value,
+    search: "",
+    limit: props.limit || 7,
   });
-  if (route.name == "profile") {
-    await store.dispatch("posts/setPostsOfUser", {
-      id: userId,
-      limit: 7,
-      sort: "latest",
-      search: "",
-      current_page: 1,
-    });
-    await store.dispatch("posts/setBookmarkPostsOfUser", {
-      id: userId,
-      search: "",
-      limit: 7,
-    });
-    if (user.value._id == userId) {
-      await store.dispatch("posts/setPostsInTrashOfUser", {
-        id: userId,
-        limit: 7,
-      });
-    }
-  } else if (route.name == "home") {
-    await store.dispatch("posts/setCurrent_page", {
-      search: "",
-      current_page: 1,
-      limit: 7,
-    });
-  }
   emit("closeModal");
 }
 </script>
@@ -96,12 +72,12 @@ async function editStatusOfPost() {
             ></path>
           </svg>
           <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-            Are you sure you want to hide this product?
+            Are you sure you want to delete this post?
           </h3>
           <button
             data-modal-hide="popup-modal"
             type="button"
-            @click="editStatusOfPost"
+            @click="deleteGlobalPost"
             class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2"
           >
             Yes, I'm sure

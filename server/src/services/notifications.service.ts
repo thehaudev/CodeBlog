@@ -22,7 +22,9 @@ export default class NotificationService {
         data.skip,
         data.take
       );
-    const total: number = await this.notificationRepository.countNotification();
+    const total: number = await this.notificationRepository.countNotification(
+      data.filter
+    );
     const totalNotRead: number =
       await this.notificationRepository.countNotificationNotRead(data.filter);
     return { notifications, total, totalNotRead };

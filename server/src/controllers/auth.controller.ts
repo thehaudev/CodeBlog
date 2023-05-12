@@ -32,17 +32,6 @@ class AuthController {
       const accessToken = await oAuth2Client.getAccessToken();
       const resetPasswordLink = `http://localhost:3001/auth/reset-password?token=${token}`;
 
-      // Tạo nội dung email
-      const emailContent = `
-            <p>Xin chào,</p>
-            <p>Vui lòng click vào đường dẫn dưới đây để đặt lại mật khẩu trong vòng ${
-              expiresIn / 60
-            } phút:</p>
-            <a href="${resetPasswordLink}">${resetPasswordLink}</a>
-            <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
-            <p>Trân trọng,</p>
-            <p>Nhóm hỗ trợ của chúng tôi</p>
-            `;
       const textContent = `You are receiving this email because you (or someone else) has requested to reset the password for your account. Please click on the following link to reset your password within ${
         expiresIn / 60
       } minutes:

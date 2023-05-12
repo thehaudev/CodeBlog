@@ -22,7 +22,7 @@ watch(search, async () => {
     search: search.value,
     current_page: page.value,
     limit: 7,
-    search: search.value,
+    sort: sort.value,
   });
 });
 async function emitSelectSort(select) {

@@ -17,15 +17,14 @@ async function fetchData() {
     search: search.value,
   });
 }
-async function setUserPage(pageTag) {
-  page.value = pageTag;
+watch(page, async () => {
   await store.dispatch("users/filterUser", {
     sort: "follower",
 
     current_page: page.value,
     search: search.value,
   });
-}
+});
 watch(search, async () => {
   page.value = 1;
   await store.dispatch("users/filterUser", {
@@ -53,44 +52,13 @@ onMounted(fetchData);
       class="py-2 px-4"
     />
     <section class="tag-layout">
-      <Author v-for="user in listUsers" :key="user._id" :author="user"></Author>
-      <!-- <div v-for="user in listUsers" :key="user._id" class="item">
-        <div class="">
-          <img
-            :src="URL_AVATAR + user.avatar"
-            alt="avatar"
-            class="w-12 h-12 rounded mr-2"
-          />
-        </div>
-        <div>
-          <p>
-            <i class="fa-solid fa-user mr-1" style="color: #4ca8d6"></i
-            >{{ user.display_name }}
-          </p>
-          <p class="ml-3 text-gray-400">@{{ user.email.split("@")[0] }}</p>
-          <div class="flex">
-            <p>
-              <i class="fa-solid fa-star"></i>
-              <span>10</span>
-            </p>
-            <p>
-              <i class="fa-solid fa-user-plus"></i>
-              <span>{{ user.followers }}</span>
-            </p>
-            <p>
-              <i class="fa-solid fa-pencil"></i><span>{{ user.posts }}</span>
-            </p>
-          </div>
-          <button
-            v-if="checkFollowUser(user._id)"
-            @click="followUser(user._id)"
-            style="color: #fff; background-color: #5488c7"
-          >
-            Following
-          </button>
-          <button v-else @click="followUser(user._id)">+ Follow</button>
-        </div>
-      </div> -->
+      <Author
+        v-for="user in listUsers"
+        :key="user._id"
+        :author="user"
+        :page="page"
+        :search="search"
+      ></Author>
     </section>
     <!-- pagination -->
     <div class="mt-8" v-if="paginationOfUsers.total_pages != 0">
@@ -98,7 +66,7 @@ onMounted(fetchData);
         <li
           @click="
             paginationOfUsers.current_page != 1 &&
-              setUserPage(paginationOfUsers.current_page - 1)
+              (page = paginationOfUsers.current_page - 1)
           "
           :class="{
             hover_pagi: paginationOfUsers.current_page != 1,
@@ -109,7 +77,7 @@ onMounted(fetchData);
         </li>
         <li
           v-for="n in paginationOfUsers.total_pages"
-          @click="setUserPage(n)"
+          @click="page = n"
           :key="n"
           :class="{ active: paginationOfUsers.current_page == n }"
           class="mx-1 px-3 py-2 bg-gray-200 text-gray-700 hover:bg-gray-700 hover:text-gray-200 rounded-lg cursor-pointer"
@@ -119,7 +87,7 @@ onMounted(fetchData);
         <li
           @click="
             paginationOfUsers.current_page != paginationOfUsers.total_pages &&
-              setUserPage(paginationOfUsers.current_page + 1)
+              (page = paginationOfUsers.current_page + 1)
           "
           :class="{
             hover_pagi:

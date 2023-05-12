@@ -1,4 +1,6 @@
 <script setup>
+import FollowBtn from "../profile/FollowBtn.vue";
+
 import { URL_AVATAR } from "../../constants";
 import { computed } from "vue";
 import { useStore } from "vuex";
@@ -6,31 +8,13 @@ import { useRoute, useRouter } from "vue-router";
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
-const props = defineProps(["author"]);
-const usersFollowing = computed(
-  () => (user.value && store.getters["auth/getUsersFollowing"]) || []
-);
-function checkFollowUser(id) {
-  return usersFollowing.value.some((e) => e.userId == id);
-}
-const user = computed(() => store.getters["auth/getUser"]);
-
-async function followUser(userId) {
-  if (user.value) {
-    await store.dispatch("users/follow", { userId: userId });
-    await store.dispatch("auth/setUsersFollowing");
-    await store.dispatch("users/filterUser", {
-      sort: "follower",
-
-      current_page: page.value,
-      search: search.value,
-    });
-  } else {
-    await store.dispatch("route/setRouteBeforeLogin", {
-      path: route.path,
-    });
-    router.push({ name: "login", params: {} });
-  }
+const props = defineProps(["author", "page", "search"]);
+async function fetchData() {
+  await store.dispatch("users/filterUser", {
+    sort: "follower",
+    current_page: props.page,
+    search: props.search,
+  });
 }
 </script>
 
@@ -43,44 +27,13 @@ async function followUser(userId) {
       <!-- Card top -->
       <div class="flex-grow p-5">
         <div class="flex justify-between items-start">
-          <!-- Image + name -->
           <header>
-            <div class="flex mb-2">
-              <a class="relative inline-flex items-start mr-5" href="#0">
-                <div
-                  class="absolute top-0 right-2 -mr-2 bg-white rounded-full shadow"
-                  aria-hidden="true"
-                >
-                  <svg
-                    class="w-5 h-5 fill-current text-green-500"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"
-                    />
-                  </svg>
-                </div>
-                <div
-                  class="absolute top-0 right-2 -mr-2 bg-white rounded-full shadow"
-                  aria-hidden="true"
-                >
-                  <svg
-                    class="w-5 h-5 fill-current text-green-500"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"
-                    />
-                  </svg>
-                </div>
-                <img
-                  class="rounded-full"
-                  :src="URL_AVATAR + author.avatar"
-                  width="64"
-                  height="64"
-                  :alt="author.display_name"
-                />
-              </a>
+            <div class="flex items-center mb-2">
+              <img
+                :src="URL_AVATAR + author.avatar"
+                class="w-14 h-14 border rounded-full bg-gray-500 border-gray-300 mr-3"
+                :alt="author.display_name"
+              />
               <div class="mt-1 pr-1">
                 <a
                   class="inline-flex text-gray-800 hover:text-gray-900"
@@ -103,9 +56,15 @@ async function followUser(userId) {
                     >@ {{ author.email.split("@")[0] }}</span
                   >
                 </div>
+                <FollowBtn
+                  class="mt-3"
+                  @followSubmit="fetchData"
+                  :followUserId="author._id"
+                ></FollowBtn>
               </div>
             </div>
           </header>
+
           <!-- Menu button -->
         </div>
         <!-- Bio -->

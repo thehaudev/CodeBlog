@@ -32,9 +32,9 @@ function onFileSelected(event) {
 async function changeProfileSubmit() {
   formData.append("display_name", display_name.value);
   formData.append("oldAvatar", oldAvatar.value);
-  formData.append("bio", bio.value);
-  formData.append("location", location.value);
-  formData.append("about", about.value);
+  bio.value != null && formData.append("bio", bio.value);
+  location.value != null && formData.append("location", location.value);
+  about.value != null && formData.append("about", about.value);
   const newUser = await changeProfile(formData);
 
   if (newUser) {

@@ -93,11 +93,9 @@ async function changePasswordSubmit() {
           required
         />
       </div>
-      <div v-if="error" class="col-span-full">
-        <p class="mt-3 text-sm leading-6 text-rose-600">
-          {{ error }}
-        </p>
-      </div>
+      <ul v-if="error" class="text-red-500 ml-3 text-sm mb-2">
+        <li v-for="er in error.split(',')" :key="er">{{ er }}</li>
+      </ul>
       <ul v-else class="text-gray-500 ml-3 text-sm mb-2">
         <li>6-25 characters</li>
         <li>At least one capital letter</li>

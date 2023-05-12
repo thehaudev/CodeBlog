@@ -14,7 +14,7 @@ const postId = computed(() => {
 const user = computed(() => store.getters["auth/getUser"]);
 
 const { createComment } = useComment();
-const props = defineProps({ inReplyToComment: String, inReplyToUser: String });
+const props = defineProps(["inReplyToComment", "inReplyToUser", "limit"]);
 const emit = defineEmits(["commented"]);
 const content = ref("  ");
 if (props.inReplyToUser)
@@ -39,7 +39,11 @@ async function postComment() {
     }
     content.value = " ";
     emit("commented");
-    await store.dispatch("comments/fetchData", { postId: postId.value });
+    await store.dispatch("comments/setCurrent_page", {
+      current_page: 1,
+      limit: props.limit || 5,
+      postId: postId.value,
+    });
   }
 }
 var toolbarOptions = [

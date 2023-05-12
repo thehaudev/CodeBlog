@@ -36,7 +36,7 @@ export default class PostRepository extends BaseRepository<Post> {
           pipeline: [
             {
               $match: {
-                $and: [{ _id: new ObjectId(id) }, { status: true }],
+                $and: [{ _id: { $ne: new ObjectId(id) } }, { status: true }],
               },
             },
             {

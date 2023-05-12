@@ -9,7 +9,10 @@ export default class BookMarkRepository extends BaseRepository<Bookmark> {
     super(BookmarkModel);
   }
 
-  async countBookmarkPostsOfUser(id: string, search: {}): Promise<Number> {
+  public async countBookmarkPostsOfUser(
+    id: string,
+    search: {}
+  ): Promise<Number> {
     try {
       const res = await this.model.aggregate([
         {
@@ -31,16 +34,16 @@ export default class BookMarkRepository extends BaseRepository<Bookmark> {
           },
         },
         {
-          $count: "count",
+          $match: { "posts.0": { $exists: true } },
         },
       ]);
-      return res[0].count;
+      return res.length;
     } catch (error) {
       return 0;
     }
   }
 
-  async findBookmarkPostsOfUser(
+  public async findBookmarkPostsOfUser(
     id: string,
     skip: number,
     take: number,
@@ -185,5 +188,8 @@ export default class BookMarkRepository extends BaseRepository<Bookmark> {
       },
     ]);
     return res.map((e) => e.posts);
+  }
+  public async deleteBookmarksOfPost(postId: string): Promise<void> {
+    await this.model.deleteMany({ postId: postId });
   }
 }

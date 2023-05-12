@@ -4,11 +4,12 @@ import { useStore } from "vuex";
 import { URL_AVATAR } from "../constants/index";
 import { getReadableDate, getTimeSincePost } from "../utils/time";
 import CommentEditor from "./CommentEditor.vue";
+import ContentComment from "./postComponents/Content.vue";
+import OpenOptionBtn from "./comment/OpenOptionBtn.vue";
+import AuthorPostDetail from "./card/AuthorPostDetail.vue";
 
 const store = useStore();
-const props = defineProps({
-  comment: {},
-});
+const props = defineProps(["comment", "limit"]);
 let comment = props.comment;
 watch(props, () => {
   comment = props.comment;
@@ -33,30 +34,44 @@ async function handleReplyComment(replyCommentId, commentId) {
     });
   }
 }
+
+const showCard = ref(false);
+const showCardReplyCmt = ref(null);
 </script>
 
 <template>
   <section class="comment">
     <div class="border-solid border-blue-400">
       <div class="flex w-full justify-between items-center">
-        <div class="flex items-center">
+        <div
+          class="flex items-center relative"
+          @mouseover="showCard = true"
+          @mouseleave="showCard = false"
+        >
           <img
             class="w-14 h-14 border rounded-full bg-gray-500 border-gray-300"
             :src="URL_AVATAR + comment.user.avatar"
             alt="avatar"
           />
-          <p class="">{{ comment.user.display_name }}</p>
+          <p class="ml-2">{{ comment.user.display_name }}</p>
+
+          <AuthorPostDetail
+            v-if="showCard"
+            :authorId="comment.user._id"
+          ></AuthorPostDetail>
         </div>
-        <span class="text-slate-500 text-sm">{{
-          getReadableDate(comment.updatedAt)
-        }}</span>
+        <div class="flex justify-center items-center">
+          <span class="mr-3 text-slate-500 text-sm">{{
+            getReadableDate(comment.updatedAt)
+          }}</span>
+          <OpenOptionBtn
+            :commentId="comment._id"
+            :authorId="comment.user._id"
+            :limit="limit"
+          ></OpenOptionBtn>
+        </div>
       </div>
-      <div v-html="comment.content" class="mt-3"></div>
-      <!-- <span
-        @click="(selectedReplyComment = null), (selectedComment = comment._id)"
-        class="text-blue-500 cursor-pointer"
-        >Reply</span
-      > -->
+      <ContentComment :content="comment.content" class="mt-3"></ContentComment>
       <button
         @click="handleReplyComment(null, comment._id)"
         class="flex items-center text-base text-gray-500 hover:underline dark:text-gray-400"
@@ -83,9 +98,10 @@ async function handleReplyComment(replyCommentId, commentId) {
         v-if="selectedComment === comment._id"
         :inReplyToComment="comment._id"
         :inReplyToUser="comment.user.email"
+        :limit="limit"
       ></CommentEditor>
     </div>
-    <div class="">
+    <div class="commentsReply">
       <div
         v-for="commentReply in comment.commentsReply.slice(0, maxReplies)"
         :key="commentReply._id"
@@ -93,17 +109,32 @@ async function handleReplyComment(replyCommentId, commentId) {
         class="commentReply"
       >
         <div class="flex w-full justify-between items-center">
-          <div class="flex items-center">
+          <div
+            class="flex items-center relative"
+            @mouseover="showCardReplyCmt = commentReply._id"
+            @mouseleave="showCardReplyCmt = null"
+          >
             <img
               class="w-14 h-14 border rounded-full bg-gray-500 border-gray-300"
               :src="URL_AVATAR + commentReply.user.avatar"
               alt="avatar"
             />
-            <p class="">{{ commentReply.user.display_name }}</p>
+            <AuthorPostDetail
+              v-if="showCardReplyCmt == commentReply._id"
+              :authorId="commentReply.user._id"
+            ></AuthorPostDetail>
+            <p class="ml-2">{{ commentReply.user.display_name }}</p>
           </div>
-          <span class="text-slate-500 text-sm">{{
-            getReadableDate(commentReply.updatedAt)
-          }}</span>
+          <div class="flex justify-center items-center">
+            <span class="text-slate-500 text-sm mr-4">{{
+              getReadableDate(commentReply.updatedAt)
+            }}</span>
+            <OpenOptionBtn
+              :commentId="commentReply._id"
+              :authorId="commentReply.user._id"
+              :limit="limit"
+            ></OpenOptionBtn>
+          </div>
         </div>
         <div v-html="commentReply.content" class="mt-2"></div>
         <button
@@ -133,36 +164,43 @@ async function handleReplyComment(replyCommentId, commentId) {
           v-if="selectedReplyComment === commentReply._id"
           :inReplyToComment="comment._id"
           :inReplyToUser="commentReply.user.email"
+          :limit="limit"
         ></CommentEditor>
       </div>
-      <span
-        v-if="comment.commentsReply.length > maxReplies"
-        class="flex justify-center text-blue-500 cursor-pointer"
-        @click="maxReplies = comment.commentsReply.length"
+      <div
+        class="flex mt-1 justify-center items-center text-xs text-blue-500 cursor-pointer"
       >
-        Show {{ comment.commentsReply.length }} replies
-      </span>
-      <span
-        v-if="
-          comment.commentsReply.length == maxReplies &&
-          comment.commentsReply.length > 2
-        "
-        class="flex justify-center text-blue-500 cursor-pointer"
-        @click="maxReplies = 2"
-      >
-        Hide replies
-      </span>
+        <span
+          v-if="comment.commentsReply.length > maxReplies"
+          @click="maxReplies = comment.commentsReply.length"
+        >
+          Show {{ comment.commentsReply.length }} replies
+        </span>
+        <span
+          v-if="
+            comment.commentsReply.length == maxReplies &&
+            comment.commentsReply.length > 2
+          "
+          @click="maxReplies = 2"
+        >
+          Hide replies
+        </span>
+      </div>
     </div>
   </section>
 </template>
 
 <style scoped>
 .comment {
-  border-bottom: 0.5px solid;
+  border: 0.5px solid;
   border-color: #dddddd;
   padding: 20px;
+  margin: 0 0 10px 0;
 }
 .comment .commentReply {
   margin: 10px 0 0 30px;
+  padding: 15px;
+  border-bottom: 0.5px solid;
+  border-color: #dddddd;
 }
 </style>

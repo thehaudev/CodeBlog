@@ -1,4 +1,18 @@
-var router = require('express').Router()
-//tao mot thong bao khi co nguoi comment bai viet, tra loi comment cua minh
-//post /api/v1/comments/:id/notification
-router.post("/:id/notification",)
+import CommentsController from "../controllers/comments.controller";
+import { IdDto } from "../dtos/objecId.dto";
+import { verify } from "../middlewares/auth.middlewares";
+import { permissionComment } from "../middlewares/permission.middlerwares";
+import { validationMiddleware } from "../middlewares/validation.middlewares";
+
+const commentsController = new CommentsController();
+var router = require("express").Router();
+//DELETE /api/v1/comments/:id
+router.delete(
+  "/:id",
+  validationMiddleware(IdDto, "params"),
+  verify,
+  permissionComment,
+  commentsController.deleteComment
+);
+
+export default router;

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import AuthorPostDetail from "../components/card/AuthorPostDetail.vue";
@@ -53,11 +53,29 @@ function myScrollHandler(evt, el) {
   }
   return false;
 }
+
+//show avatar
+const isShowAvatar = ref(false);
+onMounted(() => {
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 100) {
+      isShowAvatar.value = true;
+    } else isShowAvatar.value = false;
+  });
+});
+onUnmounted(() => {
+  window.removeEventListener("scroll", () => {
+    if (window.scrollY > 100) {
+      isShowAvatar.value = true;
+    } else isShowAvatar.value = false;
+  });
+});
 </script>
 <template>
   <main class="w-2/12 sticky top-9" @scroll="myScrollHandler">
     <div class="post-active">
       <div
+        v-if="isShowAvatar"
         class="relative w-14 h-14 mb-2"
         @mouseover="showCard = true"
         @mouseleave="showCard = false"
@@ -78,7 +96,7 @@ function myScrollHandler(evt, el) {
           :class="{ active: isVote == 'Upvote' }"
           @click="vote('Upvote')"
         ></i>
-        <span>{{ votes }}</span>
+        <span class="text-blue-500">{{ votes }}</span>
         <i
           title="Downvote"
           class="fa-solid fa-caret-down"
@@ -148,7 +166,8 @@ function myScrollHandler(evt, el) {
   color: black;
   font-size: 2rem;
 }
-.vote .active {
-  color: black;
+
+.active {
+  color: #5488c7;
 }
 </style>

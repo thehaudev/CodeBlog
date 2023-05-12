@@ -36,14 +36,14 @@ onMounted(async () => {
     <button
       v-if="checkFollowUser(followUserId)"
       @click="followUser(followUserId)"
-      class="ml-10 flex items-center border border-gray-200 bg-gray-200 hover:bg-gray-400 text-black rounded outline-none focus:outline-none text-base py-1 px-3"
+      class="flex items-center border border-gray-200 bg-gray-200 hover:bg-gray-400 text-black rounded outline-none focus:outline-none text-base py-1 px-3"
     >
       <span class="block">Following </span>
     </button>
     <button
       v-else
       @click="followUser(followUserId)"
-      class="ml-10 flex items-center border border-blue-500 bg-blue-500 hover:bg-blue-600 text-white rounded outline-none focus:outline-none text-base py-1 px-3"
+      class="flex items-center border border-blue-500 bg-blue-500 hover:bg-blue-600 text-white rounded outline-none focus:outline-none text-base py-1 px-3"
     >
       <span class="block">Follow</span>
     </button>

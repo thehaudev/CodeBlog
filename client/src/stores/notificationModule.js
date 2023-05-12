@@ -51,8 +51,11 @@ const notifications = {
       });
       commit("setNotificationOfUser", res.data);
     },
-    async readNotification({}, { id }) {
-      await instanceWithAccess.patch("/notifications/read/" + id);
+    async readNotification({}, { id, isRead, isStatus }) {
+      await instanceWithAccess.patch("/notifications/" + id, {
+        isRead: isRead,
+        status: isStatus,
+      });
     },
     pushNotificationIO({ commit }, { notification }) {
       commit("pushNotificationIO", notification);

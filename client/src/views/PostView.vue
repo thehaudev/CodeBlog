@@ -76,7 +76,7 @@ onMounted(fetchData);
   <main>
     <div class="container title">
       <h2>Title</h2>
-      <span>Tiêu đề của bài viết.</span>
+      <span>Title of post</span>
       <input
         v-model="title"
         type="text"
@@ -85,10 +85,7 @@ onMounted(fetchData);
     </div>
     <div class="container tags">
       <h2>Tags</h2>
-      <span
-        >Thêm tối đa 5 thẻ để mô tả nội dung bài viết của bạn. Bắt đầu nhập để
-        xem gợi ý.</span
-      >
+      <span>Tag your post. Maximum 5 tags. At least 1 tag!</span>
       <div class="input">
         <ul v-if="tags != []" class="flex items-center">
           <li v-for="tag in tags" :key="tag._id" class="mr-3">
@@ -99,11 +96,7 @@ onMounted(fetchData);
             ></i>
           </li>
         </ul>
-        <input
-          v-model="search"
-          type="text"
-          placeholder="Ít nhất 1 thẻ tối đa 5 thẻ"
-        />
+        <input v-model="search" type="text" placeholder="At least 1 tag!" />
       </div>
       <ul v-if="search" class="sub-menu pl-2 pb-2 pt-1">
         <li v-for="tag in listTags" :key="tag._id" @click="addTag(tag)">

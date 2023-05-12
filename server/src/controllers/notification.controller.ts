@@ -36,7 +36,7 @@ export default class NotificationController {
       let pagination: any = {
         skip: (+page - 1) * +limit,
         take: +limit,
-        filter: { recipient: user._id },
+        filter: { recipient: user._id, status: true },
       };
 
       const { notifications, total, totalNotRead } =
@@ -255,17 +255,17 @@ export default class NotificationController {
 
       const listFollowerUserId: ObjectId[] =
         await this.followUserService.getListFollowerIds(user._id);
-      const listFollowerTagId: ObjectId[] =
-        await this.postService.getListFollowerIds(postId);
+      const listFollowerTagId: ObjectId[] = (
+        await this.postService.getListFollowerIds(postId)
+      ).filter((e) => e + "" != user._id);
 
       const listFollowerId: ObjectId[] = listFollowerUserId
         .concat(listFollowerTagId)
         .filter(
           (value, index, self) =>
             self.findIndex((v) => v.toHexString() === value.toHexString()) ===
-              index && value.toHexString() === user._id
+            index
         );
-
       const notification: CreateNotificationDto[] = listFollowerId.map((e) => {
         return {
           sender: user._id,
@@ -275,19 +275,19 @@ export default class NotificationController {
         };
       });
       if (notification.length === 0) {
-        res.status(201).json({
+        res.status(400).json({
           msg: "no followers so no notification",
         });
       } else {
         const createNotifications =
           await this.notificationService.createNotifications(notification);
-        for (const e of createNotifications) {
+        createNotifications.forEach((e) => {
           io.sockets.sockets.forEach((socket: any) => {
             if (socket.userId == e.recipient) {
               socket.emit("new-post", e);
             }
           });
-        }
+        });
         res.status(201).json({
           notifications: createNotifications,
           msg: "create notifications when new post",

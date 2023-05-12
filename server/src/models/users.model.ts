@@ -33,8 +33,8 @@ const userSchema = new Schema(
       type: String,
       default: "default/default.png",
     },
-    location: String,
-    about: String,
+    location: { type: String, default: null },
+    about: { type: String, default: null },
   },
   {
     timestamps: true,

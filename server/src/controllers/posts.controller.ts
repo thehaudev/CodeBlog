@@ -26,26 +26,28 @@ export class PostsController {
     try {
       const userId = req.user._id;
       let postId: any = req.params.id;
-      if (req.body.inReplyToComment) {
-        const CommentData: CreateCommentDto = { ...req.body, userId: userId };
-        const createComment: Comment =
-          await this.commentService.commentReplyComment(CommentData);
-        res
-          .status(201)
-          .json({ comment: createComment, message: "comment reply comment" });
-      } else {
-        const CommentData: CreateCommentDto = {
-          ...req.body,
-          postId: postId,
-          userId: userId,
-        };
-        const createComment: Comment = await this.commentService.comment(
-          CommentData
-        );
-        res
-          .status(201)
-          .json({ comment: createComment, message: "comment post" });
-      }
+      // if (req.body.inReplyToComment) {
+      //   const CommentData: CreateCommentDto = {
+      //     ...req.body,
+      //     postId: postId,
+      //     userId: userId,
+      //   };
+      //   const createComment: Comment =
+      //     await this.commentService.commentReplyComment(CommentData);
+      //   res
+      //     .status(201)
+      //     .json({ comment: createComment, message: "comment reply comment" });
+      // } else {
+      const CommentData: CreateCommentDto = {
+        ...req.body,
+        postId: postId,
+        userId: userId,
+      };
+      const createComment: Comment = await this.commentService.comment(
+        CommentData
+      );
+      res.status(201).json({ comment: createComment, message: "comment post" });
+      // }
     } catch (error) {
       next(error);
     }
@@ -410,23 +412,6 @@ export class PostsController {
       const id: string = req.params.id;
       let post: Post = await this.postService.findPostById(id);
 
-      // const countBookmark = await this.bookmarkService.countBookmarksOfPost(id)
-
-      // const { data, count: total } = await this.postTagService.findPost_Tag(id)
-      // const count = data.length
-      // const tags = data.map(e => e.tagId)
-      // const total_pageTags = Math.floor(+total % 5 == 0 ? +total / 5 : +total / 5 + 1)
-      // const tagPagination = {
-      //     count: +count,
-      //     total: +total,
-      //     per_page: 5,
-      //     current_page: 1,
-      //     total_pages: +total_pageTags
-      // }
-      // const tagData = { data: tags, meta: tagPagination }
-
-      // const data2 = { ...post['_doc'], user: post['user'], countBookmark: countBookmark, tags: tagData }
-
       res.status(200).json({ post: post, message: "get post by id" });
     } catch (error) {
       next(error);
@@ -478,7 +463,7 @@ export class PostsController {
     try {
       const id = req.params.id;
       await this.postService.deletePost(id);
-      res.status(200).json({ message: "deleted" });
+      res.status(200).json({ msg: "deleted" });
     } catch (error) {
       next(error);
     }

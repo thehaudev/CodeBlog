@@ -23,6 +23,20 @@ async function createComment(inReplyToComment, inReplyToUser, postId, content) {
   }
 }
 
+async function deleteComment(commentId) {
+  isPending.value = true;
+  error.value = null;
+  try {
+    const res = await instanceWithAccess.delete("/comments/" + commentId);
+    const { msg } = res.data;
+    return msg;
+  } catch (err) {
+    error.value = err.response.data.message;
+  } finally {
+    isPending.value = false;
+  }
+}
+
 export function useComment() {
-  return { error, isPending, createComment };
+  return { error, isPending, createComment, deleteComment };
 }

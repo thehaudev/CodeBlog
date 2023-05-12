@@ -5,7 +5,9 @@ import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { ref, computed, onMounted } from "vue";
 import OpenOptionBtn from "./OpenOptionBtn.vue";
-
+import AuthorPostDetail from "../card/AuthorPostDetail.vue";
+import ContentPost from "./Content.vue";
+const showCard = ref(false);
 const store = useStore();
 const router = useRouter();
 const props = defineProps(["post", "typePost"]);
@@ -55,18 +57,18 @@ onMounted(() => {
         >
       </div>
     </div>
-    <div class="mt-2">
+    <div class="mt-2 overflow-hidden">
       <span
         @click="typePost.type != 'trash' && getPostDetail(post._id)"
         :id="post._id"
         class="text-2xl text-gray-700 font-bold hover:underline cursor-pointer"
         >{{ post.title }}</span
       >
-      <div
+      <ContentPost
         class="mt-2 text-gray-600"
         :class="{ paragraph: !readMore }"
-        v-html="post.content"
-      ></div>
+        :content="post.content"
+      ></ContentPost>
     </div>
     <div class="flex justify-between items-center mt-4">
       <span
@@ -113,7 +115,11 @@ onMounted(() => {
           {{ post.views }}<span class="hidden md:inline">&nbsp;views</span>
         </div>
       </div>
-      <div>
+      <div
+        @mouseover="showCard = true"
+        @mouseleave="showCard = false"
+        class="relative"
+      >
         <router-link
           :to="{
             name: 'profile',
@@ -132,9 +138,17 @@ onMounted(() => {
             {{ post.user.display_name }}
           </h1>
         </router-link>
+        <AuthorPostDetail
+          v-if="showCard"
+          :authorId="post.user._id"
+        ></AuthorPostDetail>
       </div>
     </div>
-    <OpenOptionBtn :type="typePost" :postId="post._id"></OpenOptionBtn>
+    <OpenOptionBtn
+      :type="typePost"
+      :postId="post._id"
+      :authorId="post.user._id"
+    ></OpenOptionBtn>
   </div>
 </template>
 <style scoped>

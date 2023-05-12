@@ -21,7 +21,7 @@ const paginationOfPosts = computed(
   () => store.getters["posts/paginationPostsOfUser"]
 );
 const sort = ref("latest");
-const limit = ref(7);
+const limit = ref(10);
 const search = ref("");
 
 watch(search, async () => {
@@ -31,7 +31,7 @@ watch(search, async () => {
     search: search.value,
     current_page: page.value,
     sort: sort.value,
-    limit: 7,
+    limit: 10,
   });
 });
 async function emitSelectSort(select) {
@@ -77,7 +77,7 @@ window.addEventListener("scroll", (e) => {
 async function fetchData() {
   await store.dispatch("posts/setPostsOfUser", {
     id: userId,
-    limit: 7,
+    limit: 10,
     sort: sort.value,
     search: search.value,
     current_page: 1,
@@ -87,7 +87,7 @@ async function fetchData() {
   if (user.value && user.value._id == userId) {
     await store.dispatch("posts/setBookmarkPostsOfUser", {
       id: userId,
-      limit: 7,
+      limit: 10,
     });
 
     await store.dispatch("posts/setPostsInTrashOfUser", {

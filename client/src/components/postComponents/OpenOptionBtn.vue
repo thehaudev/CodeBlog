@@ -5,12 +5,14 @@ import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import HidePostModal from "../modal/HidePostModal.vue";
 import BookmarkLi from "./BookmarkLi.vue";
+import DeletePostModal from "../modal/DeletePostModal.vue";
 
-const props = defineProps(["type", "postId"]);
+const props = defineProps(["type", "postId", "authorId"]);
 const store = useStore();
 const isShow = ref(false);
 
 const isShowHidePostModal = ref(false);
+const isShowDeletePostModal = ref(false);
 
 const route = useRoute();
 const userId = route.params.id;
@@ -78,12 +80,13 @@ async function restorePost() {
         </BookmarkLi>
         <li>
           <span
-            v-if="type.type == 'postOfUser' && user && user._id == userId"
+            v-if="type.type != 'trash' && user && user._id == authorId"
             class="block cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             @click="isShowHidePostModal = true"
             >Hide posts</span
           >
         </li>
+
         <li>
           <span
             v-if="type.type == 'trash' && user && user._id == userId"
@@ -91,6 +94,14 @@ async function restorePost() {
             class="block cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             >Restore from trash
           </span>
+        </li>
+        <li>
+          <span
+            v-if="type.type == 'trash' && user && user._id == authorId"
+            class="block text-red-400 cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            @click="isShowDeletePostModal = true"
+            >Delete</span
+          >
         </li>
       </ul>
     </div>
@@ -100,4 +111,9 @@ async function restorePost() {
     :postId="postId"
     v-if="isShowHidePostModal"
   ></HidePostModal>
+  <DeletePostModal
+    @closeModal="isShowDeletePostModal = false"
+    :postId="postId"
+    v-if="isShowDeletePostModal"
+  ></DeletePostModal>
 </template>

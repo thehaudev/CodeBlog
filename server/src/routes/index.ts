@@ -10,7 +10,8 @@ import vote_commentRouter from "./vote_comment.router";
 import follow_tagRouter from "./follow_tag.router";
 import follow_userRouter from "./follow_user.router";
 import notificationRouter from "./notification.router";
-import viewsRouter from "./viewPost.router.";
+import viewsRouter from "./viewPost.router";
+import commentsRouter from "./comments.router";
 export function route(app: any) {
   app.use("/api/v1/auth", authRouter);
   app.use("/api/v1/users", userRouter);
@@ -25,4 +26,5 @@ export function route(app: any) {
   app.use("/api/v1/follow_user", follow_userRouter);
   app.use("/api/v1/notifications", notificationRouter);
   app.use("/api/v1/views", viewsRouter);
+  app.use("/api/v1/comments", commentsRouter);
 }

@@ -28,7 +28,7 @@ async function resetPasswordSubmit() {
 </script>
 <template>
   <div class="body">
-    <main>
+    <main class="min-h-fit">
       <form @submit.prevent="resetPasswordSubmit()" class="formLogin">
         <div class="row">
           <p>Please enter a new password!</p>
@@ -121,7 +121,8 @@ p.error {
 .formLogin {
   background-color: #fff;
   width: 100%;
-  height: 230px;
+  height: 300px;
+  max-height: fit-content;
   display: flex;
   justify-content: left;
   flex-direction: column;

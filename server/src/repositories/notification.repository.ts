@@ -16,8 +16,8 @@ export default class NotificationRepository extends BaseRepository<Notification>
       .exec();
   }
 
-  public async countNotification(): Promise<number> {
-    return await this.model.count().exec();
+  public async countNotification(filter: {}): Promise<number> {
+    return await this.model.find(filter).count().exec();
   }
 
   public async countNotificationNotRead(filter: {}): Promise<number> {

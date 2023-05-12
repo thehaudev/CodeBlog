@@ -34,7 +34,7 @@ function selectTab(type) {
         'border-sky-600': active == 'posts',
       }"
       rel="noopener noreferrer"
-      class="flex items-center mx-1 flex-shrink-0 px-5 py-3 space-x-2 border-b-4 border-solid border-gray-300 text-gray-600"
+      class="flex cursor-pointer items-center mx-1 flex-shrink-0 px-5 py-3 space-x-2 border-b-4 border-solid border-gray-300 text-gray-600"
       @click="selectTab('posts')"
     >
       <svg
@@ -66,7 +66,7 @@ function selectTab(type) {
         'border-sky-600': active == 'bookmarks',
       }"
       rel="noopener noreferrer"
-      class="flex items-center mx-1 flex-shrink-0 px-5 py-3 space-x-2 border-b-4 border-solid border-gray-300 text-gray-600"
+      class="flex cursor-pointer items-center mx-1 flex-shrink-0 px-5 py-3 space-x-2 border-b-4 border-solid border-gray-300 text-gray-600"
       @click="selectTab('bookmarks')"
     >
       <svg
@@ -97,7 +97,7 @@ function selectTab(type) {
         'border-sky-600': active == 'trash',
       }"
       rel="noopener noreferrer"
-      class="flex items-center mx-1 flex-shrink-0 px-5 py-3 space-x-2 border-b-4 border-solid border-gray-300 text-gray-600"
+      class="flex cursor-pointer items-center mx-1 flex-shrink-0 px-5 py-3 space-x-2 border-b-4 border-solid border-gray-300 text-gray-600"
       @click="selectTab('trash')"
     >
       <i class="fa-solid fa-trash-can"></i>

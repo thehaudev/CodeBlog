@@ -5,4 +5,8 @@ export default class ViewsRepository extends BaseRepository<ViewsPost> {
   constructor() {
     super(ViewPostModel);
   }
+
+  public async deleteViewsOfPost(postId: string): Promise<void> {
+    await this.model.deleteMany({ postId: postId });
+  }
 }

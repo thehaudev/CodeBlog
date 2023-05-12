@@ -1,15 +1,15 @@
 <script setup>
-import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
-
+import { useComment } from "../../composables/comment";
+import { ref } from "vue";
+const { error, isPending, deleteComment } = useComment();
 const store = useStore();
 const route = useRoute();
 
-const userId = route.params.id;
-const user = computed(() => store.getters["auth/getUser"]);
+const postId = ref(route.params.id);
 
-const props = defineProps(["type", "postId"]);
+const props = defineProps(["commentId", "limit", "postId"]);
 const emit = defineEmits(["closeModal"]);
 function closeModal(e) {
   if (!event.target.closest(".modal") || e == "btn") {
@@ -18,36 +18,12 @@ function closeModal(e) {
 }
 
 async function editStatusOfPost() {
-  await store.dispatch("posts/editStatusOfPost", {
-    postId: props.postId,
-    status: false,
+  const msg = await deleteComment(props.commentId);
+  await store.dispatch("comments/setCurrent_page", {
+    current_page: 1,
+    limit: props.limit,
+    postId: postId.value,
   });
-  if (route.name == "profile") {
-    await store.dispatch("posts/setPostsOfUser", {
-      id: userId,
-      limit: 7,
-      sort: "latest",
-      search: "",
-      current_page: 1,
-    });
-    await store.dispatch("posts/setBookmarkPostsOfUser", {
-      id: userId,
-      search: "",
-      limit: 7,
-    });
-    if (user.value._id == userId) {
-      await store.dispatch("posts/setPostsInTrashOfUser", {
-        id: userId,
-        limit: 7,
-      });
-    }
-  } else if (route.name == "home") {
-    await store.dispatch("posts/setCurrent_page", {
-      search: "",
-      current_page: 1,
-      limit: 7,
-    });
-  }
   emit("closeModal");
 }
 </script>
@@ -96,7 +72,7 @@ async function editStatusOfPost() {
             ></path>
           </svg>
           <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-            Are you sure you want to hide this product?
+            Are you sure you want to delete this comment?
           </h3>
           <button
             data-modal-hide="popup-modal"

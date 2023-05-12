@@ -2,10 +2,14 @@
 import RelatedPost from "../components/postDetailComponents/RelatedPost.vue";
 import CommentEditor from "../components/CommentEditor.vue";
 import SkeletonLoader from "../components/skeletonLoader.vue";
+import PostDontExist from "../components/error/PostDontExist.vue";
 import Comment from "../components/Comment.vue";
 import PostAcive from "../components/PostAcive.vue";
+import ContentPost from "../components/postComponents/Content.vue";
+import TableOfContent from "../components/postDetailComponents/TableOfContent.vue";
+import AuthorPostDetail from "../components/card/AuthorPostDetail.vue";
 
-import { computed, onUpdated, ref, onMounted, watch } from "vue";
+import { computed, onUpdated, onUnmounted, ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { URL_AVATAR, URL_IMG } from "../constants/index";
@@ -14,6 +18,7 @@ import { getReadableDate, getTimeSincePost } from "../utils/time";
 const store = useStore();
 const route = useRoute();
 const limit = ref(5);
+const showCard = ref(false);
 //pagination comments
 watch(limit, async () => {
   await store.dispatch("comments/setCurrent_page", {
@@ -37,11 +42,14 @@ window.addEventListener("scroll", (e) => {
 
 //cuộn đến comment khi ta click vào thông báo
 const commentId = ref(route.query.commentId);
-if (commentId.value) {
+if (commentId.value != null) {
   onMounted(() => {
     const commentElement = document.getElementById(commentId.value);
     if (commentElement) {
       commentElement.scrollIntoView({ behavior: "smooth" });
+    } else {
+      const discussion = document.getElementById("Discussion");
+      if (discussion) discussion.scrollIntoView({ behavior: "smooth" });
     }
   });
 }
@@ -57,9 +65,11 @@ const listComments = computed(
 const paginationOfComment = computed(
   () => store.getters["comments/getPaginationOfComments"]
 );
-const listPostsOfUser = computed(
-  () => store.getters["postDetail/getPostsOfUser"]
-);
+const listPostsOfUser = computed(() => {
+  const id = postId.value;
+  const items = store.getters["postDetail/getPostsOfUser"];
+  return items.filter((e) => e._id != id);
+});
 const listRelatedPosts = computed(
   () => store.getters["postDetail/getRelatedPosts"]
 );
@@ -86,36 +96,11 @@ const fetchData = async () => {
   }
 };
 onMounted(fetchData);
-
-const tableOfContent = ref(null);
-onUpdated(() => {
-  const section = document.querySelector(".postContent");
-  if (section) {
-    const headers = Array.from(section.querySelectorAll("h1, h2, h3")).map(
-      (header, index) => {
-        header.setAttribute("id", `newId${index}`);
-        return {
-          id: header.id,
-          tag: header.tagName.toLowerCase(),
-          text: header.textContent,
-        };
-      }
-    );
-    tableOfContent.value = headers;
-  }
-});
-function scrollToElement(id) {
-  const element = document.getElementById(id);
-  element.scrollIntoView({ behavior: "smooth" });
-  setTimeout(() => {
-    const elementPosition = element.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.pageYOffset - 67;
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: "smooth",
-    });
-  }, 10);
-}
+//Khi bài viết đã bị xóa
+const isDeleted = ref(false);
+setTimeout(() => {
+  isDeleted.value = true;
+}, 15000);
 </script>
 <template>
   <main v-if="post">
@@ -128,14 +113,20 @@ function scrollToElement(id) {
               {{ post.title }}
             </h1>
             <div
-              class="flex flex-col items-start justify-between w-full md:flex-row md:items-center text-gray-600"
+              class="relative flex flex-col items-start justify-between w-full md:flex-row md:items-center text-gray-600"
             >
               <div class="flex items-center md:space-x-2">
                 <img
                   :src="URL_AVATAR + post.user.avatar"
                   :alt="post.user.display_name"
                   class="w-4 h-4 border rounded-full bg-gray-500 border-gray-300"
+                  @mouseover="showCard = true"
+                  @mouseleave="showCard = false"
                 />
+                <AuthorPostDetail
+                  v-if="showCard"
+                  :authorId="post.user._id"
+                ></AuthorPostDetail>
                 <p class="text-sm">
                   <router-link
                     :to="{
@@ -147,6 +138,8 @@ function scrollToElement(id) {
                     rel="noopener noreferrer"
                     target="_blank"
                     class="underline text-sky-600 mr-1"
+                    @mouseover="showCard = true"
+                    @mouseleave="showCard = false"
                   >
                     <span itemprop="name">{{
                       post.user.display_name
@@ -172,7 +165,10 @@ function scrollToElement(id) {
           <div
             class="px-4 lg:px-0 mt-12 text-gray-700 text-lg leading-relaxed w-full lg:w-3/4"
           >
-            <div class="postContent" v-html="post.content"></div>
+            <ContentPost
+              class="postContent"
+              :content="post.content"
+            ></ContentPost>
             <div>
               <div
                 class="flex flex-wrap py-6 space-x-2 border-t border-dashed border-gray-600"
@@ -187,7 +183,7 @@ function scrollToElement(id) {
                   >#{{ tag.title }}</router-link
                 >
               </div>
-              <div class="space-y-2">
+              <div v-if="listPostsOfUser.length" class="space-y-2">
                 <h4 class="text-lg font-semibold">
                   More from {{ post.user.display_name }}
                 </h4>
@@ -228,6 +224,7 @@ function scrollToElement(id) {
                 :key="comment._id"
                 :comment="comment"
                 :id="comment._id"
+                :limit="limit"
               ></Comment>
             </div>
           </div>
@@ -235,23 +232,9 @@ function scrollToElement(id) {
           <div
             class="w-full lg:w-1/4 m-auto mt-12 max-w-screen-sm sticky top-20 self-start"
           >
-            <div class="space-y-2">
-              <h2
-                class="text-sm font-semibold tracking-widest uppercase text-gray-600"
-              >
-                Table of content
-              </h2>
-              <div class="flex flex-col space-y-1 section-nav">
-                <span
-                  v-for="table in tableOfContent"
-                  :key="table.id"
-                  @click="scrollToElement(table.id)"
-                  :class="'cursor-pointer ' + table.id"
-                  >{{ table.text }}</span
-                >
-              </div>
-            </div>
-            <div class="space-y-2 mt-5">
+            <TableOfContent />
+
+            <div class="space-y-2 mt-5" v-if="listRelatedPosts.length">
               <h2
                 class="text-sm font-semibold tracking-widest uppercase text-gray-600"
               >
@@ -272,32 +255,13 @@ function scrollToElement(id) {
       <!-- main ends here -->
     </div>
   </main>
-  <SkeletonLoader v-else></SkeletonLoader>
+  <section v-else>
+    <SkeletonLoader v-if="!isDeleted"></SkeletonLoader>
+    <PostDontExist v-else></PostDontExist>
+  </section>
 </template>
 <style scoped>
 .style1::-webkit-scrollbar {
   display: none;
 }
-/* .section-nav .active > span {
-  color: #333;
-  font-weight: 500;
-}
-
-.section-nav {
-  padding-left: 10px;
-  border-left: 1px solid #efefef;
-}
-
-.section-nav span {
-  text-decoration: none;
-  display: block;
-  padding: 0.125rem 0;
-  color: #ccc;
-  transition: all 50ms ease-in-out; 💡
-}
-
-.section-nav span:hover,
-.section-nav span:focus {
-  color: #666;
-} */
 </style>
