@@ -56,9 +56,11 @@ if (commentId.value != null) {
 
 //lấy dữ liệu
 const postId = ref(route.params.id);
+watch(postId, () => {
+  fetchData();
+});
 const post = computed(() => store.getters["postDetail/getPost"]);
 const user = computed(() => store.getters["auth/getUser"]);
-
 const listComments = computed(
   () => store.getters["comments/getCommentsInPost"]
 );
@@ -100,7 +102,7 @@ onMounted(fetchData);
 const isDeleted = ref(false);
 setTimeout(() => {
   isDeleted.value = true;
-}, 15000);
+}, 2000);
 </script>
 <template>
   <main v-if="post">

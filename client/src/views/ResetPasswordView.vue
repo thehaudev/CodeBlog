@@ -1,5 +1,6 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
+import { onMounted } from "vue";
 import { useResetPassword } from "../composables/auth";
 import { ref } from "vue";
 
@@ -25,6 +26,9 @@ async function resetPasswordSubmit() {
     });
   }
 }
+onMounted(() => {
+  error.value = null;
+});
 </script>
 <template>
   <div class="body">

@@ -44,10 +44,7 @@ function addTag(tag) {
   }
 }
 async function post() {
-  if (
-    content.value.replace(/\s/g, "").length >= 22 &&
-    title.value.replace(/\s/g, "").length >= 16
-  ) {
+  if (content.value.replace(/\s/g, "").length >= 22) {
     const tagId = tags.value.map((e) => e._id);
     const post = await createPost(
       title.value,
@@ -67,9 +64,7 @@ async function post() {
       )}</span> mà có thể bạn quan tâm.</p>`,
     });
     router.push({ name: "home", params: {} });
-  } else
-    error.value =
-      "Title must be longer than or equal to 15 characters,content must be longer than or equal to 22 characters";
+  }
 }
 function removeItem(arr, item) {
   const index = arr.indexOf(item);

@@ -22,7 +22,7 @@ export const io = new Server(server, {
 });
 
 require("dotenv").config();
-const { MONGODB_URL } = process.env;
+const { CLIENT_URL, MONGODB_URL, MONGODB_URL_SHARDING } = process.env;
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
@@ -38,10 +38,10 @@ mongoose.set({
 mongoose
   .connect(MONGODB_URL)
   .then(console.log("Connected"))
-  .catch((err: any) => console.log("don't connect"));
+  .catch((err: any) => console.log("Don't connect"));
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3001");
+  res.header("Access-Control-Allow-Origin", CLIENT_URL);
   res.header(
     "Access-Control-Allow-Headers",
     "Content-Type,Content-Length, Authorization,set-cookie, Accept,X-Requested-With"

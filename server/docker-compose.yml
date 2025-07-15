@@ -8,11 +8,11 @@ services:
       - "27017:27017"
     volumes:
       - ./data:/data/db
-  node:
-    build: .
-    container_name: nodeapp
-    restart: always
-    ports:
-      - "8080:8080"
-    depends_on:
-      - mongo
+  # node:
+  #   build: .
+  #   container_name: nodeapp
+  #   restart: always
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - mongo

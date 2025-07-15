@@ -1,0 +1,55 @@
+version: "3.8"
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.client
+    ports:
+      - "8080:80"
+    environment:
+      - CLIENT_URL=http://localhost:8080
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.server
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URL=mongodb://mongo:27017/blog_technology
+      - MONGODB_URL_SHARDING=mongodb://mongo:27015,mongo:27016/blog_technology
+      - ACTIVATION_TOKEN_SECRET={ACTIVATION_TOKEN_SECRET}
+      - ACCESS_TOKEN_SECRET={ACCESS_TOKEN_SECRET}
+      - REFRESH_TOKEN_SECRET={REFRESH_TOKEN_SECRET}
+      - CLIENT_URL=http://localhost:8080
+      - CLIENT_ID={CLIENT_ID}
+      - CLIENT_SECRET={CLIENT_SECRET}
+      - REDIRECT_URI={REDIRECT_URI}
+      - REFRESH_TOKEN={GOOGLE_REFRESH_TOKEN}
+    volumes:
+      - ./server/src/public:/app/src/public
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongo-data:
+
+networks:
+  app-network:
+    driver: bridge
